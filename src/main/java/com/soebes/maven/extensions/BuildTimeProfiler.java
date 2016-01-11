@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Karl Heinz Marbaise <khmarbaise@apache.org>
- *
  */
 @Named
 public class BuildTimeProfiler
@@ -31,11 +30,14 @@ public class BuildTimeProfiler
 
     private List<String> lifeCyclePhases;
 
+    private final MojoTimer mojoTimer;
+
     @Inject
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
         this.lifeCyclePhases = Collections.<String>synchronizedList( new LinkedList<String>() );
+        this.mojoTimer = new MojoTimer();
     }
 
     @Override
@@ -88,39 +90,39 @@ public class BuildTimeProfiler
             {
                 dependencyResolutionResult( (DependencyResolutionResult) event );
             }
-            //The following event type is available since Maven 3.3.1+
-//            else if ( event instanceof DefaultSettingsBuildingRequest) {
-//                DefaultSettingsBuildingRequest r = null;
-//                r.getGlobalSettingsFile();
-//                r.getGlobalSettingsSource();
-//                r.getSystemProperties();
-//                r.getUserSettingsFile();
-//                r.getUserSettingsSource();
-//                
-//                r.setGlobalSettingsFile( globalSettingsFile );
-//                r.setGlobalSettingsSource( globalSettingsSource );
-//                r.setSystemProperties( systemProperties );
-//                r.setUserProperties( userProperties );
-//                r.setUserSettingsFile( userSettingsFile );
-//                r.setUserSettingsSource( userSettingsSource );
-//            }
-            //The following event type is available since Maven 3.3.1+
-//            else if (event instanceof DefaultSettingsBuildingRequest) {
-//                
-//                DefaultSettingsBuildingRequest r = null;
-//                r.getGlobalSettingsSource().getLocation()
-//            }
-            //The following event type is available since Maven 3.3.1+
-//            else if (event instanceof DefaultToolchainsBuildingRequest) {
-//                DefaultToolchainsBuildingRequest r = null;
-//                r.getGlobalToolchainsSource().
-//            }
-            //The following event type is available since Maven 3.3.1+
-//            else if (event instanceof DefaultToolchainsBuildingResult) {
-//                DefaultToolchainsBuildingResult r = null;
-//                r.getEffectiveToolchains();
-//                r.getProblems();
-//            }
+            // The following event type is available since Maven 3.3.1+
+            // else if ( event instanceof DefaultSettingsBuildingRequest) {
+            // DefaultSettingsBuildingRequest r = null;
+            // r.getGlobalSettingsFile();
+            // r.getGlobalSettingsSource();
+            // r.getSystemProperties();
+            // r.getUserSettingsFile();
+            // r.getUserSettingsSource();
+            //
+            // r.setGlobalSettingsFile( globalSettingsFile );
+            // r.setGlobalSettingsSource( globalSettingsSource );
+            // r.setSystemProperties( systemProperties );
+            // r.setUserProperties( userProperties );
+            // r.setUserSettingsFile( userSettingsFile );
+            // r.setUserSettingsSource( userSettingsSource );
+            // }
+            // The following event type is available since Maven 3.3.1+
+            // else if (event instanceof DefaultSettingsBuildingRequest) {
+            //
+            // DefaultSettingsBuildingRequest r = null;
+            // r.getGlobalSettingsSource().getLocation()
+            // }
+            // The following event type is available since Maven 3.3.1+
+            // else if (event instanceof DefaultToolchainsBuildingRequest) {
+            // DefaultToolchainsBuildingRequest r = null;
+            // r.getGlobalToolchainsSource().
+            // }
+            // The following event type is available since Maven 3.3.1+
+            // else if (event instanceof DefaultToolchainsBuildingResult) {
+            // DefaultToolchainsBuildingResult r = null;
+            // r.getEffectiveToolchains();
+            // r.getProblems();
+            // }
             else
             {
                 // TODO: What kind of event we haven't considered?
@@ -214,12 +216,13 @@ public class BuildTimeProfiler
             case MojoStarted:
                 String phase = executionEvent.getMojoExecution().getLifecyclePhase();
                 collectAllLifeCylcePhases( phase );
+
+                mojoTimer.mojoStart( executionEvent, new SystemTime().start() );
                 break;
             case MojoFailed:
-                break;
             case MojoSucceeded:
-                break;
             case MojoSkipped:
+                mojoTimer.mojoStop( executionEvent );
                 break;
 
             case ProjectStarted:
@@ -251,6 +254,9 @@ public class BuildTimeProfiler
         {
             LOGGER.debug( "MBTP: Phase: {}", phase );
         }
+
+        mojoTimer.report();
+
     }
 
     private void collectAllLifeCylcePhases( String phase )
