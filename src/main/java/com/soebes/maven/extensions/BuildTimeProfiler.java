@@ -42,6 +42,8 @@ public class BuildTimeProfiler
     public void init( Context context )
         throws Exception
     {
+        super.init( context );
+
         // TODO: Replace this with property from filtered file to get the real version number
         LOGGER.info( "MBTP: Maven Build Time Profiler Version 0.1 started." );
         // Is this always in the context?
