@@ -43,10 +43,10 @@ public class BuildTimeProfiler
         throws Exception
     {
         // TODO: Replace this with property from filtered file to get the real version number
-        LOGGER.info( "Maven Build Time Profiler Version 0.1 started." );
+        LOGGER.info( "MBTP: Maven Build Time Profiler Version 0.1 started." );
         // Is this always in the context?
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
-        LOGGER.debug( "workingDirectory: " + workingDirectory );
+        LOGGER.debug( "MBTP: workingDirectory: " + workingDirectory );
 
         // data.put( "plexus", container );
         // data.put( "workingDirectory", cliRequest.workingDirectory );
@@ -86,32 +86,65 @@ public class BuildTimeProfiler
             {
                 dependencyResolutionResult( (DependencyResolutionResult) event );
             }
+            //The following event type is available since Maven 3.3.1+
+//            else if ( event instanceof DefaultSettingsBuildingRequest) {
+//                DefaultSettingsBuildingRequest r = null;
+//                r.getGlobalSettingsFile();
+//                r.getGlobalSettingsSource();
+//                r.getSystemProperties();
+//                r.getUserSettingsFile();
+//                r.getUserSettingsSource();
+//                
+//                r.setGlobalSettingsFile( globalSettingsFile );
+//                r.setGlobalSettingsSource( globalSettingsSource );
+//                r.setSystemProperties( systemProperties );
+//                r.setUserProperties( userProperties );
+//                r.setUserSettingsFile( userSettingsFile );
+//                r.setUserSettingsSource( userSettingsSource );
+//            }
+            //The following event type is available since Maven 3.3.1+
+//            else if (event instanceof DefaultSettingsBuildingRequest) {
+//                
+//                DefaultSettingsBuildingRequest r = null;
+//                r.getGlobalSettingsSource().getLocation()
+//            }
+            //The following event type is available since Maven 3.3.1+
+//            else if (event instanceof DefaultToolchainsBuildingRequest) {
+//                DefaultToolchainsBuildingRequest r = null;
+//                r.getGlobalToolchainsSource().
+//            }
+            //The following event type is available since Maven 3.3.1+
+//            else if (event instanceof DefaultToolchainsBuildingResult) {
+//                DefaultToolchainsBuildingResult r = null;
+//                r.getEffectiveToolchains();
+//                r.getProblems();
+//            }
             else
             {
                 // TODO: What kind of event we haven't considered?
-                LOGGER.debug( "Event {}", event.getClass().getCanonicalName() );
+                LOGGER.debug( "MBTP: Event {}", event.getClass().getCanonicalName() );
             }
         }
         catch ( Exception e )
         {
-            LOGGER.error( "Exception", e );
+            LOGGER.error( "MBTP: Exception", e );
         }
     }
 
     @Override
     public void close()
     {
-        LOGGER.debug( "done." );
+        LOGGER.debug( "MBTP: done." );
     }
 
     private void dependencyResolutionResult( DependencyResolutionResult event )
     {
-        LOGGER.debug( "dependencyResolutionResult()" );
+        LOGGER.debug( "MBTP: dependencyResolutionResult()" );
     }
 
     private void dependencyResolutionRequest( DependencyResolutionRequest event )
     {
-        LOGGER.debug( "dependencyResolutionRequest()" );
+        LOGGER.debug( "MBTP: dependencyResolutionRequest()" );
     }
 
     private void repositoryEventHandler( RepositoryEvent repositoryEvent )
@@ -141,7 +174,7 @@ public class BuildTimeProfiler
                 break;
 
             default:
-                LOGGER.error( "Event {}", type );
+                LOGGER.error( "MBTP: repositoryEventHandler {}", type );
                 break;
         }
     }
@@ -197,6 +230,7 @@ public class BuildTimeProfiler
                 break;
 
             default:
+                LOGGER.error( "MBTP: executionEventHandler: {}", type );
                 break;
         }
 
@@ -205,12 +239,12 @@ public class BuildTimeProfiler
     private void executionRequestEventHandler( MavenExecutionRequest event )
     {
         // Can we do something more useful here?
-        LOGGER.debug( "executionRequest: {}", event.getExecutionListener() );
+        LOGGER.debug( "MBTP: executionRequest: {}", event.getExecutionListener() );
     }
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        LOGGER.debug( "executionRequest: {}", event.getProject() );
+        LOGGER.debug( "MBTP: executionRequest: {}", event.getProject() );
     }
 
     private void collectAllLifeCylcePhases( String phase )
