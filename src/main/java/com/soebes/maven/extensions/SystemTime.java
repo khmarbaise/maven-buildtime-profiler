@@ -22,8 +22,9 @@ public class SystemTime
         this.stopTime = System.currentTimeMillis();
         return this;
     }
-    
-    public long getElapsedTime() {
+
+    public long getElapsedTime()
+    {
         return this.stopTime - this.startTime;
     }
 }

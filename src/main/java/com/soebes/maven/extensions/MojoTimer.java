@@ -26,9 +26,10 @@ public class MojoTimer
             + mojo.getExecutionId();
     }
 
-    public void mojoStart( ExecutionEvent even, SystemTime systemTime )
+    public void mojoStart( ExecutionEvent event, SystemTime systemTime )
     {
-        String projectId = getMojoId( even.getMojoExecution() );
+//        even.getProject();
+        String projectId = getMojoId( event.getMojoExecution() );
         timerEvents.put( projectId, systemTime );
 
         // even.getMojoExecution();
@@ -37,9 +38,9 @@ public class MojoTimer
         // even.getType();
     }
 
-    public void mojoStop( ExecutionEvent even )
+    public void mojoStop( ExecutionEvent event )
     {
-        String mojoId = getMojoId( even.getMojoExecution() );
+        String mojoId = getMojoId( event.getMojoExecution() );
         if ( !timerEvents.containsKey( mojoId ) )
         {
             throw new IllegalArgumentException( "Unknown mojoId (" + mojoId + ")" );
