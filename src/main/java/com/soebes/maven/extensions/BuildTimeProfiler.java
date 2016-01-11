@@ -32,12 +32,15 @@ public class BuildTimeProfiler
 
     private final MojoTimer mojoTimer;
 
+    private final ProjectTimer projectTimer;
+
     @Inject
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
         this.lifeCyclePhases = Collections.<String>synchronizedList( new LinkedList<String>() );
         this.mojoTimer = new MojoTimer();
+        this.projectTimer = new ProjectTimer();
     }
 
     @Override
@@ -219,6 +222,7 @@ public class BuildTimeProfiler
 
                 mojoTimer.mojoStart( executionEvent, new SystemTime().start() );
                 break;
+
             case MojoFailed:
             case MojoSucceeded:
             case MojoSkipped:
@@ -226,12 +230,13 @@ public class BuildTimeProfiler
                 break;
 
             case ProjectStarted:
+                projectTimer.projectStart( executionEvent, new SystemTime().start() );
                 break;
+
             case ProjectFailed:
-                break;
             case ProjectSucceeded:
-                break;
             case ProjectSkipped:
+                projectTimer.projectStop( executionEvent );
                 break;
 
             default:
@@ -256,6 +261,8 @@ public class BuildTimeProfiler
         }
 
         mojoTimer.report();
+        LOGGER.info( " Project information:" );
+        projectTimer.report();
 
     }
 
