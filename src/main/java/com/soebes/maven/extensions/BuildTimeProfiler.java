@@ -239,12 +239,16 @@ public class BuildTimeProfiler
     private void executionRequestEventHandler( MavenExecutionRequest event )
     {
         // Can we do something more useful here?
-        LOGGER.debug( "MBTP: executionRequest: {}", event.getExecutionListener() );
+        LOGGER.debug( "MBTP: executionRequestEventHandler: {}", event.getExecutionListener() );
     }
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        LOGGER.debug( "MBTP: executionRequest: {}", event.getProject() );
+        LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
+        for ( String phase : lifeCyclePhases )
+        {
+            LOGGER.debug( "MBTP: Phase: {}", phase );
+        }
     }
 
     private void collectAllLifeCylcePhases( String phase )
