@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,46 +14,47 @@ public class MojoTimer
 {
     private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
-    private Map<String, SystemTime> timerEvents;
+    private Map<ProjectMojo, SystemTime> timerEvents;
 
     public MojoTimer()
     {
         this.timerEvents = new ConcurrentHashMap<>();
     }
 
-    private String getMojoId( MojoExecution mojo )
+    private ProjectKey createProjectKey( MavenProject project )
     {
-        return mojo.getGroupId() + ":" + mojo.getArtifactId() + ":" + mojo.getVersion() + ":" + mojo.getGoal() + ":"
-            + mojo.getExecutionId();
+        return new ProjectKey( project.getGroupId(), project.getArtifactId(), project.getVersion() );
+    }
+
+    private MojoKey createMojoKey( MojoExecution mojo )
+    {
+        return new MojoKey( mojo.getGroupId(), mojo.getArtifactId(), mojo.getVersion(), mojo.getGoal(),
+                            mojo.getExecutionId(), mojo.getLifecyclePhase() );
     }
 
     public void mojoStart( ExecutionEvent event, SystemTime systemTime )
     {
-//        even.getProject();
-        String projectId = getMojoId( event.getMojoExecution() );
-        timerEvents.put( projectId, systemTime );
-
-        // even.getMojoExecution();
-        // even.getProject();
-        // even.getSession();
-        // even.getType();
+        ProjectMojo pm =
+            new ProjectMojo( createProjectKey( event.getProject() ), createMojoKey( event.getMojoExecution() ) );
+        timerEvents.put( pm, systemTime );
     }
 
     public void mojoStop( ExecutionEvent event )
     {
-        String mojoId = getMojoId( event.getMojoExecution() );
-        if ( !timerEvents.containsKey( mojoId ) )
+        ProjectMojo pm =
+            new ProjectMojo( createProjectKey( event.getProject() ), createMojoKey( event.getMojoExecution() ) );
+        if ( !timerEvents.containsKey( pm ) )
         {
-            throw new IllegalArgumentException( "Unknown mojoId (" + mojoId + ")" );
+            throw new IllegalArgumentException( "Unknown mojoId (" + pm + ")" );
         }
-        timerEvents.get( mojoId ).stop();
+        timerEvents.get( pm ).stop();
     }
 
     public void report()
     {
-        for ( Entry<String, SystemTime> item : this.timerEvents.entrySet() )
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
         {
-            LOGGER.info( "SessionTimer: {} : {}", item.getKey(), item.getValue().getElapsedTime() );
+            LOGGER.info( "{} : {}", item.getKey().getId(), item.getValue().getElapsedTime() );
         }
     }
 }

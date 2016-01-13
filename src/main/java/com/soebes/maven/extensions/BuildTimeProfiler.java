@@ -34,6 +34,8 @@ public class BuildTimeProfiler
 
     private final ProjectTimer projectTimer;
 
+    private final SessionTimer sessionTimer;
+
     @Inject
     public BuildTimeProfiler()
     {
@@ -41,6 +43,7 @@ public class BuildTimeProfiler
         this.lifeCyclePhases = Collections.<String>synchronizedList( new LinkedList<String>() );
         this.mojoTimer = new MojoTimer();
         this.projectTimer = new ProjectTimer();
+        this.sessionTimer = new SessionTimer();
     }
 
     @Override
@@ -197,22 +200,22 @@ public class BuildTimeProfiler
             case SessionStarted:
                 // Reading of pom files done and structure now there.
                 // executionEvent.getSession().getProjectDependencyGraph().getSortedProjects();
+                sessionTimer.sessionStart( executionEvent );
                 break;
             case SessionEnded:
                 // Everything is done.
+                sessionTimer.sessionStop( executionEvent );
                 break;
 
             case ForkStarted:
                 break;
             case ForkFailed:
-                break;
             case ForkSucceeded:
                 break;
 
             case ForkedProjectStarted:
                 break;
             case ForkedProjectFailed:
-                break;
             case ForkedProjectSucceeded:
                 break;
 
@@ -220,6 +223,7 @@ public class BuildTimeProfiler
                 String phase = executionEvent.getMojoExecution().getLifecyclePhase();
                 collectAllLifeCylcePhases( phase );
 
+                // Key: phase, project, mojo
                 mojoTimer.mojoStart( executionEvent, new SystemTime().start() );
                 break;
 
@@ -257,13 +261,15 @@ public class BuildTimeProfiler
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
         for ( String phase : lifeCyclePhases )
         {
-            LOGGER.debug( "MBTP: Phase: {}", phase );
+            LOGGER.info( " Run phases: {}", phase );
         }
 
         mojoTimer.report();
         LOGGER.info( " Project information:" );
         projectTimer.report();
 
+        LOGGER.info( " Session information:" );
+        sessionTimer.report();
     }
 
     private void collectAllLifeCylcePhases( String phase )
