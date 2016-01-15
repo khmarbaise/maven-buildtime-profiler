@@ -261,17 +261,18 @@ public class BuildTimeProfiler
     private void executionResultEventHandler( MavenExecutionResult event )
     {
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
-        for ( String phase : lifeCyclePhases )
-        {
-            LOGGER.info( " Run phases: {}", phase );
-        }
+//        for ( String phase : lifeCyclePhases )
+//        {
+//            LOGGER.info( " Run phases: {}", phase );
+//        }
 
         // LOGGER.info( " Mojo information:" );
         // mojoTimer.report();
         // LOGGER.info( " Project information:" );
-        projectTimer.report();
+//        projectTimer.report();
 
-        LOGGER.info( "Project (reactor order) information:" );
+//        LOGGER.info( "------------------------------------------------------------------------" );
+        LOGGER.info( "Project Build Time (reactor order):" );
         List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
         for ( MavenProject mavenProject : topologicallySortedProjects )
         {
@@ -295,8 +296,9 @@ public class BuildTimeProfiler
             }
 
         }
-        LOGGER.info( " Session information:" );
-        sessionTimer.report();
+//        LOGGER.info( "------------------------------------------------------------------------" );
+//        LOGGER.info( " Session information:" );
+//        sessionTimer.report();
 
         LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "Phase summary:" );
