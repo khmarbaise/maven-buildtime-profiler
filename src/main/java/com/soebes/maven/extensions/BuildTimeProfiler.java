@@ -267,8 +267,7 @@ public class BuildTimeProfiler
         List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
         for ( MavenProject mavenProject : topologicallySortedProjects )
         {
-            long timeForProject = projectTimer.getTimeForProject( mavenProject );
-            LOGGER.info( "{} ms : {}", String.format( "%8d", timeForProject ), mavenProject.getName() );
+            LOGGER.info( "{}:", mavenProject.getName() );
 
             for ( String phase : lifeCyclePhases )
             {
@@ -280,7 +279,7 @@ public class BuildTimeProfiler
                 }
 
                 long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( proKey, phase );
-                LOGGER.info( "              {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
+                LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
 
             }
 
@@ -293,7 +292,7 @@ public class BuildTimeProfiler
         for ( String phase : lifeCyclePhases )
         {
             long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
-            LOGGER.info( "{}: {} ms", String.format( "%-23s", phase ), String.format( "%8d", timeForPhaseInMillis ) );
+            LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase  );
         }
         LOGGER.info( "------------------------------------------------------------------------" );
 
