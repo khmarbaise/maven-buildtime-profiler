@@ -1,5 +1,6 @@
 package com.soebes.maven.extensions;
 
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.maven.eventspy.AbstractEventSpy;
-import org.apache.maven.execution.BuildSummary;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionEvent.Type;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -261,18 +261,9 @@ public class BuildTimeProfiler
     private void executionResultEventHandler( MavenExecutionResult event )
     {
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
-//        for ( String phase : lifeCyclePhases )
-//        {
-//            LOGGER.info( " Run phases: {}", phase );
-//        }
 
-        // LOGGER.info( " Mojo information:" );
-        // mojoTimer.report();
-        // LOGGER.info( " Project information:" );
-//        projectTimer.report();
-
-//        LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "Project Build Time (reactor order):" );
+        LOGGER.info( "" );
         List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
         for ( MavenProject mavenProject : topologicallySortedProjects )
         {
@@ -294,9 +285,7 @@ public class BuildTimeProfiler
             }
 
         }
-//        LOGGER.info( "------------------------------------------------------------------------" );
-//        LOGGER.info( " Session information:" );
-//        sessionTimer.report();
+
 
         LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "Phase summary:" );
