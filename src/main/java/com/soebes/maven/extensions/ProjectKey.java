@@ -46,6 +46,11 @@ public class ProjectKey
         this.version = version;
     }
 
+    public String getId()
+    {
+        return this.groupId + ":" + this.artifactId + ":" + this.version;
+    }
+
     @Override
     public int hashCode()
     {

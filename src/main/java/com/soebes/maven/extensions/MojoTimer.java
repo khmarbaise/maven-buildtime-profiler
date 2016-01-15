@@ -1,5 +1,6 @@
 package com.soebes.maven.extensions;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,6 +49,48 @@ public class MojoTimer
             throw new IllegalArgumentException( "Unknown mojoId (" + pm + ")" );
         }
         timerEvents.get( pm ).stop();
+    }
+
+    public long getTimeForPhaseInMillis( String phase )
+    {
+        long result = 0;
+
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            if ( phase.equals( item.getKey().getMojo().getPhase() ) )
+            {
+                result += item.getValue().getElapsedTime();
+            }
+        }
+        return result;
+    }
+
+    public boolean hasTimeForProjectAndPhase( ProjectKey proKey, String phase )
+    {
+        boolean result = false;
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            if ( item.getKey().getProject().equals( proKey ) && phase.equals( item.getKey().getMojo().getPhase() ) )
+            {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public long getTimeForProjectAndPhaseInMillis( ProjectKey proKey, String phase )
+    {
+        long result = 0;
+
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            if ( item.getKey().getProject().equals( proKey ) && phase.equals( item.getKey().getMojo().getPhase() ) )
+            {
+                result += item.getValue().getElapsedTime();
+            }
+        }
+
+        return result;
     }
 
     public void report()

@@ -42,6 +42,16 @@ public class ProjectTimer
         timerEvents.get( projectId ).stop();
     }
 
+    public long getTimeForProject( MavenProject project )
+    {
+        String projectId = getProjectId( project );
+        if ( !timerEvents.containsKey( projectId ) )
+        {
+            throw new IllegalArgumentException( "Unknown projectId (" + projectId + ")" );
+        }
+        return timerEvents.get( projectId ).getElapsedTime();
+    }
+
     public void report()
     {
         for ( Entry<String, SystemTime> item : this.timerEvents.entrySet() )

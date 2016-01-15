@@ -8,12 +8,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.maven.eventspy.AbstractEventSpy;
+import org.apache.maven.execution.BuildSummary;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionEvent.Type;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.project.DependencyResolutionRequest;
 import org.apache.maven.project.DependencyResolutionResult;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
 import org.slf4j.Logger;
@@ -264,12 +266,53 @@ public class BuildTimeProfiler
             LOGGER.info( " Run phases: {}", phase );
         }
 
-        mojoTimer.report();
-        LOGGER.info( " Project information:" );
+        // LOGGER.info( " Mojo information:" );
+        // mojoTimer.report();
+        // LOGGER.info( " Project information:" );
         projectTimer.report();
 
+        LOGGER.info( "Project (reactor order) information:" );
+        List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
+        for ( MavenProject mavenProject : topologicallySortedProjects )
+        {
+            long timeForProject = projectTimer.getTimeForProject( mavenProject );
+            LOGGER.info( "{}: {} ms", String.format( "%-52s", mavenProject.getName() ),
+                         String.format( "%8d", timeForProject ) );
+
+            for ( String phase : lifeCyclePhases )
+            {
+                ProjectKey proKey = mavenProjectToProjectKey( mavenProject );
+
+                if ( !mojoTimer.hasTimeForProjectAndPhase( proKey, phase ) )
+                {
+                    continue;
+                }
+
+                long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( proKey, phase );
+                LOGGER.info( "    {}: {} ms", String.format( "%-23s", phase ),
+                             String.format( "%8d", timeForPhaseAndProjectInMillis ) );
+
+            }
+
+        }
         LOGGER.info( " Session information:" );
         sessionTimer.report();
+
+        LOGGER.info( "------------------------------------------------------------------------" );
+        LOGGER.info( "Phase summary:" );
+        LOGGER.info( "" );
+        for ( String phase : lifeCyclePhases )
+        {
+            long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
+            LOGGER.info( "{}: {} ms", String.format( "%-23s", phase ), String.format( "%8d", timeForPhaseInMillis ) );
+        }
+        LOGGER.info( "------------------------------------------------------------------------" );
+
+    }
+
+    private ProjectKey mavenProjectToProjectKey( MavenProject project )
+    {
+        return new ProjectKey( project.getGroupId(), project.getArtifactId(), project.getVersion() );
     }
 
     private void collectAllLifeCylcePhases( String phase )

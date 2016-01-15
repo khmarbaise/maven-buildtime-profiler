@@ -1,6 +1,7 @@
 package com.soebes.maven.extensions;
 
 import org.testng.annotations.Test;
+import org.testng.junit.JUnit4TestMethod;
 
 public class FirstTest
 {
@@ -20,5 +21,13 @@ public class FirstTest
         X result = new X();
         String value = result.get("p", "clean", "mojo", "exec");
         
+    }
+    
+    @Test
+    public void secondTest() {
+        long l = 10456;
+        String s = String.format( "%6d", l);
+        String x = String.format( "%-12s", "X" );
+        System.out.println( "S=" + s + " X: '" + x + "'");
     }
 }
