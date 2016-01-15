@@ -1,7 +1,6 @@
 package com.soebes.maven.extensions;
 
 import org.testng.annotations.Test;
-import org.testng.junit.JUnit4TestMethod;
 
 public class FirstTest
 {

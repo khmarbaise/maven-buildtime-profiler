@@ -1,6 +1,5 @@
 package com.soebes.maven.extensions;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;

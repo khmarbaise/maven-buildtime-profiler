@@ -8,23 +8,23 @@ public final class BuildTimeProfilerVersion {
     private static final String SVN_BRANCH = "${scmBranch}";
     private static final String REVISION = "${buildNumber}";
 
-    public static String getVersion() {
+    public static final String getVersion() {
         return VERSION;
     }
 
-    public static String getGroupId() {
+    public static final String getGroupId() {
         return GROUPID;
     }
 
-    public static String getSVN() {
+    public static final String getSVN() {
         return SVN;
     }
 
-    public static String getRevision() {
+    public static final String getRevision() {
         return REVISION;
     }
 
-    public static String getSVNBranch() {
+    public static final String getSVNBranch() {
         return SVN_BRANCH;
     }
 }
