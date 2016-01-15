@@ -55,7 +55,7 @@ public class BuildTimeProfiler
         super.init( context );
 
         // TODO: Replace this with property from filtered file to get the real version number
-        LOGGER.info( "MBTP: Maven Build Time Profiler Version 0.1 started." );
+        LOGGER.info( "MBTP: Maven Build Time Profiler Version {} started.", BuildTimeProfilerVersion.getVersion() );
         // Is this always in the context?
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
         LOGGER.debug( "MBTP: workingDirectory: " + workingDirectory );

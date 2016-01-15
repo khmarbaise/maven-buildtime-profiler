@@ -86,6 +86,11 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.3</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>templating-maven-plugin</artifactId>
+          <version>1.0.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -98,6 +103,17 @@
             <id>generate-index</id>
             <goals>
               <goal>main-index</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>templating-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>filter-sources</goal>
             </goals>
           </execution>
         </executions>
