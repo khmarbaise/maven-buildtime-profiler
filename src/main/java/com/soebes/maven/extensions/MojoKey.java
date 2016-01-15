@@ -18,6 +18,40 @@ public class MojoKey
         this.phase = lifeCyclePhase;
     }
 
+
+    public String getGoal()
+    {
+        return goal;
+    }
+
+    public void setGoal( String goal )
+    {
+        this.goal = goal;
+    }
+
+    public String getExecutionId()
+    {
+        return executionId;
+    }
+
+    public void setExecutionId( String executionId )
+    {
+        this.executionId = executionId;
+    }
+
+    public String getPhase()
+    {
+        return phase;
+    }
+
+    public void setPhase( String phase )
+    {
+        this.phase = phase;
+    }
+
+    public String getFullId() {
+        return super.getId() + ":" + getGoal() + ":" + getExecutionId();
+    }
     @Override
     public int hashCode()
     {
@@ -61,36 +95,6 @@ public class MojoKey
         else if ( !phase.equals( other.phase ) )
             return false;
         return true;
-    }
-
-    public String getGoal()
-    {
-        return goal;
-    }
-
-    public void setGoal( String goal )
-    {
-        this.goal = goal;
-    }
-
-    public String getExecutionId()
-    {
-        return executionId;
-    }
-
-    public void setExecutionId( String executionId )
-    {
-        this.executionId = executionId;
-    }
-
-    public String getPhase()
-    {
-        return phase;
-    }
-
-    public void setPhase( String phase )
-    {
-        this.phase = phase;
     }
 
 }

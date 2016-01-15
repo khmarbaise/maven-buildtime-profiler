@@ -1,9 +1,10 @@
 package com.soebes.maven.extensions;
 
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,6 +33,8 @@ public class BuildTimeProfiler
 
     private List<String> lifeCyclePhases;
 
+    private final DiscoveryTimer discoveryTimer;
+
     private final MojoTimer mojoTimer;
 
     private final ProjectTimer projectTimer;
@@ -43,6 +46,7 @@ public class BuildTimeProfiler
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
         this.lifeCyclePhases = Collections.<String>synchronizedList( new LinkedList<String>() );
+        this.discoveryTimer = new DiscoveryTimer();
         this.mojoTimer = new MojoTimer();
         this.projectTimer = new ProjectTimer();
         this.sessionTimer = new SessionTimer();
@@ -151,7 +155,7 @@ public class BuildTimeProfiler
 
     private void dependencyResolutionResult( DependencyResolutionResult event )
     {
-        LOGGER.debug( "MBTP: dependencyResolutionResult()" );
+        LOGGER.debug( "MBTP: dependencyResolutionResult() {}", event.getResolvedDependencies().size() );
     }
 
     private void dependencyResolutionRequest( DependencyResolutionRequest event )
@@ -165,16 +169,24 @@ public class BuildTimeProfiler
         switch ( type )
         {
             case ARTIFACT_DOWNLOADING:
+                // Start Downloading ...
                 break;
             case ARTIFACT_DOWNLOADED:
+                // stop
                 break;
             case ARTIFACT_DEPLOYING:
+                // start...
                 break;
             case ARTIFACT_DEPLOYED:
+                // stop
+                // repositoryEvent.getArtifact().getFile().length();
+                // repositoryEvent.getMetadata().getFile().length()
                 break;
             case ARTIFACT_INSTALLING:
+                // ...start
                 break;
             case ARTIFACT_INSTALLED:
+                // stop...
                 break;
             case ARTIFACT_RESOLVING:
                 break;
@@ -183,6 +195,21 @@ public class BuildTimeProfiler
             case ARTIFACT_DESCRIPTOR_INVALID:
                 break;
             case ARTIFACT_DESCRIPTOR_MISSING:
+                break;
+
+            case METADATA_DEPLOYING:
+                break;
+            case METADATA_DEPLOYED:
+                break;
+            case METADATA_DOWNLOADED:
+                break;
+            case METADATA_DOWNLOADING:
+
+            case METADATA_INSTALLING:
+            case METADATA_INSTALLED:
+            case METADATA_RESOLVED:
+            case METADATA_RESOLVING:
+            case METADATA_INVALID:
                 break;
 
             default:
@@ -198,8 +225,10 @@ public class BuildTimeProfiler
         {
             case ProjectDiscoveryStarted:
                 // Start reading the pom files..
+                discoveryTimer.discoveryStart( executionEvent );
                 break;
             case SessionStarted:
+                discoveryTimer.discoveryStop( executionEvent );
                 // Reading of pom files done and structure now there.
                 // executionEvent.getSession().getProjectDependencyGraph().getSortedProjects();
                 sessionTimer.sessionStart( executionEvent );
@@ -262,6 +291,8 @@ public class BuildTimeProfiler
     {
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
+        discoveryTimer.report();
+        LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "Project Build Time (reactor order):" );
         LOGGER.info( "" );
         List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
@@ -285,14 +316,29 @@ public class BuildTimeProfiler
 
         }
 
-
         LOGGER.info( "------------------------------------------------------------------------" );
-        LOGGER.info( "Phase summary:" );
+        LOGGER.info( "Lifecycle Phase summary:" );
         LOGGER.info( "" );
         for ( String phase : lifeCyclePhases )
         {
             long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
-            LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase  );
+            LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase );
+        }
+
+        // List all plugins per phase
+        LOGGER.info( "------------------------------------------------------------------------" );
+        LOGGER.info( "Plugins in lifecycle Phases:" );
+        LOGGER.info( "" );
+        for ( String phase : lifeCyclePhases )
+        {
+            LOGGER.info( "{}:", phase );
+            Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
+            for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
+            {
+                LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
+                             pluginInPhase.getKey().getMojo().getFullId() );
+            }
+
         }
         LOGGER.info( "------------------------------------------------------------------------" );
 

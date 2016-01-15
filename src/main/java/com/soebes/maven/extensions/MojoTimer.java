@@ -1,5 +1,6 @@
 package com.soebes.maven.extensions;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,6 +60,20 @@ public class MojoTimer
             if ( phase.equals( item.getKey().getMojo().getPhase() ) )
             {
                 result += item.getValue().getElapsedTime();
+            }
+        }
+        return result;
+    }
+
+    public Map<ProjectMojo, SystemTime> getPluginsInPhase( String phase )
+    {
+        Map<ProjectMojo, SystemTime> result = new LinkedHashMap<ProjectMojo, SystemTime>();
+        
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            if ( phase.equals( item.getKey().getMojo().getPhase() ) )
+            {
+                result.put( item.getKey(), item.getValue() );
             }
         }
         return result;
