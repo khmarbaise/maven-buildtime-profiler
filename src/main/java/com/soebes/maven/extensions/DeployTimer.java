@@ -23,7 +23,8 @@ public class DeployTimer
 
     private String getArtifactId( Artifact artifact )
     {
-        StringBuilder sb = new StringBuilder( artifact.getGroupId() );
+        StringBuilder sb = new StringBuilder( 128 );
+        sb.append( artifact.getGroupId() );
         sb.append( ":" ).append( artifact.getArtifactId() ).append( ":" ).append( artifact.getVersion() );
         if ( artifact.getClassifier() != null )
         {
