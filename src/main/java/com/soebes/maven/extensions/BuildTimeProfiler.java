@@ -76,6 +76,19 @@ public class BuildTimeProfiler
         String multiModuleProjectDirectory = (String) context.getData().get( "multiModuleProjectDirectory" );
         LOGGER.info( "MBTP: multiModuleProjectDirectory: " + multiModuleProjectDirectory );
 
+        // Properties systemProperties = (Properties) context.getData().get( "systemProperties" );
+        // for ( String propName : systemProperties.stringPropertyNames() )
+        // {
+        // String propValue = systemProperties.getProperty( propName );
+        // LOGGER.info( " systemProperty " + propName + ": '" + propValue + "'" );
+        // }
+        //
+        // Properties userProperties = (Properties) context.getData().get( "userProperties" );
+        // for ( String propName : userProperties.stringPropertyNames() )
+        // {
+        // String propValue = userProperties.getProperty( propName );
+        // LOGGER.info( " userProperty " + propName + ": '" + propValue + "'" );
+        // }
         // data.put( "plexus", container );
         // data.put( "workingDirectory", cliRequest.workingDirectory );
         // data.put( "systemProperties", cliRequest.systemProperties );
