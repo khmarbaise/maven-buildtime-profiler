@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,16 +23,19 @@ import org.eclipse.aether.RepositoryEvent.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Singleton;
+
 /**
  * @author Karl Heinz Marbaise <khmarbaise@apache.org>
  */
 @Named
+@Singleton
 public class BuildTimeProfiler
     extends AbstractEventSpy
 {
     private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
-    private List<String> lifeCyclePhases;
+    private final List<String> lifeCyclePhases;
 
     private final DiscoveryTimer discoveryTimer;
 
@@ -64,11 +68,13 @@ public class BuildTimeProfiler
     {
         super.init( context );
 
-        // TODO: Replace this with property from filtered file to get the real version number
         LOGGER.info( "MBTP: Maven Build Time Profiler Version {} started.", BuildTimeProfilerVersion.getVersion() );
-        // Is this always in the context?
+        // Is this always in the context? Based on Maven Core yes.
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
-        LOGGER.debug( "MBTP: workingDirectory: " + workingDirectory );
+        LOGGER.info( "MBTP: workingDirectory: " + workingDirectory );
+
+        String multiModuleProjectDirectory = (String) context.getData().get( "multiModuleProjectDirectory" );
+        LOGGER.info( "MBTP: multiModuleProjectDirectory: " + multiModuleProjectDirectory );
 
         // data.put( "plexus", container );
         // data.put( "workingDirectory", cliRequest.workingDirectory );
@@ -180,21 +186,21 @@ public class BuildTimeProfiler
             case ARTIFACT_DOWNLOADED:
                 // stop
                 break;
+
             case ARTIFACT_DEPLOYING:
                 deployTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_DEPLOYED:
                 deployTimer.stop( repositoryEvent );
-                // stop
-                // repositoryEvent.getArtifact().getFile().length();
-                // repositoryEvent.getMetadata().getFile().length()
                 break;
+
             case ARTIFACT_INSTALLING:
                 installTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_INSTALLED:
                 installTimer.stop( repositoryEvent );
                 break;
+
             case ARTIFACT_RESOLVING:
                 break;
             case ARTIFACT_RESOLVED:
@@ -212,6 +218,7 @@ public class BuildTimeProfiler
                 break;
             case METADATA_DOWNLOADING:
                 break;
+
             case METADATA_INSTALLING:
             case METADATA_INSTALLED:
                 break;
