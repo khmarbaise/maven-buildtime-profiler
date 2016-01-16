@@ -214,6 +214,7 @@
                     <extraArtifact>com.soebes.smpp:smpp:1.2.0:pom</extraArtifact>
                     <extraArtifact>org.testng:testng:6.8.8:jar</extraArtifact>
                     <extraArtifact>com.beust:jcommander:1.35:jar</extraArtifact>
+                    <extraArtifact>org.assertj:assertj-core:2.1.0:jar</extraArtifact>
                   </extraArtifacts>
                 </configuration>
               </execution>
