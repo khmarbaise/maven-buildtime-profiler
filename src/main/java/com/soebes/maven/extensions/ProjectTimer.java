@@ -27,7 +27,6 @@ public class ProjectTimer
 
     public void projectStart( ExecutionEvent event, SystemTime systemTime )
     {
-        LOGGER.info( "MojoExecution: {}", event.getMojoExecution() );
         String projectId = getProjectId( event.getProject() );
         timerEvents.put( projectId, systemTime );
     }
