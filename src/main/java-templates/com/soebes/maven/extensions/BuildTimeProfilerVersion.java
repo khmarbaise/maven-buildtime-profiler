@@ -8,6 +8,11 @@ public final class BuildTimeProfilerVersion {
     private static final String SVN_BRANCH = "${scmBranch}";
     private static final String REVISION = "${buildNumber}";
 
+    
+    private BuildTimeProfilerVersion () {
+        // no one should create an instance of this class.
+    }
+
     public static final String getVersion() {
         return VERSION;
     }

@@ -48,7 +48,6 @@ public class ProjectTimer
         {
             throw new IllegalArgumentException( "Unknown projectId (" + projectId + ")" );
         }
-//        LOGGER.info( " Project: {}", projectId );
         return timerEvents.get( projectId ).getElapsedTime();
     }
 

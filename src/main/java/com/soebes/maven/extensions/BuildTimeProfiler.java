@@ -41,6 +41,10 @@ public class BuildTimeProfiler
 
     private final SessionTimer sessionTimer;
 
+    private final InstallTimer installTimer;
+
+    private final DeployTimer deployTimer;
+
     @Inject
     public BuildTimeProfiler()
     {
@@ -50,6 +54,8 @@ public class BuildTimeProfiler
         this.mojoTimer = new MojoTimer();
         this.projectTimer = new ProjectTimer();
         this.sessionTimer = new SessionTimer();
+        this.installTimer = new InstallTimer();
+        this.deployTimer = new DeployTimer();
     }
 
     @Override
@@ -175,18 +181,19 @@ public class BuildTimeProfiler
                 // stop
                 break;
             case ARTIFACT_DEPLOYING:
-                // start...
+                deployTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_DEPLOYED:
+                deployTimer.stop( repositoryEvent );
                 // stop
                 // repositoryEvent.getArtifact().getFile().length();
                 // repositoryEvent.getMetadata().getFile().length()
                 break;
             case ARTIFACT_INSTALLING:
-                // ...start
+                installTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_INSTALLED:
-                // stop...
+                installTimer.stop( repositoryEvent );
                 break;
             case ARTIFACT_RESOLVING:
                 break;
@@ -204,9 +211,11 @@ public class BuildTimeProfiler
             case METADATA_DOWNLOADED:
                 break;
             case METADATA_DOWNLOADING:
-
+                break;
             case METADATA_INSTALLING:
             case METADATA_INSTALLED:
+                break;
+
             case METADATA_RESOLVED:
             case METADATA_RESOLVING:
             case METADATA_INVALID:
@@ -341,7 +350,9 @@ public class BuildTimeProfiler
 
         }
         LOGGER.info( "------------------------------------------------------------------------" );
-
+        installTimer.report();
+        LOGGER.info( "------------------------------------------------------------------------" );
+        deployTimer.report();
     }
 
     private ProjectKey mavenProjectToProjectKey( MavenProject project )
