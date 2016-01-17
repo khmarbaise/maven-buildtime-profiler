@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,6 +48,14 @@ public class BuildTimeProfiler
 
     private final DeployTimer deployTimer;
 
+    private final DownloadTimer downloadTimer;
+
+    private final MetadataDownloadTimer metadataDownloadTimer;
+
+    private final MetadataDeploymentTimer metadataDeploymentTimer;
+    
+    private final MetadataInstallTimer metadataInstallTimer;
+
     @Inject
     public BuildTimeProfiler()
     {
@@ -60,6 +67,11 @@ public class BuildTimeProfiler
         this.sessionTimer = new SessionTimer();
         this.installTimer = new InstallTimer();
         this.deployTimer = new DeployTimer();
+        this.downloadTimer = new DownloadTimer();
+
+        this.metadataDownloadTimer = new MetadataDownloadTimer();
+        this.metadataDeploymentTimer = new MetadataDeploymentTimer();
+        this.metadataInstallTimer = new MetadataInstallTimer();
     }
 
     @Override
@@ -194,10 +206,10 @@ public class BuildTimeProfiler
         switch ( type )
         {
             case ARTIFACT_DOWNLOADING:
-                // Start Downloading ...
+                downloadTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_DOWNLOADED:
-                // stop
+                downloadTimer.stop( repositoryEvent );
                 break;
 
             case ARTIFACT_DEPLOYING:
@@ -214,31 +226,35 @@ public class BuildTimeProfiler
                 installTimer.stop( repositoryEvent );
                 break;
 
-            case ARTIFACT_RESOLVING:
-                break;
-            case ARTIFACT_RESOLVED:
-                break;
-            case ARTIFACT_DESCRIPTOR_INVALID:
-                break;
-            case ARTIFACT_DESCRIPTOR_MISSING:
-                break;
-
             case METADATA_DEPLOYING:
+                metadataDeploymentTimer.start( repositoryEvent );
                 break;
             case METADATA_DEPLOYED:
+                metadataDeploymentTimer.stop( repositoryEvent );
+                break;
+
+            case METADATA_DOWNLOADING:
+                metadataDownloadTimer.start( repositoryEvent );
                 break;
             case METADATA_DOWNLOADED:
-                break;
-            case METADATA_DOWNLOADING:
+                metadataDownloadTimer.stop( repositoryEvent );
                 break;
 
             case METADATA_INSTALLING:
+                metadataInstallTimer.start( repositoryEvent );
+                break;
             case METADATA_INSTALLED:
+                metadataInstallTimer.stop( repositoryEvent );
                 break;
 
+            case ARTIFACT_RESOLVING:
+            case ARTIFACT_RESOLVED:
+            case ARTIFACT_DESCRIPTOR_INVALID:
+            case ARTIFACT_DESCRIPTOR_MISSING:
             case METADATA_RESOLVED:
             case METADATA_RESOLVING:
             case METADATA_INVALID:
+                // Those events are not recorded.
                 break;
 
             default:
@@ -373,6 +389,13 @@ public class BuildTimeProfiler
         installTimer.report();
         LOGGER.info( "------------------------------------------------------------------------" );
         deployTimer.report();
+        
+        LOGGER.info( "------------------------------------------------------------------------" );
+        metadataInstallTimer.report();
+        LOGGER.info( "------------------------------------------------------------------------" );
+        metadataDownloadTimer.report();
+        LOGGER.info( "------------------------------------------------------------------------" );
+        metadataDeploymentTimer.report();
     }
 
     private ProjectKey mavenProjectToProjectKey( MavenProject project )
