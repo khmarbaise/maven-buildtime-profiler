@@ -1,6 +1,5 @@
 package com.soebes.maven.extensions;
 
-import org.apache.maven.execution.ExecutionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +14,12 @@ public class DiscoveryTimer
         this.time = new SystemTime();
     }
 
-    public void discoveryStart( ExecutionEvent event )
+    public void discoveryStart()
     {
         time.start();
     }
 
-    public void discoveryStop( ExecutionEvent event )
+    public void discoveryStop()
     {
         time.stop();
     }

@@ -53,7 +53,7 @@ public class BuildTimeProfiler
     private final MetadataDownloadTimer metadataDownloadTimer;
 
     private final MetadataDeploymentTimer metadataDeploymentTimer;
-    
+
     private final MetadataInstallTimer metadataInstallTimer;
 
     @Inject
@@ -270,10 +270,10 @@ public class BuildTimeProfiler
         {
             case ProjectDiscoveryStarted:
                 // Start reading the pom files..
-                discoveryTimer.discoveryStart( executionEvent );
+                discoveryTimer.discoveryStart();
                 break;
             case SessionStarted:
-                discoveryTimer.discoveryStop( executionEvent );
+                discoveryTimer.discoveryStop();
                 // Reading of pom files done and structure now there.
                 // executionEvent.getSession().getProjectDependencyGraph().getSortedProjects();
                 sessionTimer.sessionStart( executionEvent );
@@ -389,7 +389,7 @@ public class BuildTimeProfiler
         installTimer.report();
         LOGGER.info( "------------------------------------------------------------------------" );
         deployTimer.report();
-        
+
         LOGGER.info( "------------------------------------------------------------------------" );
         metadataInstallTimer.report();
         LOGGER.info( "------------------------------------------------------------------------" );
