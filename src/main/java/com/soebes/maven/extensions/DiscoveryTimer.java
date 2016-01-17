@@ -27,6 +27,7 @@ public class DiscoveryTimer
     public void report()
     {
         LOGGER.info( "Project discovery time: {} ms", String.format( "%8d", time.getElapsedTime() ) );
+        LOGGER.info( "------------------------------------------------------------------------" );
     }
 
 }

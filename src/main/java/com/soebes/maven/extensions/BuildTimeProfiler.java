@@ -337,7 +337,6 @@ public class BuildTimeProfiler
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
         discoveryTimer.report();
-        LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "Project Build Time (reactor order):" );
         LOGGER.info( "" );
         List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
@@ -386,15 +385,11 @@ public class BuildTimeProfiler
 
         }
         LOGGER.info( "------------------------------------------------------------------------" );
-        installTimer.report();
-        LOGGER.info( "------------------------------------------------------------------------" );
-        deployTimer.report();
 
-        LOGGER.info( "------------------------------------------------------------------------" );
+        installTimer.report();
+        deployTimer.report();
         metadataInstallTimer.report();
-        LOGGER.info( "------------------------------------------------------------------------" );
         metadataDownloadTimer.report();
-        LOGGER.info( "------------------------------------------------------------------------" );
         metadataDeploymentTimer.report();
     }
 

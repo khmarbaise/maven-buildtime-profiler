@@ -66,7 +66,7 @@ public class DeployTimer
         }
         LOGGER.info( "{} ms  {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
                      NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
-
+        LOGGER.info( "------------------------------------------------------------------------" );
     }
 
 }
