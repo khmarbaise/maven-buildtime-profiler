@@ -1,6 +1,5 @@
 package com.soebes.maven.extensions;
 
-import org.apache.maven.execution.ExecutionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +14,12 @@ public class SessionTimer
         this.time = new SystemTime();
     }
 
-    public void sessionStart( ExecutionEvent event )
+    public void sessionStart( )
     {
         time.start();
     }
 
-    public void sessionStop( ExecutionEvent event )
+    public void sessionStop( )
     {
         time.stop();
     }

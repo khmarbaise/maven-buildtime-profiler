@@ -23,6 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
+import com.soebes.maven.extensions.artifact.DeployTimer;
+import com.soebes.maven.extensions.artifact.DownloadTimer;
+import com.soebes.maven.extensions.artifact.InstallTimer;
+import com.soebes.maven.extensions.metadata.MetadataDeploymentTimer;
+import com.soebes.maven.extensions.metadata.MetadataDownloadTimer;
+import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
 
 /**
  * @author Karl Heinz Marbaise <khmarbaise@apache.org>
@@ -276,11 +282,11 @@ public class BuildTimeProfiler
                 discoveryTimer.discoveryStop();
                 // Reading of pom files done and structure now there.
                 // executionEvent.getSession().getProjectDependencyGraph().getSortedProjects();
-                sessionTimer.sessionStart( executionEvent );
+                sessionTimer.sessionStart();
                 break;
             case SessionEnded:
                 // Everything is done.
-                sessionTimer.sessionStop( executionEvent );
+                sessionTimer.sessionStop();
                 break;
 
             case ForkStarted:
@@ -336,10 +342,10 @@ public class BuildTimeProfiler
     {
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
-        //TODO: Use better formatting
+        // TODO: Use better formatting
         LOGGER.info( "--             Maven Build Time Profiler Summary                      --" );
         LOGGER.info( "------------------------------------------------------------------------" );
-        
+
         discoveryTimer.report();
         LOGGER.info( "Project Build Time (reactor order):" );
         LOGGER.info( "" );

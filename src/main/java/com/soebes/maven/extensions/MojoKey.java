@@ -18,7 +18,6 @@ public class MojoKey
         this.phase = lifeCyclePhase;
     }
 
-
     public String getGoal()
     {
         return goal;
@@ -49,9 +48,11 @@ public class MojoKey
         this.phase = phase;
     }
 
-    public String getFullId() {
+    public String getFullId()
+    {
         return super.getId() + ":" + getGoal() + ":" + getExecutionId();
     }
+
     @Override
     public int hashCode()
     {
