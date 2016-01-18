@@ -20,17 +20,19 @@ public class MetadataInstallTimer
 
     public void report()
     {
-        LOGGER.info( "Metadata Install summary:" );
         long totalInstallationTime = 0;
         long totalInstallationSize = 0;
         for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
         {
             totalInstallationTime += item.getValue().getElapsedTime();
+            // Hint: The getSize() will not return something different than zero
+            // I don't know why we don't get the information about the downloaded size here?
             totalInstallationSize += item.getValue().getSize();
-            LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
+            // LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
         }
-        LOGGER.info( "{} ms  {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-                     NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
+        LOGGER.info( "Metadata Install summary: {} ms", NumberFormat.getIntegerInstance().format( totalInstallationTime ) );
+        // LOGGER.info( "{} ms {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
+        // NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 
