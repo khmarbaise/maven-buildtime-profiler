@@ -54,4 +54,12 @@ public abstract class AbstractArtifactTimer
         getTimerEvents().get( artifactId ).setSize( event.getArtifact().getFile().length() );
     }
 
+    private final double MiB = 1024 * 1024;
+
+    protected double calculateMegabytesPerSeconds( long timeInMilliseconds, long sizeInBytes )
+    {
+        double dividerTime = ( timeInMilliseconds / 1000.0 );
+        return (double) sizeInBytes / dividerTime / MiB;
+    }
+
 }

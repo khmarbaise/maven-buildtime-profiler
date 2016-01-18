@@ -20,6 +20,10 @@ public class InstallTimer
 
     public void report()
     {
+        if ( getTimerEvents().isEmpty() )
+        {
+            return;
+        }
         LOGGER.info( "Installation summary:" );
         long totalInstallationTime = 0;
         long totalInstallationSize = 0;
@@ -30,8 +34,10 @@ public class InstallTimer
             LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
         }
 
-        LOGGER.info( "{} ms {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-                     NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
+        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
+        LOGGER.info( "{} ms  {} bytes. {} MiB / s", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
+                     NumberFormat.getIntegerInstance().format( totalInstallationSize ),
+                     NumberFormat.getNumberInstance().format( mibPerSeconds ) );
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 

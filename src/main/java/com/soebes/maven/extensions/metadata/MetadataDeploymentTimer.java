@@ -20,6 +20,10 @@ public class MetadataDeploymentTimer
 
     public void report()
     {
+        if ( getTimerEvents().isEmpty() )
+        {
+            return;
+        }
         long totalInstallationTime = 0;
         long totalInstallationSize = 0;
         for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )

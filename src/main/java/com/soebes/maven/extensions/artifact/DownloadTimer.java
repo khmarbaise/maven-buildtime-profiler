@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.soebes.maven.extensions.TimePlusSize;
 
-public class DownloadTimer extends AbstractArtifactTimer
+public class DownloadTimer
+    extends AbstractArtifactTimer
 {
     private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
@@ -19,6 +20,10 @@ public class DownloadTimer extends AbstractArtifactTimer
 
     public void report()
     {
+        if ( getTimerEvents().isEmpty() )
+        {
+            return;
+        }
         LOGGER.info( "Artifact Download summary:" );
         long totalInstallationTime = 0;
         long totalInstallationSize = 0;
@@ -28,8 +33,10 @@ public class DownloadTimer extends AbstractArtifactTimer
             totalInstallationSize += item.getValue().getSize();
             LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
         }
-        LOGGER.info( "{} ms  {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-                     NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
+        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
+        LOGGER.info( "{} ms  {} bytes. {} MiB / s", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
+                     NumberFormat.getIntegerInstance().format( totalInstallationSize ),
+                     NumberFormat.getNumberInstance().format( mibPerSeconds ) );
 
     }
 

@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.soebes.maven.extensions.TimePlusSize;
 
-public class DeployTimer extends AbstractArtifactTimer
+public class DeployTimer
+    extends AbstractArtifactTimer
 {
     private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
@@ -19,6 +20,10 @@ public class DeployTimer extends AbstractArtifactTimer
 
     public void report()
     {
+        if ( getTimerEvents().isEmpty() )
+        {
+            return;
+        }
         LOGGER.info( "Deployment summary:" );
         long totalInstallationTime = 0;
         long totalInstallationSize = 0;
@@ -28,8 +33,10 @@ public class DeployTimer extends AbstractArtifactTimer
             totalInstallationSize += item.getValue().getSize();
             LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
         }
-        LOGGER.info( "{} ms  {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-                     NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
+        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
+        LOGGER.info( "{} ms  {} bytes. {} MiB / s", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
+                     NumberFormat.getIntegerInstance().format( totalInstallationSize ),
+                     NumberFormat.getNumberInstance().format( mibPerSeconds ) );
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 
