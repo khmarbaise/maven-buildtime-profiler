@@ -336,6 +336,10 @@ public class BuildTimeProfiler
     {
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
+        //TODO: Use better formatting
+        LOGGER.info( "--             Maven Build Time Profiler Summary                      --" );
+        LOGGER.info( "------------------------------------------------------------------------" );
+        
         discoveryTimer.report();
         LOGGER.info( "Project Build Time (reactor order):" );
         LOGGER.info( "" );
