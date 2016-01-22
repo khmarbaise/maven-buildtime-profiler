@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import com.soebes.maven.extensions.TimePlusSize;
 
+/**
+ * @author Karl Heinz Marbaise <khmarbaise@apache.org>
+ *
+ */
 public class InstallTimer
     extends AbstractArtifactTimer
 {

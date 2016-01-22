@@ -8,6 +8,10 @@ import org.eclipse.aether.artifact.Artifact;
 
 import com.soebes.maven.extensions.TimePlusSize;
 
+/**
+ * @author Karl Heinz Marbaise <khmarbaise@apache.org>
+ *
+ */
 public abstract class AbstractArtifactTimer
 {
     private Map<String, TimePlusSize> timerEvents;
