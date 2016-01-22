@@ -298,8 +298,8 @@ public class BuildTimeProfiler
                 discoveryTimer.discoveryStart();
                 break;
             case SessionStarted:
-                discoveryTimer.discoveryStop();
                 // Reading of pom files done and structure now there.
+                discoveryTimer.discoveryStop();
                 // executionEvent.getSession().getProjectDependencyGraph().getSortedProjects();
                 sessionTimer.sessionStart();
                 break;
