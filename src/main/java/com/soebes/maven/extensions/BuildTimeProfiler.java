@@ -294,9 +294,6 @@ public class BuildTimeProfiler
         switch ( type )
         {
             case ProjectDiscoveryStarted:
-                // executionEvent.getSession().getSystemProperties().put( "revision", "8.0-SNAPSHOT" );
-                // executionEvent.getSession().getRequest().getUserProperties().put( "revision", "8.0-SNAPSHOT" );
-                // executionEvent.getSession().getRequest().getSystemProperties().put( "revision", "8.0-SNAPSHOT" );
                 // Start reading the pom files..
                 discoveryTimer.discoveryStart();
                 break;
