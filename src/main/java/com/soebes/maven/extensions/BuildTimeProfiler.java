@@ -81,6 +81,10 @@ public class BuildTimeProfiler
 
     private final MetadataInstallTimer metadataInstallTimer;
 
+    private final ForkTimer forkTimer;
+
+    private final ProjectTimer forkProject;
+
     @Inject
     public BuildTimeProfiler()
     {
@@ -97,6 +101,8 @@ public class BuildTimeProfiler
         this.metadataDownloadTimer = new MetadataDownloadTimer();
         this.metadataDeploymentTimer = new MetadataDeploymentTimer();
         this.metadataInstallTimer = new MetadataInstallTimer();
+        this.forkTimer = new ForkTimer();
+        this.forkProject = new ProjectTimer();
     }
 
     @Override
@@ -309,15 +315,19 @@ public class BuildTimeProfiler
                 break;
 
             case ForkStarted:
+                forkTimer.start();
                 break;
             case ForkFailed:
             case ForkSucceeded:
+                forkTimer.stop();
                 break;
 
             case ForkedProjectStarted:
+                forkProject.projectStart( executionEvent, new SystemTime().start() );
                 break;
             case ForkedProjectFailed:
             case ForkedProjectSucceeded:
+                forkProject.projectStop( executionEvent );
                 break;
 
             case MojoStarted:
@@ -422,6 +432,9 @@ public class BuildTimeProfiler
         metadataInstallTimer.report();
         metadataDownloadTimer.report();
         metadataDeploymentTimer.report();
+        
+        forkTimer.report();
+        forkProject.report();
     }
 
     private ProjectKey mavenProjectToProjectKey( MavenProject project )
