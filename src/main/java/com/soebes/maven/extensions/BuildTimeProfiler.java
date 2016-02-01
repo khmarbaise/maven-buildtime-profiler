@@ -150,7 +150,7 @@ public class BuildTimeProfiler
             {
                 executionEventHandler( (ExecutionEvent) event );
             }
-            else if ( event instanceof RepositoryEvent )
+            else if ( event instanceof org.eclipse.aether.RepositoryEvent )
             {
                 repositoryEventHandler( (RepositoryEvent) event );
             }
@@ -231,7 +231,7 @@ public class BuildTimeProfiler
         LOGGER.debug( "MBTP: dependencyResolutionRequest()" );
     }
 
-    private void repositoryEventHandler( RepositoryEvent repositoryEvent )
+    private void repositoryEventHandler( org.eclipse.aether.RepositoryEvent repositoryEvent )
     {
         EventType type = repositoryEvent.getType();
         switch ( type )
@@ -432,7 +432,7 @@ public class BuildTimeProfiler
         metadataInstallTimer.report();
         metadataDownloadTimer.report();
         metadataDeploymentTimer.report();
-        
+
         forkTimer.report();
         forkProject.report();
     }

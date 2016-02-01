@@ -46,6 +46,17 @@
       <version>1.7.5</version>
       <scope>provided</scope>
     </dependency>
+
+
+    <!--
+      ! Maven 3.1.x and above
+    -->
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-api</artifactId>
+      <version>1.0.0.v20140518</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
