@@ -56,11 +56,11 @@ public class MojoTimer
                             mojo.getExecutionId(), mojo.getLifecyclePhase() );
     }
 
-    public void mojoStart( ExecutionEvent event, SystemTime systemTime )
+    public void mojoStart( ExecutionEvent event )
     {
         ProjectMojo pm =
             new ProjectMojo( createProjectKey( event.getProject() ), createMojoKey( event.getMojoExecution() ) );
-        timerEvents.put( pm, systemTime );
+        timerEvents.put( pm, new SystemTime().start());
     }
 
     public void mojoStop( ExecutionEvent event )

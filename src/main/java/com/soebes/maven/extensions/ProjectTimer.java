@@ -48,10 +48,10 @@ public class ProjectTimer
         return mavenProject.getId();
     }
 
-    public void projectStart( ExecutionEvent event, SystemTime systemTime )
+    public void projectStart( ExecutionEvent event )
     {
         String projectId = getProjectId( event.getProject() );
-        timerEvents.put( projectId, systemTime );
+        timerEvents.put( projectId, new SystemTime().start() );
     }
 
     public void projectStop( ExecutionEvent event )

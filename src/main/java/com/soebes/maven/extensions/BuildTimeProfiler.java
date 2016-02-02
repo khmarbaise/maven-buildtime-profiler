@@ -323,7 +323,7 @@ public class BuildTimeProfiler
                 break;
 
             case ForkedProjectStarted:
-                forkProject.projectStart( executionEvent, new SystemTime().start() );
+                forkProject.projectStart( executionEvent );
                 break;
             case ForkedProjectFailed:
             case ForkedProjectSucceeded:
@@ -335,7 +335,7 @@ public class BuildTimeProfiler
                 collectAllLifeCylcePhases( phase );
 
                 // Key: phase, project, mojo
-                mojoTimer.mojoStart( executionEvent, new SystemTime().start() );
+                mojoTimer.mojoStart( executionEvent );
                 break;
 
             case MojoFailed:
@@ -345,7 +345,7 @@ public class BuildTimeProfiler
                 break;
 
             case ProjectStarted:
-                projectTimer.projectStart( executionEvent, new SystemTime().start() );
+                projectTimer.projectStart( executionEvent );
                 break;
 
             case ProjectFailed:
