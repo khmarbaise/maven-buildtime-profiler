@@ -21,7 +21,6 @@ package com.soebes.maven.extensions;
 
 /**
  * @author Karl Heinz Marbaise <khmarbaise@apache.org>
- *
  */
 public class ProjectKey
 {
