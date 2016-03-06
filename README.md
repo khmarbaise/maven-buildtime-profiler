@@ -89,6 +89,65 @@ Here's an example of what the output will look like:
 [INFO] ForkTime: 0
 ```
 
+Most important might be in this relationship that you will get also informations about the 
+time taken to install artifacts:
+
+```
+[INFO] ------------------------------------------------------------------------
+[INFO] Installation summary:
+[INFO]        0 ms : com.soebes.examples.j2ee:service:1.1.2-SNAPSHOT::pom
+[INFO]        1 ms : com.soebes.examples.j2ee:parent:1.1.2-SNAPSHOT::pom
+[INFO]        5 ms : com.soebes.examples.j2ee:shade:1.1.2-SNAPSHOT:test:jar
+[INFO]        1 ms : com.soebes.examples.j2ee:service-client:1.1.2-SNAPSHOT::pom
+[INFO]        0 ms : com.soebes.examples.j2ee:domain:1.1.2-SNAPSHOT::pom
+[INFO]        3 ms : com.soebes.examples.j2ee:webgui:1.1.2-SNAPSHOT::pom
+[INFO]        1 ms : com.soebes.examples.j2ee:service:1.1.2-SNAPSHOT::jar
+[INFO]        0 ms : com.soebes.examples.j2ee:service-client:1.1.2-SNAPSHOT::jar
+[INFO]        1 ms : com.soebes.examples.j2ee:domain:1.1.2-SNAPSHOT::jar
+[INFO]       10 ms : com.soebes.examples.j2ee:assembly:1.1.2-SNAPSHOT:archive:zip
+[INFO]       19 ms : com.soebes.examples.j2ee:assembly:1.1.2-SNAPSHOT:prod:jar
+[INFO]        6 ms : com.soebes.examples.j2ee:shade:1.1.2-SNAPSHOT:dev:jar
+[INFO]        6 ms : com.soebes.examples.j2ee:shade:1.1.2-SNAPSHOT:prod:jar
+[INFO]        1 ms : com.soebes.examples.j2ee:shade:1.1.2-SNAPSHOT::pom
+[INFO]        6 ms : com.soebes.examples.j2ee:assembly:1.1.2-SNAPSHOT:dev:jar
+[INFO]        1 ms : com.soebes.examples.j2ee:assembly:1.1.2-SNAPSHOT::pom
+[INFO]        0 ms : com.soebes.examples.j2ee:appasm:1.1.2-SNAPSHOT::pom
+[INFO]        2 ms : com.soebes.examples.j2ee:webgui:1.1.2-SNAPSHOT::war
+[INFO]        8 ms : com.soebes.examples.j2ee:app:1.1.2-SNAPSHOT::pom
+[INFO]        1 ms : com.soebes.examples.j2ee:shade:1.1.2-SNAPSHOT::jar
+[INFO]        3 ms : com.soebes.examples.j2ee:app:1.1.2-SNAPSHOT::ear
+[INFO] 75 ms  34,888,754 bytes. 443.633 MiB / s
+```
+
+And much more imporant are things like the time for the deployment:
+
+```
+[INFO] ------------------------------------------------------------------------
+[INFO] Deployment summary:
+[INFO]       19 ms : com.soebes.examples.j2ee:assembly:1.1.2-20160306.145402-11::pom
+[INFO]       20 ms : com.soebes.examples.j2ee:service-client:1.1.2-20160306.145401-11::jar
+[INFO]       80 ms : com.soebes.examples.j2ee:assembly:1.1.2-20160306.145402-11:prod:jar
+[INFO]       20 ms : com.soebes.examples.j2ee:shade:1.1.2-20160306.145402-11::pom
+[INFO]       19 ms : com.soebes.examples.j2ee:shade:1.1.2-20160306.145402-11::jar
+[INFO]       84 ms : com.soebes.examples.j2ee:webgui:1.1.2-20160306.145401-11::war
+[INFO]       20 ms : com.soebes.examples.j2ee:service:1.1.2-20160306.145401-11::jar
+[INFO]      192 ms : com.soebes.examples.j2ee:assembly:1.1.2-20160306.145402-11:archive:zip
+[INFO]       79 ms : com.soebes.examples.j2ee:shade:1.1.2-20160306.145402-11:prod:jar
+[INFO]       20 ms : com.soebes.examples.j2ee:webgui:1.1.2-20160306.145401-11::pom
+[INFO]       23 ms : com.soebes.examples.j2ee:service-client:1.1.2-20160306.145401-11::pom
+[INFO]       90 ms : com.soebes.examples.j2ee:shade:1.1.2-20160306.145402-11:dev:jar
+[INFO]       38 ms : com.soebes.examples.j2ee:domain:1.1.2-20160306.145401-11::jar
+[INFO]       19 ms : com.soebes.examples.j2ee:appasm:1.1.2-20160306.145402-11::pom
+[INFO]       18 ms : com.soebes.examples.j2ee:app:1.1.2-20160306.145401-11::pom
+[INFO]      103 ms : com.soebes.examples.j2ee:assembly:1.1.2-20160306.145402-11:dev:jar
+[INFO]       39 ms : com.soebes.examples.j2ee:parent:1.1.2-20160306.145401-11::pom
+[INFO]      101 ms : com.soebes.examples.j2ee:shade:1.1.2-20160306.145402-11:test:jar
+[INFO]       93 ms : com.soebes.examples.j2ee:app:1.1.2-20160306.145401-11::ear
+[INFO]       19 ms : com.soebes.examples.j2ee:service:1.1.2-20160306.145401-11::pom
+[INFO]       18 ms : com.soebes.examples.j2ee:domain:1.1.2-20160306.145401-11::pom
+[INFO] 1,114 ms  34,888,754 bytes. 29.868 MiB / s
+```
+
 Prerequisites minimum for this is Maven 3.1.1 and Java 1.7 as run time.
 
 [1]: http://maven.apache.org/ref/3.0.3/maven-core/apidocs/org/apache/maven/eventspy/AbstractEventSpy.html
