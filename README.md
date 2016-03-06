@@ -150,4 +150,6 @@ And much more imporant are things like the time for the deployment:
 
 Prerequisites minimum for this is Maven 3.1.1 and Java 1.7 as run time.
 
+If you have ideas for improvements etc. just fill in issues in the tracking system.
+
 [1]: http://maven.apache.org/ref/3.0.3/maven-core/apidocs/org/apache/maven/eventspy/AbstractEventSpy.html
