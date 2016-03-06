@@ -33,6 +33,7 @@ import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionEvent.Type;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.project.DependencyResolutionRequest;
 import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
@@ -401,6 +402,7 @@ public class BuildTimeProfiler
 
         }
 
+        // LifecyclePhase.CLEAN.ordinal();
         LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "Lifecycle Phase summary:" );
         LOGGER.info( "" );
