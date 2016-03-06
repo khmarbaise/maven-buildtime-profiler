@@ -3,7 +3,6 @@
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/khmarbaise/maven-buildtime-profiler.svg?label=License)](http://www.apache.org/licenses/)
 [![Maven Central](https://img.shields.io/maven-central/v/com.soebes.extensions/maven-buildtime-profiler.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cmaven-buildtime-profiler)
 [![Build Status](https://travis-ci.org/mojohaus/sql-maven-plugin.svg?branch=master)](https://travis-ci.org/khmarbaise/maven-buildtime-profiler)
-You can find the artifacts in [Maven Central](https://repo1.maven.org/maven2/com/soebes/maven/extensions/profiler/test/test-profiler/0.1.0/).
 
 Often you have the problem that in large builds you need to find
 where time is consumed.
