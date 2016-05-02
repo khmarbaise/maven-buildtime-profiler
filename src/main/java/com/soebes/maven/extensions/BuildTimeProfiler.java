@@ -238,9 +238,11 @@ public class BuildTimeProfiler
         switch ( type )
         {
             case ARTIFACT_DOWNLOADING:
+                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
                 downloadTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_DOWNLOADED:
+                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
                 downloadTimer.stop( repositoryEvent );
                 break;
 
@@ -266,16 +268,20 @@ public class BuildTimeProfiler
                 break;
 
             case METADATA_DOWNLOADING:
+                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
                 metadataDownloadTimer.start( repositoryEvent );
                 break;
             case METADATA_DOWNLOADED:
+                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
                 metadataDownloadTimer.stop( repositoryEvent );
                 break;
 
             case METADATA_INSTALLING:
+                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
                 metadataInstallTimer.start( repositoryEvent );
                 break;
             case METADATA_INSTALLED:
+                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
                 metadataInstallTimer.stop( repositoryEvent );
                 break;
 
