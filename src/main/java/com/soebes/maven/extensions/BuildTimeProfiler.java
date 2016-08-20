@@ -33,7 +33,6 @@ import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionEvent.Type;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.project.DependencyResolutionRequest;
 import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
@@ -238,11 +237,11 @@ public class BuildTimeProfiler
         switch ( type )
         {
             case ARTIFACT_DOWNLOADING:
-                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
+                LOGGER.debug( "MBTP: repositoryEventHandler {}", type );
                 downloadTimer.start( repositoryEvent );
                 break;
             case ARTIFACT_DOWNLOADED:
-                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
+                LOGGER.debug( "MBTP: repositoryEventHandler {}", type );
                 downloadTimer.stop( repositoryEvent );
                 break;
 
@@ -268,20 +267,20 @@ public class BuildTimeProfiler
                 break;
 
             case METADATA_DOWNLOADING:
-                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
+                LOGGER.debug( "MBTP: repositoryEventHandler {}", type );
                 metadataDownloadTimer.start( repositoryEvent );
                 break;
             case METADATA_DOWNLOADED:
-                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
+                LOGGER.debug( "MBTP: repositoryEventHandler {}", type );
                 metadataDownloadTimer.stop( repositoryEvent );
                 break;
 
             case METADATA_INSTALLING:
-                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
+                LOGGER.debug( "MBTP: repositoryEventHandler {}", type );
                 metadataInstallTimer.start( repositoryEvent );
                 break;
             case METADATA_INSTALLED:
-                LOGGER.info( "MBTP: repositoryEventHandler {}", type );
+                LOGGER.debug( "MBTP: repositoryEventHandler {}", type );
                 metadataInstallTimer.stop( repositoryEvent );
                 break;
 
@@ -436,6 +435,7 @@ public class BuildTimeProfiler
         LOGGER.info( "------------------------------------------------------------------------" );
 
         installTimer.report();
+        downloadTimer.report();
         deployTimer.report();
         metadataInstallTimer.report();
         metadataDownloadTimer.report();
