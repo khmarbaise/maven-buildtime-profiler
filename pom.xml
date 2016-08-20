@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.soebes.smpp</groupId>
-    <artifactId>smpp</artifactId>
+    <artifactId>smpp-plugins</artifactId>
     <version>2.2.1</version>
   </parent>
 
@@ -14,12 +14,6 @@
   <name>Maven :: Build Time Profiler</name>
   <properties>
     <mavenVersion>3.1.1</mavenVersion>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- dependency versions -->
-    <gmaven-plugin.version>1.5</gmaven-plugin.version>
-    <org.codehaus.groovy-groovy.version>1.8.4</org.codehaus.groovy-groovy.version>
-    <org.codehaus.gmaven.runtime-gmaven-runtime-1.8>1.4</org.codehaus.gmaven.runtime-gmaven-runtime-1.8>
-
     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.compiler.source>1.7</maven.compiler.source>
@@ -44,7 +38,7 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.4</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -69,24 +63,27 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
+  <reporting>
+    <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>3.0.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+      </plugins>
+  </reporting>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.gmaven</groupId>
-          <artifactId>gmaven-plugin</artifactId>
-          <version>${gmaven-plugin.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.codehaus.groovy</groupId>
-              <artifactId>groovy</artifactId>
-            </dependency>
-            <dependency>
-              <groupId>org.codehaus.gmaven.runtime</groupId>
-              <artifactId>gmaven-runtime-1.8</artifactId>
-            </dependency>
-          </dependencies>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>3.0.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -126,18 +123,6 @@
           <plugin>
             <groupId>org.codehaus.gmaven</groupId>
             <artifactId>gmaven-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy</artifactId>
-                <version>${org.codehaus.groovy-groovy.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.codehaus.gmaven.runtime</groupId>
-                <artifactId>gmaven-runtime-1.8</artifactId>
-                <version>${org.codehaus.gmaven.runtime-gmaven-runtime-1.8}</version>
-              </dependency>
-            </dependencies>
             <configuration>
               <debug>false</debug>
               <verbose>true</verbose>
@@ -156,18 +141,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy</artifactId>
-                <version>${org.codehaus.groovy-groovy.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.codehaus.gmaven.runtime</groupId>
-                <artifactId>gmaven-runtime-1.8</artifactId>
-                <version>${org.codehaus.gmaven.runtime-gmaven-runtime-1.8}</version>
-              </dependency>
-            </dependencies>
             <configuration>
               <addTestClassPath>true</addTestClassPath>
               <debug>false</debug>

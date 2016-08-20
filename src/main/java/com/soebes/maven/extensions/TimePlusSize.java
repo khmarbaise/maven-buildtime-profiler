@@ -20,7 +20,7 @@ package com.soebes.maven.extensions;
  */
 
 /**
- * @author Karl Heinz Marbaise <khmarbaise@apache.org>
+ * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  *
  */
 public class TimePlusSize

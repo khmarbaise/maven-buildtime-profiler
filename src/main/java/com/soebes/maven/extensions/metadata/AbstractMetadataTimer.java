@@ -28,7 +28,7 @@ import org.eclipse.aether.metadata.Metadata;
 import com.soebes.maven.extensions.TimePlusSize;
 
 /**
- * @author Karl Heinz Marbaise <khmarbaise@apache.org>
+ * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  *
  */
 public abstract class AbstractMetadataTimer

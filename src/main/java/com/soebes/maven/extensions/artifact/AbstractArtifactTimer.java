@@ -9,7 +9,7 @@ import org.eclipse.aether.artifact.Artifact;
 import com.soebes.maven.extensions.TimePlusSize;
 
 /**
- * @author Karl Heinz Marbaise <khmarbaise@apache.org>
+ * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  *
  */
 public abstract class AbstractArtifactTimer
