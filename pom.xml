@@ -18,12 +18,22 @@
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.compiler.source>1.7</maven.compiler.source>
     <smpp.component>maven-buildtime-profiler</smpp.component>
+    <!--
+      ! Make mvn site:stage working correctly in combination with scm-publish.
+    -->
+    <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
   </properties>
   <scm>
     <developerConnection>scm:git:ssh://git@github.com/khmarbaise/maven-buildtime-profiler.git</developerConnection>
     <connection>scm:git:https://github.com/khmarbaise/maven-buildtime-profiler.git</connection>
     <url>https://github.com/khmarbaise/maven-buildtime-profiler/</url>
   </scm>
+  <distributionManagement>
+    <site>
+      <id>github</id>
+      <url>scm:git:ssh://git@github.com/khmarbaise/maven-buildtime-profiler.git</url>
+    </site>
+  </distributionManagement>
   <dependencies>
     <dependency>
       <groupId>javax.inject</groupId>
