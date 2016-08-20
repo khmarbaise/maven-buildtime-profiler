@@ -23,7 +23,13 @@
     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.compiler.source>1.7</maven.compiler.source>
+    <smpp.component>maven-buildtime-profiler</smpp.component>
   </properties>
+  <scm>
+    <developerConnection>scm:git:ssh://git@github.com/khmarbaise/maven-buildtime-profiler.git</developerConnection>
+    <connection>scm:git:https://github.com/khmarbaise/maven-buildtime-profiler.git</connection>
+    <url>https://github.com/khmarbaise/maven-buildtime-profiler/</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>javax.inject</groupId>
