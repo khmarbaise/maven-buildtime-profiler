@@ -377,9 +377,20 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
+    	// when no phase was built, do not create any statistics
+    	if (lifeCyclePhases.isEmpty() || lifeCyclePhases.get(0) == null) {
+    		return;
+    	}
+
+    	// sort the information for Maven phases according to their order in the lifecycle 
+    	Collections.sort(lifeCyclePhases, new LifeCyclePhaseComparator());
+
+    	LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
         // TODO: Use better formatting
+        LOGGER.info( "" );
+        LOGGER.info( "" );
+        LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "--             Maven Build Time Profiler Summary                      --" );
         LOGGER.info( "------------------------------------------------------------------------" );
 
@@ -402,9 +413,7 @@ public class BuildTimeProfiler
 
                 long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( proKey, phase );
                 LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
-
             }
-
         }
 
         // LifecyclePhase.CLEAN.ordinal();
@@ -430,7 +439,6 @@ public class BuildTimeProfiler
                 LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
                              pluginInPhase.getKey().getMojo().getFullId() );
             }
-
         }
         LOGGER.info( "------------------------------------------------------------------------" );
 
