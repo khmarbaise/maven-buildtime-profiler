@@ -11,12 +11,8 @@ This is an [EventSpy][1] implementation which collects all the information of
 all phases and mojo executions and make a summarization output at the end of
 the build.
 
-If you like to use this EventSpy you need to put the resulting jar
-file of this project into the `${M2_HOME}/lib/ext` directory.
-
-
-If you like to use this extension in relationship with Maven 3.3.1+ you
-can define the following `.mvn/extensions.xml` file:
+If you like to use this extension Maven 3.3.1+ you
+have to define the following `.mvn/extensions.xml` file:
 
 ``` xml
 <extensions xmlns="http://maven.apache.org/EXTENSIONS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -119,7 +115,7 @@ time taken to install artifacts:
 [INFO] 75 ms  34,888,754 bytes. 443.633 MiB / s
 ```
 
-And much more imporant are things like the time for the deployment:
+And much more important are things like the time for the deployment:
 
 ```
 [INFO] ------------------------------------------------------------------------
@@ -148,7 +144,7 @@ And much more imporant are things like the time for the deployment:
 [INFO] 1,114 ms  34,888,754 bytes. 29.868 MiB / s
 ```
 
-Prerequisites minimum for this is Maven 3.1.1 and Java 1.7 as run time.
+Prerequisites minimum for this is Maven 3.3.1+ and Java 1.7 as run time.
 
 If you have ideas for improvements etc. just fill in issues in the tracking system.
 

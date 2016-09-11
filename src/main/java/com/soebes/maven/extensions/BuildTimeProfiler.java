@@ -25,10 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.apache.maven.eventspy.AbstractEventSpy;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.ExecutionEvent.Type;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -41,7 +40,6 @@ import org.eclipse.aether.RepositoryEvent.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Singleton;
 import com.soebes.maven.extensions.artifact.DeployTimer;
 import com.soebes.maven.extensions.artifact.DownloadTimer;
 import com.soebes.maven.extensions.artifact.InstallTimer;
@@ -55,11 +53,11 @@ import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
 @Named
 @Singleton
 public class BuildTimeProfiler
-    extends AbstractEventSpy
+    extends LifeCycleOrdering
 {
     private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
-    private final List<String> lifeCyclePhases;
+    final List<String> lifeCyclePhases;
 
     private final DiscoveryTimer discoveryTimer;
 
@@ -85,7 +83,6 @@ public class BuildTimeProfiler
 
     private final ProjectTimer forkProject;
 
-    @Inject
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
@@ -103,6 +100,7 @@ public class BuildTimeProfiler
         this.metadataInstallTimer = new MetadataInstallTimer();
         this.forkTimer = new ForkTimer();
         this.forkProject = new ProjectTimer();
+
     }
 
     @Override
@@ -110,14 +108,14 @@ public class BuildTimeProfiler
         throws Exception
     {
         super.init( context );
+        LOGGER.info( "Maven Build Time Profiler started. (Version {})", BuildTimeProfilerVersion.getVersion() );
 
-        LOGGER.info( "MBTP: Maven Build Time Profiler Version {} started.", BuildTimeProfilerVersion.getVersion() );
         // Is this always in the context? Based on Maven Core yes.
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
-        LOGGER.info( "MBTP: workingDirectory: " + workingDirectory );
+        LOGGER.debug( "MBTP: workingDirectory: " + workingDirectory );
 
         String multiModuleProjectDirectory = (String) context.getData().get( "multiModuleProjectDirectory" );
-        LOGGER.info( "MBTP: multiModuleProjectDirectory: " + multiModuleProjectDirectory );
+        LOGGER.debug( "MBTP: multiModuleProjectDirectory: " + multiModuleProjectDirectory );
 
         // Properties systemProperties = (Properties) context.getData().get( "systemProperties" );
         // for ( String propName : systemProperties.stringPropertyNames() )
@@ -339,7 +337,6 @@ public class BuildTimeProfiler
             case MojoStarted:
                 String phase = executionEvent.getMojoExecution().getLifecyclePhase();
                 collectAllLifeCylcePhases( phase );
-
                 // Key: phase, project, mojo
                 mojoTimer.mojoStart( executionEvent );
                 break;
@@ -377,6 +374,13 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
+        if ( lifeCyclePhases.isEmpty() )
+        {
+            return;
+        }
+        
+        orderLifeCycleOnPreparedOrder(lifeCyclePhases);
+
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
         // TODO: Use better formatting
@@ -452,6 +456,13 @@ public class BuildTimeProfiler
 
     private void collectAllLifeCylcePhases( String phase )
     {
+        // Phase can be null if you call maven via:
+        // mvn site:stage (no life cycle started.)
+        if ( phase == null )
+        {
+            return;
+        }
+        LOGGER.debug( "collectAllLifeCyclePhases({})", phase);
         if ( !lifeCyclePhases.contains( phase ) )
         {
             lifeCyclePhases.add( phase );
