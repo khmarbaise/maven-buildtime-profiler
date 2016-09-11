@@ -20,6 +20,8 @@ package com.soebes.maven.extensions;
  */
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -377,9 +379,20 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
+    	// when no phase was built, do not create any statistics
+    	if (lifeCyclePhases.isEmpty() || lifeCyclePhases.get(0) == null) {
+    		return;
+    	}
+
+    	// sort the information for Maven phases according to their order in the lifecycle 
+    	Collections.sort(lifeCyclePhases, new LifeCyclePhaseComparator());
+
+    	LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
         // TODO: Use better formatting
+        LOGGER.info( "" );
+        LOGGER.info( "" );
+        LOGGER.info( "------------------------------------------------------------------------" );
         LOGGER.info( "--             Maven Build Time Profiler Summary                      --" );
         LOGGER.info( "------------------------------------------------------------------------" );
 
@@ -402,9 +415,7 @@ public class BuildTimeProfiler
 
                 long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( proKey, phase );
                 LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
-
             }
-
         }
 
         // LifecyclePhase.CLEAN.ordinal();
@@ -424,13 +435,10 @@ public class BuildTimeProfiler
         for ( String phase : lifeCyclePhases )
         {
             LOGGER.info( "{}:", phase );
-            Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
-            for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
-            {
-                LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
-                             pluginInPhase.getKey().getMojo().getFullId() );
+            List<Entry<String, Long>> durationsByPlugin = aggregateDurations( mojoTimer.getPluginsInPhase(phase) );
+            for ( Entry<String, Long> durationByPlugin : durationsByPlugin ) {
+                LOGGER.info("{} ms: {}", String.format( "%8d", durationByPlugin.getValue()), durationByPlugin.getKey() );
             }
-
         }
         LOGGER.info( "------------------------------------------------------------------------" );
 
@@ -458,4 +466,24 @@ public class BuildTimeProfiler
         }
     }
 
+    private List<Entry<String, Long>> aggregateDurations( Map<ProjectMojo, SystemTime> pluginsInPhase ) {
+        Map<String, Long> durationsByPlugin = new HashMap<>( pluginsInPhase.size() );
+        for ( Entry<ProjectMojo, SystemTime> pluginInPhase : pluginsInPhase.entrySet() ) {
+            String pluginId = pluginInPhase.getKey().getMojo().getFullId();
+            Long oldDuration = durationsByPlugin.containsKey( pluginId ) ? durationsByPlugin.get( pluginId ) : 0L;
+            Long newDuration = oldDuration + pluginInPhase.getValue().getElapsedTime();
+            durationsByPlugin.put( pluginId, newDuration );
+        }
+
+        // sort the entries according to the duration (descending)
+        List<Entry<String, Long>> orderedList = new LinkedList<>();
+        orderedList.addAll( durationsByPlugin.entrySet() );
+        Collections.sort( orderedList, new Comparator<Entry<String, Long>>() {
+             public int compare( Entry<String, Long> o1, Entry<String, Long> o2 ) {
+                return o2.getValue().compareTo( o1.getValue() );
+             }
+        } );
+        
+        return orderedList;
+    }
 }
