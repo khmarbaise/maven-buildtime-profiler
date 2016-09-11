@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.soebes.smpp</groupId>
@@ -44,6 +47,7 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
@@ -53,6 +57,12 @@
         ! we use LifeCyclePhases from this package. 
        -->
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.maven</groupId>
+          <artifactId>maven-artifact</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -84,17 +94,17 @@
   </dependencies>
   <reporting>
     <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>3.0.4</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>2.3</version>
-        </plugin>
-      </plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.4</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+    </plugins>
   </reporting>
   <build>
     <pluginManagement>
@@ -131,6 +141,27 @@
           </execution>
         </executions>
       </plugin>
+      <!--
+        ! Create extension for Maven version less than 3.3.1
+        ! works for Maven 3.1.1 till 3.2.5
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <configuration>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <shadedClassifierName>mvn311</shadedClassifierName>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
