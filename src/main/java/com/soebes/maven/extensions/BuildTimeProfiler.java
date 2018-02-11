@@ -397,14 +397,14 @@ public class BuildTimeProfiler
 
             for ( String phase : lifeCyclePhases )
             {
-                ProjectKey proKey = mavenProjectToProjectKey( mavenProject );
+                ProjectKey projectKey = mavenProjectToProjectKey( mavenProject );
 
-                if ( !mojoTimer.hasTimeForProjectAndPhase( proKey, phase ) )
+                if ( !mojoTimer.hasTimeForProjectAndPhase( projectKey, phase ) )
                 {
                     continue;
                 }
 
-                long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( proKey, phase );
+                long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( projectKey, phase );
                 LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
 
             }

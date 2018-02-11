@@ -1,8 +1,5 @@
 package com.soebes.maven.extensions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +18,9 @@ import org.slf4j.LoggerFactory;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
