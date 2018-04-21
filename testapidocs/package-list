@@ -1,1 +1,3 @@
 com.soebes.maven.extensions
+com.soebes.maven.extensions.artifact
+com.soebes.maven.extensions.metadata

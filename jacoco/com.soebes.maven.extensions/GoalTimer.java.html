@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GoalTimer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Maven :: Build Time Profiler</a> &gt; <a href="index.source.html" class="el_package">com.soebes.maven.extensions</a> &gt; <span class="el_source">GoalTimer.java</span></div><h1>GoalTimer.java</h1><pre class="source lang-java linenums">package com.soebes.maven.extensions;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.maven.execution.ExecutionEvent;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author Karl Heinz Marbaise &lt;a href=&quot;mailto:kama@soebes.de&quot;&gt;kama@soebes.de&lt;/a&gt;
+ */
+class GoalTimer
+{
+<span class="nc" id="L18">    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );</span>
+
+    private Map&lt;ProjectGoal, SystemTime&gt; timerEvents;
+
+    public GoalTimer()
+<span class="nc" id="L23">    {</span>
+<span class="nc" id="L24">        this.timerEvents = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="nc" id="L25">    }</span>
+
+    public boolean hasEvents()
+    {
+<span class="nc bnc" id="L29" title="All 2 branches missed.">        return !timerEvents.isEmpty();</span>
+    }
+
+    private ProjectKey createProjectKey( MavenProject project )
+    {
+<span class="nc" id="L34">        return new ProjectKey( project.getGroupId(), project.getArtifactId(), project.getVersion() );</span>
+    }
+
+    private GoalKey createGoalKey( MojoExecution mojo )
+    {
+<span class="nc" id="L39">        return new GoalKey( mojo.getGroupId(), mojo.getArtifactId(), mojo.getVersion(), mojo.getGoal(),</span>
+                            mojo.getExecutionId() );
+    }
+
+    public void mojoStart( ExecutionEvent event )
+    {
+<span class="nc" id="L45">        ProjectGoal pm =</span>
+            new ProjectGoal( createProjectKey( event.getProject() ), createGoalKey( event.getMojoExecution() ) );
+<span class="nc" id="L47">        timerEvents.put( pm, new SystemTime().start() );</span>
+<span class="nc" id="L48">    }</span>
+
+    public void mojoStop( ExecutionEvent event )
+    {
+<span class="nc" id="L52">        ProjectGoal pm =</span>
+            new ProjectGoal( createProjectKey( event.getProject() ), createGoalKey( event.getMojoExecution() ) );
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if ( !timerEvents.containsKey( pm ) )</span>
+        {
+<span class="nc" id="L56">            throw new IllegalArgumentException( &quot;Unknown mojoId (&quot; + pm + &quot;)&quot; );</span>
+        }
+<span class="nc" id="L58">        timerEvents.get( pm ).stop();</span>
+<span class="nc" id="L59">    }</span>
+
+    public void report()
+    {
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        for ( Entry&lt;ProjectGoal, SystemTime&gt; item : this.timerEvents.entrySet() )</span>
+        {
+<span class="nc" id="L65">            LOGGER.info( &quot;{} ms : {}&quot;, String.format( &quot;%8d&quot;, item.getValue().getElapsedTime() ),</span>
+                         item.getKey().getId() );
+<span class="nc" id="L67">        }</span>
+<span class="nc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

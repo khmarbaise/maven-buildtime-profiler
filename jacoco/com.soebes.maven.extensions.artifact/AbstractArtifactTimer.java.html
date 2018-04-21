@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractArtifactTimer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Maven :: Build Time Profiler</a> &gt; <a href="index.source.html" class="el_package">com.soebes.maven.extensions.artifact</a> &gt; <span class="el_source">AbstractArtifactTimer.java</span></div><h1>AbstractArtifactTimer.java</h1><pre class="source lang-java linenums">package com.soebes.maven.extensions.artifact;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.eclipse.aether.RepositoryEvent;
+import org.eclipse.aether.artifact.Artifact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.soebes.maven.extensions.TimePlusSize;
+
+/**
+ * @author Karl Heinz Marbaise &lt;a href=&quot;mailto:kama@soebes.de&quot;&gt;kama@soebes.de&lt;/a&gt;
+ */
+public abstract class AbstractArtifactTimer
+{
+<span class="fc" id="L37">    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );</span>
+
+    private Map&lt;String, TimePlusSize&gt; timerEvents;
+
+    public AbstractArtifactTimer()
+<span class="fc" id="L42">    {</span>
+<span class="fc" id="L43">        this.timerEvents = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L44">    }</span>
+
+    protected String getArtifactId( Artifact artifact )
+    {
+<span class="fc" id="L48">        StringBuilder sb = new StringBuilder( 128 );</span>
+<span class="fc" id="L49">        sb.append( artifact.getGroupId() ) //</span>
+          .append( &quot;:&quot; ).append( artifact.getArtifactId() ) //
+          .append( &quot;:&quot; ).append( artifact.getVersion() );
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if ( artifact.getClassifier() != null )</span>
+        {
+<span class="fc" id="L55">            sb.append( ':' ).append( artifact.getClassifier() );</span>
+        }
+        
+<span class="fc" id="L58">        sb.append( ':' ).append( artifact.getExtension() );</span>
+<span class="fc" id="L59">        return sb.toString();</span>
+    }
+
+    protected Map&lt;String, TimePlusSize&gt; getTimerEvents()
+    {
+<span class="fc" id="L64">        return timerEvents;</span>
+    }
+
+    public void start( RepositoryEvent event )
+    {
+<span class="fc" id="L69">        String artifactId = getArtifactId( event.getArtifact() );</span>
+<span class="fc" id="L70">        TimePlusSize systemTime = new TimePlusSize();</span>
+<span class="fc" id="L71">        systemTime.start();</span>
+<span class="fc" id="L72">        getTimerEvents().put( artifactId, systemTime );</span>
+<span class="fc" id="L73">    }</span>
+
+    public void stop( RepositoryEvent event )
+    {
+<span class="fc" id="L77">        String artifactId = getArtifactId( event.getArtifact() );</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if ( !getTimerEvents().containsKey( artifactId ) )</span>
+        {
+<span class="fc" id="L80">            throw new IllegalArgumentException( &quot;Unknown artifactId (&quot; + artifactId + &quot;)&quot; );</span>
+        }
+<span class="fc" id="L82">        getTimerEvents().get( artifactId ).stop();</span>
+
+<span class="fc" id="L84">        long size = 0;</span>
+        // This could happen if an artifact could not be found for download (like site_..xml etc.)
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if ( event.getArtifact().getFile() != null )</span>
+        {
+<span class="fc" id="L88">            size = event.getArtifact().getFile().length();</span>
+        }
+<span class="fc" id="L90">        getTimerEvents().get( artifactId ).setSize( size );</span>
+<span class="fc" id="L91">    }</span>
+
+<span class="fc" id="L93">    private final double MiB = 1024 * 1024;</span>
+
+    protected double calculateMegabytesPerSeconds( long timeInMilliseconds, long sizeInBytes )
+    {
+<span class="nc" id="L97">        double dividerTime = ( timeInMilliseconds / 1000.0 );</span>
+<span class="nc" id="L98">        return (double) sizeInBytes / dividerTime / MiB;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
