@@ -4,7 +4,7 @@
     <mirror>
       <id>it-repo</id>
       <name>RPM</name>
-      <url>@localRepositoryUrl@</url>
+      <url>@repository.proxy.url@</url>
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
@@ -18,7 +18,7 @@
       <repositories>
         <repository>
           <id>local.central</id>
-          <url>@localRepositoryUrl@</url>
+          <url>@repository.proxy.url@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -30,7 +30,7 @@
       <pluginRepositories>
         <pluginRepository>
           <id>local.central</id>
-          <url>@localRepositoryUrl@</url>
+          <url>@repository.proxy.url@</url>
           <releases>
             <enabled>true</enabled>
           </releases>

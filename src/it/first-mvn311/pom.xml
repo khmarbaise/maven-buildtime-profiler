@@ -81,7 +81,6 @@
                   <artifactId>${project.artifactId}</artifactId>
                   <groupId>${project.groupId}</groupId>
                   <version>${project.version}</version>
-                  <tfs-version>${tfs.revision}</tfs-version>
                   <build-number>${BUILD_NUMBER}</build-number>
                   <build-id>${BUILD_ID}</build-id>
                   <build-time>${maven.build.timestamp}</build-time>

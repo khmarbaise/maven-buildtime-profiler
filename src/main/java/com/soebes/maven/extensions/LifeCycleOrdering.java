@@ -39,7 +39,7 @@ public class LifeCycleOrdering
         // at the end. Looks a bit strange. Technically it's
         // not a problem.
         initPredefinedFromTo( LifecyclePhase.PRE_CLEAN, LifecyclePhase.POST_CLEAN );
-        initPredefinedFromTo( LifecyclePhase.INITIALIZE, LifecyclePhase.DEPLOY );
+        initPredefinedFromTo( LifecyclePhase.VALIDATE, LifecyclePhase.DEPLOY );
         initPredefinedFromTo( LifecyclePhase.PRE_SITE, LifecyclePhase.SITE_DEPLOY );
     }
 

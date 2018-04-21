@@ -16,7 +16,6 @@
   <name>Maven :: Build Time Profiler</name>
   <properties>
     <mavenVersion>3.1.1</mavenVersion>
-    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.compiler.source>1.7</maven.compiler.source>
     <smpp.component>maven-buildtime-profiler</smpp.component>
@@ -193,11 +192,12 @@
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
               <addTestClassPath>true</addTestClassPath>
-              <debug>false</debug>
-              <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <projectsDirectory>src/it</projectsDirectory>
               <showVersion>true</showVersion>
+              <showErrors>true</showErrors>
+              <debug>true</debug>
               <setupIncludes>
                 <setupInclude>setup/pom.xml</setupInclude>
               </setupIncludes>
@@ -211,7 +211,7 @@
                 is build at first. see also http://jira.codehaus.org/browse/MINVOKER-147 -->
               <parallelThreads>1</parallelThreads>
               <filterProperties>
-                <pluginPropertyUsedForFiltering>localRepositoryPath</pluginPropertyUsedForFiltering>
+                <repository.proxy.url>${repository.proxy.url}</repository.proxy.url>
               </filterProperties>
             </configuration>
             <executions>
@@ -223,14 +223,14 @@
                 <configuration>
                   <extraArtifacts>
                     <extraArtifact>org.apache.maven.plugins:maven-install-plugin:2.5.2:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:3.0.0:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.6:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.18.1:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.surefire:surefire-testng:2.18.1:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:3.0.0:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.6:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.20:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.surefire:surefire-testng:2.20:jar</extraArtifact>
                     <extraArtifact>org.apache.maven.surefire:surefire-testng-utils:2.18.1:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-failsafe-plugin:2.18.1:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.7:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-assembly-plugin:2.6:maven-plugin</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-failsafe-plugin:2.20:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:3.0.2:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-assembly-plugin:2.6:jar</extraArtifact>
                     <extraArtifact>com.soebes.smpp:smpp:1.2.0:pom</extraArtifact>
                     <extraArtifact>org.testng:testng:6.8.8:jar</extraArtifact>
                     <extraArtifact>com.beust:jcommander:1.35:jar</extraArtifact>

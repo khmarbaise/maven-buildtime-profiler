@@ -61,6 +61,8 @@ public class BuildTimeProfiler
 
     private final DiscoveryTimer discoveryTimer;
 
+    private final GoalTimer goalTimer;
+
     private final MojoTimer mojoTimer;
 
     private final ProjectTimer projectTimer;
@@ -88,6 +90,7 @@ public class BuildTimeProfiler
         LOGGER.debug( "LifeCycleProfiler ctor called." );
         this.lifeCyclePhases = Collections.<String>synchronizedList( new LinkedList<String>() );
         this.discoveryTimer = new DiscoveryTimer();
+        this.goalTimer = new GoalTimer();
         this.mojoTimer = new MojoTimer();
         this.projectTimer = new ProjectTimer();
         this.sessionTimer = new SessionTimer();
@@ -300,6 +303,7 @@ public class BuildTimeProfiler
 
     private void executionEventHandler( ExecutionEvent executionEvent )
     {
+        LOGGER.debug( "executionEventHandler: {}", executionEvent.getType() );
         Type type = executionEvent.getType();
         switch ( type )
         {
@@ -310,7 +314,6 @@ public class BuildTimeProfiler
             case SessionStarted:
                 // Reading of pom files done and structure now there.
                 discoveryTimer.discoveryStop();
-                // executionEvent.getSession().getProjectDependencyGraph().getSortedProjects();
                 sessionTimer.sessionStart();
                 break;
             case SessionEnded:
@@ -335,16 +338,31 @@ public class BuildTimeProfiler
                 break;
 
             case MojoStarted:
-                String phase = executionEvent.getMojoExecution().getLifecyclePhase();
-                collectAllLifeCylcePhases( phase );
+                String phaseStart = executionEvent.getMojoExecution().getLifecyclePhase();
                 // Key: phase, project, mojo
-                mojoTimer.mojoStart( executionEvent );
+                if ( phaseStart == null )
+                {
+                    goalTimer.mojoStart( executionEvent );
+                }
+                else
+                {
+                    collectAllLifeCylcePhases( phaseStart );
+                    mojoTimer.mojoStart( executionEvent );
+                }
                 break;
 
             case MojoFailed:
             case MojoSucceeded:
             case MojoSkipped:
-                mojoTimer.mojoStop( executionEvent );
+                String phaseStop = executionEvent.getMojoExecution().getLifecyclePhase();
+                if ( phaseStop == null )
+                {
+                    goalTimer.mojoStop( executionEvent );
+                }
+                else
+                {
+                    mojoTimer.mojoStop( executionEvent );
+                }
                 break;
 
             case ProjectStarted:
@@ -374,69 +392,73 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        if ( lifeCyclePhases.isEmpty() )
-        {
-            return;
-        }
-        
-        orderLifeCycleOnPreparedOrder(lifeCyclePhases);
+        orderLifeCycleOnPreparedOrder( lifeCyclePhases );
 
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
-        // TODO: Use better formatting
         LOGGER.info( "--             Maven Build Time Profiler Summary                      --" );
         LOGGER.info( "------------------------------------------------------------------------" );
 
         discoveryTimer.report();
-        LOGGER.info( "Project Build Time (reactor order):" );
-        LOGGER.info( "" );
-        List<MavenProject> topologicallySortedProjects = event.getTopologicallySortedProjects();
-        for ( MavenProject mavenProject : topologicallySortedProjects )
+
+        if ( mojoTimer.hasEvents() )
         {
-            LOGGER.info( "{}:", mavenProject.getName() );
-
-            for ( String phase : lifeCyclePhases )
+            LOGGER.info( "Project Build Time (reactor order):" );
+            LOGGER.info( "" );
+            for ( MavenProject mavenProject : event.getTopologicallySortedProjects() )
             {
-                ProjectKey projectKey = mavenProjectToProjectKey( mavenProject );
+                LOGGER.info( "{}:", mavenProject.getName() );
 
-                if ( !mojoTimer.hasTimeForProjectAndPhase( projectKey, phase ) )
+                for ( String phase : lifeCyclePhases )
                 {
-                    continue;
+                    ProjectKey projectKey = mavenProjectToProjectKey( mavenProject );
+
+                    if ( !mojoTimer.hasTimeForProjectAndPhase( projectKey, phase ) )
+                    {
+                        continue;
+                    }
+
+                    long timeForPhaseAndProjectInMillis =
+                        mojoTimer.getTimeForProjectAndPhaseInMillis( projectKey, phase );
+                    LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
+
                 }
 
-                long timeForPhaseAndProjectInMillis = mojoTimer.getTimeForProjectAndPhaseInMillis( projectKey, phase );
-                LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
-
             }
-
-        }
-
-        // LifecyclePhase.CLEAN.ordinal();
-        LOGGER.info( "------------------------------------------------------------------------" );
-        LOGGER.info( "Lifecycle Phase summary:" );
-        LOGGER.info( "" );
-        for ( String phase : lifeCyclePhases )
-        {
-            long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
-            LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase );
-        }
-
-        // List all plugins per phase
-        LOGGER.info( "------------------------------------------------------------------------" );
-        LOGGER.info( "Plugins in lifecycle Phases:" );
-        LOGGER.info( "" );
-        for ( String phase : lifeCyclePhases )
-        {
-            LOGGER.info( "{}:", phase );
-            Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
-            for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
+            LOGGER.info( "------------------------------------------------------------------------" );
+            LOGGER.info( "Lifecycle Phase summary:" );
+            LOGGER.info( "" );
+            for ( String phase : lifeCyclePhases )
             {
-                LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
-                             pluginInPhase.getKey().getMojo().getFullId() );
+                long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
+                LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase );
             }
 
+            // List all plugins per phase
+            LOGGER.info( "------------------------------------------------------------------------" );
+            LOGGER.info( "Plugins in lifecycle Phases:" );
+            LOGGER.info( "" );
+            for ( String phase : lifeCyclePhases )
+            {
+                LOGGER.info( "{}:", phase );
+                Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
+                for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
+                {
+                    LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
+                                 pluginInPhase.getKey().getMojo().getFullId() );
+                }
+
+            }
+            LOGGER.info( "------------------------------------------------------------------------" );
         }
-        LOGGER.info( "------------------------------------------------------------------------" );
+
+        if ( goalTimer.hasEvents() )
+        {
+            LOGGER.info( "Plugins directly called via goals:" );
+            LOGGER.info( "" );
+            goalTimer.report();
+            LOGGER.info( "------------------------------------------------------------------------" );
+        }
 
         installTimer.report();
         downloadTimer.report();
@@ -462,7 +484,7 @@ public class BuildTimeProfiler
         {
             return;
         }
-        LOGGER.debug( "collectAllLifeCyclePhases({})", phase);
+        LOGGER.debug( "collectAllLifeCyclePhases({})", phase );
         if ( !lifeCyclePhases.contains( phase ) )
         {
             lifeCyclePhases.add( phase );

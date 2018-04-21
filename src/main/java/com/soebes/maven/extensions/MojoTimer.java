@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public class MojoTimer
 {
@@ -56,11 +55,17 @@ public class MojoTimer
                             mojo.getExecutionId(), mojo.getLifecyclePhase() );
     }
 
+    public boolean hasEvents()
+    {
+        return !this.timerEvents.isEmpty();
+    }
+
     public void mojoStart( ExecutionEvent event )
     {
+
         ProjectMojo pm =
             new ProjectMojo( createProjectKey( event.getProject() ), createMojoKey( event.getMojoExecution() ) );
-        timerEvents.put( pm, new SystemTime().start());
+        timerEvents.put( pm, new SystemTime().start() );
     }
 
     public void mojoStop( ExecutionEvent event )
@@ -91,7 +96,7 @@ public class MojoTimer
     public Map<ProjectMojo, SystemTime> getPluginsInPhase( String phase )
     {
         Map<ProjectMojo, SystemTime> result = new LinkedHashMap<ProjectMojo, SystemTime>();
-        
+
         for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
         {
             if ( phase.equals( item.getKey().getMojo().getPhase() ) )

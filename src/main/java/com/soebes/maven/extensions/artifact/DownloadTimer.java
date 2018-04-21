@@ -29,7 +29,6 @@ import com.soebes.maven.extensions.TimePlusSize;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public class DownloadTimer
     extends AbstractArtifactTimer
@@ -54,7 +53,8 @@ public class DownloadTimer
         {
             totalInstallationTime += item.getValue().getElapsedTime();
             totalInstallationSize += item.getValue().getSize();
-            LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
+            LOGGER.info( "{} ms : {} ({} bytes)", String.format( "%8d", item.getValue().getElapsedTime() ),
+                         item.getKey(), NumberFormat.getIntegerInstance().format( item.getValue().getSize() ) );
         }
         double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
         LOGGER.info( "{} ms  {} bytes. {} MiB / s", NumberFormat.getIntegerInstance().format( totalInstallationTime ),

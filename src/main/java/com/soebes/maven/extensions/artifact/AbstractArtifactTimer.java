@@ -24,22 +24,25 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.artifact.Artifact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.soebes.maven.extensions.TimePlusSize;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public abstract class AbstractArtifactTimer
 {
+    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+
     private Map<String, TimePlusSize> timerEvents;
 
     public AbstractArtifactTimer()
     {
         this.timerEvents = new ConcurrentHashMap<>();
     }
-    
+
     protected String getArtifactId( Artifact artifact )
     {
         StringBuilder sb = new StringBuilder( 128 );
@@ -74,7 +77,14 @@ public abstract class AbstractArtifactTimer
             throw new IllegalArgumentException( "Unknown artifactId (" + artifactId + ")" );
         }
         getTimerEvents().get( artifactId ).stop();
-        getTimerEvents().get( artifactId ).setSize( event.getArtifact().getFile().length() );
+
+        long size = 0;
+        // This could happen if an artifact could not be found for download (like site_..xml etc.)
+        if ( event.getArtifact().getFile() != null )
+        {
+            size = event.getArtifact().getFile().length();
+        }
+        getTimerEvents().get( artifactId ).setSize( size );
     }
 
     private final double MiB = 1024 * 1024;
