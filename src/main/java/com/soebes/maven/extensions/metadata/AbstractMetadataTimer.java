@@ -28,8 +28,7 @@ import org.eclipse.aether.metadata.Metadata;
 import com.soebes.maven.extensions.TimePlusSize;
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public abstract class AbstractMetadataTimer
 {
@@ -43,7 +42,11 @@ public abstract class AbstractMetadataTimer
     protected String getArtifactId( Metadata artifact )
     {
         StringBuilder sb = new StringBuilder( 128 );
-        sb.append( artifact.getGroupId() ).append( ":" ).append( artifact.getArtifactId() ).append( ":" ).append( artifact.getVersion() ).append( ':' ).append( artifact.getType() ).append( ':' ).append( artifact.getNature() );
+        sb.append( artifact.getGroupId() ) //
+          .append( ":" ).append( artifact.getArtifactId() ) //
+          .append( ":" ).append( artifact.getVersion() ) //
+          .append( ':' ).append( artifact.getType() ) //
+          .append( ':' ).append( artifact.getNature() );
 
         return sb.toString();
     }
@@ -69,10 +72,13 @@ public abstract class AbstractMetadataTimer
             throw new IllegalArgumentException( "Unknown metadataId (" + metadataId + ")" );
         }
         getTimerEvents().get( metadataId ).stop();
+
+        long size = 0;
         if ( event.getMetadata().getFile() != null )
         {
-            getTimerEvents().get( metadataId ).setSize( event.getMetadata().getFile().length() );
+            size = event.getMetadata().getFile().length();
         }
+        getTimerEvents().get( metadataId ).setSize( size );
     }
 
 }

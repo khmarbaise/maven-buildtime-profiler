@@ -20,16 +20,16 @@ package com.soebes.maven.extensions;
  */
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public class GoalKey
+final class GoalKey
     extends ProjectKey
 {
-    private String goal;
+    final private String goal;
 
-    private String executionId;
+    final private String executionId;
 
-    public GoalKey( String groupId, String artifactId, String version, String goal, String executionId )
+    public GoalKey( final String groupId, final String artifactId, final String version, final String goal, final String executionId )
     {
         super( groupId, artifactId, version );
         this.goal = goal;
@@ -41,19 +41,9 @@ public class GoalKey
         return goal;
     }
 
-    public void setGoal( String goal )
-    {
-        this.goal = goal;
-    }
-
     public String getExecutionId()
     {
         return executionId;
-    }
-
-    public void setExecutionId( String executionId )
-    {
-        this.executionId = executionId;
     }
 
     public String getFullId()
@@ -75,26 +65,40 @@ public class GoalKey
     public boolean equals( Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( !super.equals( obj ) )
+        {
             return false;
-        if ( getClass() != obj.getClass() )
+        }
+        if ( !( obj instanceof GoalKey ) )
+        {
             return false;
+        }
         GoalKey other = (GoalKey) obj;
         if ( executionId == null )
         {
             if ( other.executionId != null )
+            {
                 return false;
+            }
         }
         else if ( !executionId.equals( other.executionId ) )
+        {
             return false;
+        }
         if ( goal == null )
         {
             if ( other.goal != null )
+            {
                 return false;
+            }
         }
         else if ( !goal.equals( other.goal ) )
+        {
             return false;
+        }
         return true;
     }
 

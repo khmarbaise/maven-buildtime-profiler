@@ -20,13 +20,13 @@ package com.soebes.maven.extensions;
  */
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public class ProjectGoal
+class ProjectGoal
 {
-    private ProjectKey project;
+    private final ProjectKey project;
 
-    private GoalKey mojo;
+    private final GoalKey mojo;
 
     public ProjectGoal( ProjectKey project, GoalKey mojo )
     {
@@ -40,23 +40,13 @@ public class ProjectGoal
         return project;
     }
 
-    public void setProject( ProjectKey project )
-    {
-        this.project = project;
-    }
-
     public GoalKey getMojo()
     {
         return mojo;
     }
 
-    public void setMojo( GoalKey mojo )
-    {
-        this.mojo = mojo;
-    }
-
     @Override
-    public int hashCode()
+    public final int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -72,29 +62,43 @@ public class ProjectGoal
     }
 
     @Override
-    public boolean equals( Object obj )
+    public final boolean equals( Object obj )
     {
         if ( this == obj )
+        {
             return true;
+        }
         if ( obj == null )
+        {
             return false;
-        if ( getClass() != obj.getClass() )
+        }
+        if ( !( obj instanceof ProjectGoal ) )
+        {
             return false;
+        }
         ProjectGoal other = (ProjectGoal) obj;
         if ( mojo == null )
         {
             if ( other.mojo != null )
+            {
                 return false;
+            }
         }
         else if ( !mojo.equals( other.mojo ) )
+        {
             return false;
+        }
         if ( project == null )
         {
             if ( other.project != null )
+            {
                 return false;
+            }
         }
         else if ( !project.equals( other.project ) )
+        {
             return false;
+        }
         return true;
     }
 

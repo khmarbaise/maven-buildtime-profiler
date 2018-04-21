@@ -20,8 +20,7 @@ package com.soebes.maven.extensions;
  */
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public class TimePlusSize
     extends SystemTime

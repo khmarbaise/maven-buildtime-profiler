@@ -19,33 +19,25 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.testng.annotations.Test;
 
-public class FirstTest
+/**
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
+ */
+public class SystemTimeTest
 {
- 
-    public class X {
-        public String get (String project, String phase, String mojo, String goal) {
-            return null;
-        }
-    }
-    /*
-     * Project : phase : mojo : goal
-     */
+
     @Test
-    public void firstTest()
+    public void shouldResultInMeasuredTime()
+        throws InterruptedException
     {
-        // definition however..
-        X result = new X();
-        String value = result.get("p", "clean", "mojo", "exec");
-        
-    }
-    
-    @Test
-    public void secondTest() {
-        long l = 10456;
-        String s = String.format( "%6d", l);
-        String x = String.format( "%-12s", "X" );
-        System.out.println( "S=" + s + " X: '" + x + "'");
+        SystemTime s = new SystemTime();
+        s.start();
+        Thread.sleep( 10L );
+        s.stop();
+
+        assertThat( s.getElapsedTime() ).isGreaterThanOrEqualTo( 10L );
     }
 }

@@ -20,10 +20,9 @@ package com.soebes.maven.extensions;
  */
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public class MojoKey
+class MojoKey
     extends ProjectKey
 {
     private String goal;
@@ -76,7 +75,6 @@ public class MojoKey
         return super.getId() + ":" + getGoal() + ":" + getExecutionId();
     }
 
-    @Override
     public int hashCode()
     {
         final int prime = 31;
@@ -87,8 +85,7 @@ public class MojoKey
         return result;
     }
 
-    @Override
-    public boolean equals( Object obj )
+    public final boolean equals( Object obj )
     {
         if ( this == obj )
             return true;

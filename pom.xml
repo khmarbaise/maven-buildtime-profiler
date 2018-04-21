@@ -53,8 +53,8 @@
       <artifactId>maven-plugin-annotations</artifactId>
       <!--
         ! Overwrite the scope from parent, cause
-        ! we use LifeCyclePhases from this package. 
-       -->
+        ! we use LifeCyclePhases from this package.
+      -->
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -73,6 +73,24 @@
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>nl.jqno.equalsverifier</groupId>
+      <artifactId>equalsverifier</artifactId>
+      <version>2.4.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>1.7.5</version>
+      <scope>test</scope>
+    </dependency>
+    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

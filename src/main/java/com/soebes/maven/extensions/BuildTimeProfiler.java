@@ -48,7 +48,7 @@ import com.soebes.maven.extensions.metadata.MetadataDownloadTimer;
 import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 @Named
 @Singleton

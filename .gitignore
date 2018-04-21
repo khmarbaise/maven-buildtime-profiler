@@ -1,5 +1,10 @@
+# Maven generated output
 target
+# Eclipse generated
 .project
 .classpath
 .settings
+# Release plugin
 release.properties
+# TestNG within Eclipse.
+test-output

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.soebes.maven.extensions.TimePlusSize;
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public abstract class AbstractArtifactTimer
 {
@@ -46,12 +46,15 @@ public abstract class AbstractArtifactTimer
     protected String getArtifactId( Artifact artifact )
     {
         StringBuilder sb = new StringBuilder( 128 );
-        sb.append( artifact.getGroupId() );
-        sb.append( ":" ).append( artifact.getArtifactId() ).append( ":" ).append( artifact.getVersion() );
+        sb.append( artifact.getGroupId() ) //
+          .append( ":" ).append( artifact.getArtifactId() ) //
+          .append( ":" ).append( artifact.getVersion() );
+
         if ( artifact.getClassifier() != null )
         {
             sb.append( ':' ).append( artifact.getClassifier() );
         }
+        
         sb.append( ':' ).append( artifact.getExtension() );
         return sb.toString();
     }

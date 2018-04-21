@@ -27,7 +27,10 @@ import java.util.List;
 import org.apache.maven.eventspy.AbstractEventSpy;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 
-public class LifeCycleOrdering
+/**
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
+ */
+class LifeCycleOrdering
     extends AbstractEventSpy
 {
     private final List<String> predefinedPhases = new LinkedList<>();

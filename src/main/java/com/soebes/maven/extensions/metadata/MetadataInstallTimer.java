@@ -28,8 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.soebes.maven.extensions.TimePlusSize;
 
 /**
- * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
+ * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public class MetadataInstallTimer
     extends AbstractMetadataTimer
