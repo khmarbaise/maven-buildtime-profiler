@@ -29,7 +29,7 @@ have to define the following `.mvn/extensions.xml` file:
   <extension>
     <groupId>com.soebes.maven.extensions</groupId>
     <artifactId>maven-buildtime-profiler</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </extension>
 </extensions>
 ```
