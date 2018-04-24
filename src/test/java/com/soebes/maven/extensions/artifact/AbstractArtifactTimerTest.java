@@ -20,6 +20,7 @@ package com.soebes.maven.extensions.artifact;
  */
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -170,6 +171,17 @@ public class AbstractArtifactTimerTest
         aat.stop( buildUnknown );
 
         // Intentionally no assertThat () cause we expect to get an IllegalArgumentException
+    }
+
+    @Test
+    public void calculateMegabytesPerSecondsShouldReturnOneMegabytePerSecond()
+        throws InterruptedException
+    {
+        long timeInMilliseconds = 1000;
+        long sizeInBytes = 1 * 1024 * 1024;
+        assertThat( aat.calculateMegabytesPerSeconds( timeInMilliseconds, sizeInBytes ) ).isEqualTo( 1.0,
+                                                                                                     offset( 0.0002 ) );
+
     }
 
 }

@@ -53,7 +53,7 @@ class GoalTimer
             new ProjectGoal( createProjectKey( event.getProject() ), createGoalKey( event.getMojoExecution() ) );
         if ( !timerEvents.containsKey( pm ) )
         {
-            throw new IllegalArgumentException( "Unknown mojoId (" + pm + ")" );
+            throw new IllegalArgumentException( "Unknown mojoId (" + pm.getId() + ")" );
         }
         timerEvents.get( pm ).stop();
     }
