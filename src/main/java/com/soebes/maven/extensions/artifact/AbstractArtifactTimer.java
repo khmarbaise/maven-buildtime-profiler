@@ -50,7 +50,7 @@ public abstract class AbstractArtifactTimer
           .append( ":" ).append( artifact.getArtifactId() ) //
           .append( ":" ).append( artifact.getVersion() );
 
-        if ( artifact.getClassifier() != null )
+        if ( !"".equals( artifact.getClassifier() ) )
         {
             sb.append( ':' ).append( artifact.getClassifier() );
         }
