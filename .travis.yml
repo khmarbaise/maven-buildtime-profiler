@@ -7,10 +7,10 @@ env:
   - MAVEN_VERSION=3.5.4
 
 install:
-  - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION}"
+  - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION} -Dhttps.protocols=TLSv1.2"
 
 script:
-  - "./mvnw --show-version --errors --batch-mode -Prun-its clean verify"
+  - "./mvnw --show-version --errors --batch-mode -Prun-its clean verify -Dhttps.protocols=TLSv1.2"
 
 jdk:
   - openjdk7
