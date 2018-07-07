@@ -1,20 +1,26 @@
 language: java
+env:
+  - MAVEN_VERSION=3.3.1
+  - MAVEN_VERSION=3.3.9
+  - MAVEN_VERSION=3.5.0
+  - MAVEN_VERSION=3.5.3
+  - MAVEN_VERSION=3.5.4
+
+install:
+  - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION}"
+
+script:
+  - "./mvnw --show-version --errors --batch-mode -Prun-its clean verify"
+
 jdk:
   - openjdk7
   - oraclejdk8
   - openjdk9
   - openjdk10
 
-# No need for preliminary install step.
-install: true
-#
-# Run all integration tests.
-script: 
-  - "mvn -Prun-its --show-version --errors --batch-mode clean verify"
-#
 cache:
-    directories:
-    - $HOME/.m2
+  directories:
+  - $HOME/.m2/repository
 branches:
     except:
         - gh-pages
