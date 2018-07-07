@@ -13,7 +13,6 @@ script:
   - "./mvnw --show-version --errors --batch-mode -Prun-its clean verify -Dhttps.protocols=TLSv1.2"
 
 jdk:
-  - openjdk7
   - oraclejdk8
   - openjdk9
   - openjdk10
