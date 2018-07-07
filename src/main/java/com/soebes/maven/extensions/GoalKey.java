@@ -48,7 +48,7 @@ final class GoalKey
 
     public String getFullId()
     {
-        return super.getId() + ":" + getGoal() + ":" + getExecutionId();
+        return super.getId() + ":" + getGoal() + " (" + getExecutionId() + ")";
     }
 
     @Override
