@@ -72,24 +72,24 @@ Here's an example of what the output will look like:
 [INFO] Plugins in lifecycle Phases:
 [INFO]
 [INFO] clean:
-[INFO]      169 ms: org.apache.maven.plugins:maven-clean-plugin:3.0.0:clean:default-clean
+[INFO]      169 ms: org.apache.maven.plugins:maven-clean-plugin:3.0.0:clean (default-clean)
 [INFO] process-resources:
-[INFO]      457 ms: org.apache.maven.plugins:maven-resources-plugin:2.7:resources:default-resources
+[INFO]      457 ms: org.apache.maven.plugins:maven-resources-plugin:2.7:resources (default-resources)
 [INFO] compile:
-[INFO]      663 ms: org.apache.maven.plugins:maven-compiler-plugin:3.3:compile:default-compile
+[INFO]      663 ms: org.apache.maven.plugins:maven-compiler-plugin:3.3:compile (default-compile)
 [INFO] process-test-resources:
-[INFO]       14 ms: org.apache.maven.plugins:maven-resources-plugin:2.7:testResources:default-testResources
+[INFO]       14 ms: org.apache.maven.plugins:maven-resources-plugin:2.7:testResources (default-testResources)
 [INFO] test-compile:
-[INFO]      197 ms: org.apache.maven.plugins:maven-compiler-plugin:3.3:testCompile:default-testCompile
+[INFO]      197 ms: org.apache.maven.plugins:maven-compiler-plugin:3.3:testCompile (default-testCompile)
 [INFO] test:
-[INFO]     1109 ms: org.apache.maven.plugins:maven-surefire-plugin:2.18.1:test:default-test
+[INFO]     1109 ms: org.apache.maven.plugins:maven-surefire-plugin:2.18.1:test (default-test)
 [INFO] package:
-[INFO]      871 ms: org.apache.maven.plugins:maven-assembly-plugin:2.6:single:make-executable-jar
-[INFO]      234 ms: org.apache.maven.plugins:maven-jar-plugin:2.6:jar:default-jar
+[INFO]      871 ms: org.apache.maven.plugins:maven-assembly-plugin:2.6:single (make-executable-jar)
+[INFO]      234 ms: org.apache.maven.plugins:maven-jar-plugin:2.6:jar (default-jar)
 [INFO] integration-test:
-[INFO]      811 ms: org.apache.maven.plugins:maven-failsafe-plugin:2.18.1:integration-test:failsafe-integration-test
+[INFO]      811 ms: org.apache.maven.plugins:maven-failsafe-plugin:2.18.1:integration-test (failsafe-integration-test)
 [INFO] verify:
-[INFO]       53 ms: org.apache.maven.plugins:maven-failsafe-plugin:2.18.1:verify:failsafe-verify
+[INFO]       53 ms: org.apache.maven.plugins:maven-failsafe-plugin:2.18.1:verify (failsafe-verify)
 [INFO] ------------------------------------------------------------------------
 [INFO] ForkTime: 0
 ```

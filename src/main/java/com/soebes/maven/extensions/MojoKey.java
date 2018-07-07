@@ -72,7 +72,7 @@ class MojoKey
 
     public String getFullId()
     {
-        return super.getId() + ":" + getGoal() + ":" + getExecutionId();
+        return super.getId() + ":" + getGoal() + " (" + getExecutionId() + ")";
     }
 
     public int hashCode()
