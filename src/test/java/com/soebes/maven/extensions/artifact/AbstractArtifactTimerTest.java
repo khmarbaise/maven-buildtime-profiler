@@ -87,7 +87,7 @@ public class AbstractArtifactTimerTest
     @Test
     public void shouldResultWithoutClassifier()
     {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", null );
+        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
 
         String result = aat.getArtifactId( artifact );
 
@@ -109,7 +109,7 @@ public class AbstractArtifactTimerTest
     public void shouldResultInSingleEntryInTimerEvents()
         throws InterruptedException
     {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", null );
+        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" ); // as per javadoc, extension is never null
 
         RepositoryEvent build =
             new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
@@ -132,7 +132,7 @@ public class AbstractArtifactTimerTest
     public void shouldResultInSingleEntryInTimerEventsWithLengthEntry()
         throws InterruptedException
     {
-        Artifact artifact = createMockArtifactWithLength( "groupId", "artifactId", "version", "jar", null );
+        Artifact artifact = createMockArtifactWithLength( "groupId", "artifactId", "version", "jar", "" );
 
         RepositoryEvent build =
             new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
@@ -156,7 +156,7 @@ public class AbstractArtifactTimerTest
         IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Unknown artifactId \\(groupId:artifactId:version:classifier:jar\\)" )
     public void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongArtifact()
     {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", null );
+        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
         Artifact unKnownArtifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "classifier" );
 
         RepositoryEvent build =
