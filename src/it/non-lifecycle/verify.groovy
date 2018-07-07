@@ -35,6 +35,6 @@ if (!logFile.contains ( '[INFO] Project discovery time: ') ) {
 if (!logFile.contains ( '[INFO] Plugins directly called via goals:') ) {
     throw new FileNotFoundException("Plugins called directly via goal have not been recorded.")
 }
-if (!logFile.contains ( ' ms : org.apache.maven.plugins:maven-clean-plugin:3.0.0:clean (default-cli)') ) {
+if (!logFile.contains ( ' ms : org.apache.maven.plugins:maven-clean-plugin:3.1.0:clean (default-cli)') ) {
     throw new FileNotFoundException("maven-clean-plugin has not been recorded.")
 }
