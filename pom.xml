@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.soebes.smpp</groupId>
     <artifactId>smpp-plugins</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
   </parent>
 
   <groupId>com.soebes.maven.extensions</groupId>
