@@ -12,7 +12,7 @@ install: true
 #
 # Run all integration tests.
 script: 
-  - "mvn -Prun-its --show-version -Dhttp.protocols=TLSv1.2 --errors --batch-mode clean verify"
+  - "mvn -Prun-its --show-version  -Dhttps.protocols=TLSv1.2 --errors --batch-mode clean verify"
 #
 cache:
     directories:
