@@ -1,3 +1,5 @@
+# give to fix timeout issues temporarily (hint by travis support.)
+sudo: required
 language: java
 jdk:
   - openjdk7
