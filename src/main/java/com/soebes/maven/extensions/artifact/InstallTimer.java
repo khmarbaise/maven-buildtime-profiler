@@ -62,33 +62,4 @@ public class InstallTimer
                      NumberFormat.getNumberInstance().format( mibPerSeconds ) );
         LOGGER.info( "------------------------------------------------------------------------" );
     }
-
-    public JSONObject toJSON()
-    {
-        JSONObject jsonObject = new JSONObject();
-
-        long totalInstallationTime = 0;
-        long totalInstallationSize = 0;
-
-        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
-        {
-            totalInstallationTime += item.getValue().getElapsedTime();
-            totalInstallationSize += item.getValue().getSize();
-
-            JSONObject jsonItem = new JSONObject();
-            jsonItem.put("time", item.getValue().getElapsedTime());
-            jsonItem.put("size", item.getValue().getSize());
-
-            jsonObject.put(item.getKey(), jsonItem);
-        }
-
-        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
-
-        jsonObject.put("time", totalInstallationTime);
-        jsonObject.put("size", totalInstallationSize);
-        jsonObject.put("rate", mibPerSeconds);
-
-        return jsonObject;
-    }
-
 }

@@ -20,10 +20,12 @@ package com.soebes.maven.extensions.artifact;
  */
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.artifact.Artifact;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,4 +100,31 @@ public abstract class AbstractArtifactTimer
         return (double) sizeInBytes / dividerTime / MiB;
     }
 
+    public JSONObject toJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        long totalInstallationTime = 0;
+        long totalInstallationSize = 0;
+
+        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
+        {
+            totalInstallationTime += item.getValue().getElapsedTime();
+            totalInstallationSize += item.getValue().getSize();
+
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("time", item.getValue().getElapsedTime());
+            jsonItem.put("size", item.getValue().getSize());
+
+            jsonObject.put(item.getKey(), jsonItem);
+        }
+
+        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
+
+        jsonObject.put("time", totalInstallationTime);
+        jsonObject.put("size", totalInstallationSize);
+        jsonObject.put("rate", mibPerSeconds);
+
+        return jsonObject;
+    }
 }
