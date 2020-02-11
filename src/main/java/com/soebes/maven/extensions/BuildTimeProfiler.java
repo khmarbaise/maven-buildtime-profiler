@@ -422,8 +422,11 @@ public class BuildTimeProfiler
             {
                 file.write(body);
                 return;
-            } catch (IOException e) {
-                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("Couldn't write to file at {}: {}", dest, e.getMessage());
+                return;
             }
         }
 
