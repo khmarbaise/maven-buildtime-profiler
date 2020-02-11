@@ -61,28 +61,4 @@ public class MetadataInstallTimer
         // NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
         LOGGER.info( "------------------------------------------------------------------------" );
     }
-
-    public JSONObject toJSON() {
-        JSONObject jsonObject = new JSONObject();
-
-        long totalInstallationTime = 0;
-        long totalInstallationSize = 0;
-
-        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
-        {
-            totalInstallationTime += item.getValue().getElapsedTime();
-            totalInstallationSize += item.getValue().getSize();
-
-            JSONObject jsonItem = new JSONObject();
-            jsonItem.put("time", item.getValue().getElapsedTime());
-            jsonItem.put("size", item.getValue().getSize());
-
-            jsonObject.put(item.getKey(), jsonItem);
-        }
-
-        jsonObject.put("time", totalInstallationTime);
-        jsonObject.put("size", totalInstallationSize);
-
-        return jsonObject;
-    }
 }
