@@ -396,7 +396,7 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        String output = event.getProject().getProperties().getProperty("maven-buildtime-profiler");
+        String output = event.getProject().getProperties().getProperty("maven-buildtime-profiler-output");
         String filename = "";
         String body = "";
 
