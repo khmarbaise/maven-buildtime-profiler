@@ -392,6 +392,11 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
+        report(event);
+    }
+
+    private void report(MavenExecutionResult event)
+    {
         orderLifeCycleOnPreparedOrder( lifeCyclePhases );
 
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
@@ -445,7 +450,7 @@ public class BuildTimeProfiler
                 for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
                 {
                     LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
-                                 pluginInPhase.getKey().getMojo().getFullId() );
+                        pluginInPhase.getKey().getMojo().getFullId() );
                 }
 
             }
