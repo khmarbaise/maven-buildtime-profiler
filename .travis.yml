@@ -1,9 +1,9 @@
 # give to fix timeout issues temporarily (hint by travis support.)
 sudo: required
+dist: xenial
 language: java
 jdk:
-  - openjdk7
-  - oraclejdk8
+  - openjdk8
   - openjdk9
   - openjdk10
 
