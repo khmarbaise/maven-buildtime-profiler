@@ -155,21 +155,34 @@ class MojoTimer
         {
             String artifactId = item.getKey().getProject().getArtifactId();
             String phase = item.getKey().getMojo().getPhase();
+            String plugin = item.getKey().getMojo().getFullId();
+            long time = item.getValue().getElapsedTime();
 
-            JSONObject artifactObject = jsonObject.has(artifactId) ? jsonObject.getJSONObject(artifactId) : new JSONObject();
+            // Projects section
+
+            JSONObject artifactObject = projectObject.has(artifactId) ? projectObject.getJSONObject(artifactId) : new JSONObject();
             long phaseResult = artifactObject.has(phase) ? (long) artifactObject.get(phase) : 0;
 
-            phaseResult += item.getValue().getElapsedTime();
+            phaseResult += time;
 
             artifactObject.put(phase, phaseResult);
             projectObject.put(artifactId, artifactObject);
 
+            // Phases section
+
             phaseObject.put(phase, phaseObject.has(phase) ? (long) phaseObject.get(phase) + phaseResult : phaseResult);
+
+            // Plugins section
 
             if (!pluginsObject.has(phase))
                 pluginsObject.put(phase, new JSONObject());
 
-            ((JSONObject) pluginsObject.get(phase)).put(item.getKey().getMojo().getFullId(), item.getValue().getElapsedTime());
+            long pluginResult = ((JSONObject) pluginsObject.get(phase)).has(plugin) ?
+                (long) ((JSONObject) pluginsObject.get(phase)).get(plugin) : 0;
+
+            pluginResult += time;
+
+            ((JSONObject) pluginsObject.get(phase)).put(plugin, pluginResult);
         }
 
         jsonObject.put("projects", projectObject);
