@@ -56,7 +56,7 @@ class DiscoveryTimer
     public JSONObject toJSON()
     {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("discoveryTime", String.format( "%8d", time.getElapsedTime() ));
+        jsonObject.put("discoveryTime", time.getElapsedTime());
         return jsonObject;
     }
 }
