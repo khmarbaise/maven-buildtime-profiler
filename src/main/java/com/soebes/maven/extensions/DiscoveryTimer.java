@@ -53,10 +53,8 @@ class DiscoveryTimer
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 
-    public JSONObject toJSON()
+    public long getTime()
     {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("discoveryTime", time.getElapsedTime());
-        return jsonObject;
+        return this.time.getElapsedTime();
     }
 }
