@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,5 +142,25 @@ class MojoTimer
         {
             LOGGER.info( "{} : {}", item.getKey().getId(), item.getValue().getElapsedTime() );
         }
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            String artifactId = item.getKey().getProject().getArtifactId();
+            String phase = item.getKey().getMojo().getPhase();
+
+            JSONObject artifactObject = jsonObject.has(artifactId) ? jsonObject.getJSONObject(artifactId) : new JSONObject();
+            long phaseResult = artifactObject.has(phase) ? (long) artifactObject.get(phase) : 0;
+
+            phaseResult += item.getValue().getElapsedTime();
+
+            artifactObject.put(phase, phaseResult);
+            jsonObject.put(artifactId, artifactObject);
+        }
+
+        return jsonObject;
     }
 }
