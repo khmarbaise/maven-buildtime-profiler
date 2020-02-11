@@ -20,12 +20,14 @@ package com.soebes.maven.extensions.metadata;
  */
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.metadata.Metadata;
 
 import com.soebes.maven.extensions.TimePlusSize;
+import org.json.JSONObject;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -81,4 +83,27 @@ public abstract class AbstractMetadataTimer
         getTimerEvents().get( metadataId ).setSize( size );
     }
 
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+
+        long totalInstallationTime = 0;
+        long totalInstallationSize = 0;
+
+        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
+        {
+            totalInstallationTime += item.getValue().getElapsedTime();
+            totalInstallationSize += item.getValue().getSize();
+
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("time", item.getValue().getElapsedTime());
+            jsonItem.put("size", item.getValue().getSize());
+
+            jsonObject.put(item.getKey(), jsonItem);
+        }
+
+        jsonObject.put("time", totalInstallationTime);
+        jsonObject.put("size", totalInstallationSize);
+
+        return jsonObject;
+    }
 }
