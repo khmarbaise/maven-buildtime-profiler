@@ -21,7 +21,7 @@ package com.soebes.maven.extensions.metadata;
 
 import java.text.NumberFormat;
 import java.util.Map.Entry;
-
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,4 +62,27 @@ public class MetadataInstallTimer
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+
+        long totalInstallationTime = 0;
+        long totalInstallationSize = 0;
+
+        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
+        {
+            totalInstallationTime += item.getValue().getElapsedTime();
+            totalInstallationSize += item.getValue().getSize();
+
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("time", item.getValue().getElapsedTime());
+            jsonItem.put("size", item.getValue().getSize());
+
+            jsonObject.put(item.getKey(), jsonItem);
+        }
+
+        jsonObject.put("time", totalInstallationTime);
+        jsonObject.put("size", totalInstallationSize);
+
+        return jsonObject;
+    }
 }
