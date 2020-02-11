@@ -144,7 +144,8 @@ class MojoTimer
         }
     }
 
-    public JSONObject toJSON() {
+    public JSONObject toJSON()
+    {
         JSONObject jsonObject = new JSONObject();
 
         for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
