@@ -70,6 +70,13 @@ class GoalTimer
 
     public JSONObject toJSON()
     {
+        JSONObject jsonObject = new JSONObject();
 
+        for ( Entry<ProjectGoal, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            jsonObject.put(item.getKey().getId(), item.getValue().getElapsedTime());
+        }
+
+        return jsonObject;
     }
 }
