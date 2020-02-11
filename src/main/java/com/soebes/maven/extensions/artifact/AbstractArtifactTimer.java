@@ -123,7 +123,7 @@ public abstract class AbstractArtifactTimer
 
         jsonObject.put("time", totalInstallationTime);
         jsonObject.put("size", totalInstallationSize);
-        jsonObject.put("rate", mibPerSeconds);
+        jsonObject.put("rate", ("" + mibPerSeconds).equals("NaN") ? null : mibPerSeconds);
 
         return jsonObject;
     }
