@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.project.MavenProject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,5 +80,17 @@ class ProjectTimer
         {
             LOGGER.info( "ProjectTimer: {} : {}", item.getKey(), item.getValue().getElapsedTime() );
         }
+    }
+
+    public JSONObject toJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        for ( Entry<String, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            jsonObject.put(item.getKey(), item.getValue().getElapsedTime());
+        }
+
+        return jsonObject;
     }
 }
