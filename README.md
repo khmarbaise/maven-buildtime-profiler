@@ -36,6 +36,23 @@ have to define the following `.mvn/extensions.xml` file:
 
 The download from Maven Central will be done by Maven itself.
 
+This extension allows printing the report to a JSON file instead of the stdout. To enable this you  
+simply have to set the property `<maven-buildtime-profiler-output>` with value `json`  
+under `<properties>` section in your project's pom.
+
+Additionally, you can set the property `<maven-buildtime-profiler-directory>` to indicate  
+the destination folder of the `report.json` file:
+
+```xml
+  <properties>
+    <maven-buildtime-profiler>json</maven-buildtime-profiler>
+    <maven-buildtime-profiler-output>${maven-buildtime-profiler}</maven-buildtime-profiler-output>
+    <maven-buildtime-profiler-directory>ignore/</maven-buildtime-profiler-directory>
+  </properties>
+```
+
+<small>Note that in this example we can also set the output mode adding `-Dmaven-buildtime-profiler=stdout`</small> to the maven command.
+
 Here's an example of what the output will look like:
 
 ```
