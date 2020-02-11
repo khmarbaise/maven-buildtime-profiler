@@ -37,6 +37,7 @@ import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -474,6 +475,25 @@ public class BuildTimeProfiler
 
         forkTimer.report();
         forkProject.report();
+    }
+
+    private JSONObject toJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("discoveryTime", discoveryTimer.getTime());
+        jsonObject.put("mojos", mojoTimer.toJSON());
+        jsonObject.put("goals", goalTimer.toJSON());
+        jsonObject.put("install", installTimer.toJSON());
+        jsonObject.put("download", downloadTimer.toJSON());
+        jsonObject.put("deploy", deployTimer.toJSON());
+        jsonObject.put("metadataInstall", metadataInstallTimer.toJSON());
+        jsonObject.put("metadataDownload", metadataDownloadTimer.toJSON());
+        jsonObject.put("metadataDeployment", metadataDeploymentTimer.toJSON());
+        jsonObject.put("forkTime", forkTimer.getTime());
+        jsonObject.put("forkProject", forkProject.toJSON());
+
+        return jsonObject;
     }
 
     private ProjectKey mavenProjectToProjectKey( MavenProject project )
