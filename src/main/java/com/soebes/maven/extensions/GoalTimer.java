@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,5 +66,10 @@ class GoalTimer
             LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ),
                          item.getKey().getId() );
         }
+    }
+
+    public JSONObject toJSON()
+    {
+
     }
 }
