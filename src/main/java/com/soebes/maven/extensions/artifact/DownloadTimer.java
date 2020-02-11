@@ -21,7 +21,7 @@ package com.soebes.maven.extensions.artifact;
 
 import java.text.NumberFormat;
 import java.util.Map.Entry;
-
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,4 +63,31 @@ public class DownloadTimer
 
     }
 
+    public JSONObject toJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        long totalInstallationTime = 0;
+        long totalInstallationSize = 0;
+
+        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
+        {
+            totalInstallationTime += item.getValue().getElapsedTime();
+            totalInstallationSize += item.getValue().getSize();
+
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("time", item.getValue().getElapsedTime());
+            jsonItem.put("size", item.getValue().getSize());
+
+            jsonObject.put(item.getKey(), jsonItem);
+        }
+
+        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
+
+        jsonObject.put("time", totalInstallationTime);
+        jsonObject.put("size", totalInstallationSize);
+        jsonObject.put("rate", mibPerSeconds);
+
+        return jsonObject;
+    }
 }
