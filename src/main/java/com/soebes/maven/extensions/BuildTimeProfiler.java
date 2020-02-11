@@ -421,6 +421,7 @@ public class BuildTimeProfiler
             try (FileWriter file = new FileWriter(dest))
             {
                 file.write(body);
+                return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
