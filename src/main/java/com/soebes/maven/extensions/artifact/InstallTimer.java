@@ -75,14 +75,18 @@ public class InstallTimer
             totalInstallationTime += item.getValue().getElapsedTime();
             totalInstallationSize += item.getValue().getSize();
 
-            jsonObject.put(item.getKey(), item.getValue().getElapsedTime());
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("time", item.getValue().getElapsedTime());
+            jsonItem.put("size", item.getValue().getSize());
+
+            jsonObject.put(item.getKey(), jsonItem);
         }
 
         double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
 
-        jsonObject.put("installaionTime", totalInstallationTime);
-        jsonObject.put("installaionSize", totalInstallationSize);
-        jsonObject.put("installaionRate", mibPerSeconds);
+        jsonObject.put("time", totalInstallationTime);
+        jsonObject.put("size", totalInstallationSize);
+        jsonObject.put("rate", mibPerSeconds);
 
         return jsonObject;
     }
