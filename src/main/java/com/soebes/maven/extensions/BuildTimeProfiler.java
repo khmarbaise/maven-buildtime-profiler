@@ -19,6 +19,8 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -394,6 +396,12 @@ public class BuildTimeProfiler
     private void executionResultEventHandler( MavenExecutionResult event )
     {
         report(event);
+
+        try (FileWriter file = new FileWriter("report.json")) {
+            file.write(toJSON().toString());
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     private void report(MavenExecutionResult event)
@@ -482,7 +490,7 @@ public class BuildTimeProfiler
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("discoveryTime", discoveryTimer.getTime());
-        jsonObject.put("mojos", mojoTimer.toJSON());
+        jsonObject.put("build", mojoTimer.toJSON());
         jsonObject.put("goals", goalTimer.toJSON());
         jsonObject.put("install", installTimer.toJSON());
         jsonObject.put("download", downloadTimer.toJSON());
