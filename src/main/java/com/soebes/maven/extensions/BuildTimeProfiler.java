@@ -19,6 +19,7 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
@@ -395,25 +396,33 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-
         String output = event.getProject().getProperties().getProperty("maven-buildtime-profiler");
+        String filename = "";
+        String body = "";
 
         if (output != null)
         {
             switch (output.toLowerCase())
             {
                 case "json":
-                    try (FileWriter file = new FileWriter("report.json"))
-                    {
-                        file.write(toJSON().toString());
-                    } catch (IOException e) {
-                        LOGGER.error(e.getMessage());
-                    }
-                    return;
+                    body = toJSON().toString();
+                    filename = "report.json";
+                    break;
                 case "stdout":
                 default:
                     report(event);
                     return;
+            }
+
+            File dest = event.getProject().getProperties().containsKey("maven-buildtime-profiler-directory") ?
+                new File(event.getProject().getProperties().getProperty("maven-buildtime-profiler-directory"), filename) :
+                new File(event.getProject().getBasedir(), filename);
+
+            try (FileWriter file = new FileWriter(dest))
+            {
+                file.write(body);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
