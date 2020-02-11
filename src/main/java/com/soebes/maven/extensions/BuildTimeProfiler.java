@@ -395,13 +395,29 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        report(event);
 
-        try (FileWriter file = new FileWriter("report.json")) {
-            file.write(toJSON().toString());
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+        String output = event.getProject().getProperties().getProperty("maven-buildtime-profiler");
+
+        if (output != null)
+        {
+            switch (output.toLowerCase())
+            {
+                case "json":
+                    try (FileWriter file = new FileWriter("report.json"))
+                    {
+                        file.write(toJSON().toString());
+                    } catch (IOException e) {
+                        LOGGER.error(e.getMessage());
+                    }
+                    return;
+                case "stdout":
+                default:
+                    report(event);
+                    return;
+            }
         }
+
+        report(event);
     }
 
     private void report(MavenExecutionResult event)
