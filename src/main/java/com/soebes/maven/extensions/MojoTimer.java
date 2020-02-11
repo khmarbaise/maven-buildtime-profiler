@@ -147,6 +147,9 @@ class MojoTimer
     public JSONObject toJSON()
     {
         JSONObject jsonObject = new JSONObject();
+        JSONObject projectObject = new JSONObject();
+        JSONObject phaseObject = new JSONObject();
+        JSONObject pluginsObject = new JSONObject();
 
         for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
         {
@@ -159,8 +162,19 @@ class MojoTimer
             phaseResult += item.getValue().getElapsedTime();
 
             artifactObject.put(phase, phaseResult);
-            jsonObject.put(artifactId, artifactObject);
+            projectObject.put(artifactId, artifactObject);
+
+            phaseObject.put(phase, phaseObject.has(phase) ? (long) phaseObject.get(phase) + phaseResult : phaseResult);
+
+            if (!pluginsObject.has(phase))
+                pluginsObject.put(phase, new JSONObject());
+
+            ((JSONObject) pluginsObject.get(phase)).put(item.getKey().getMojo().getFullId(), item.getValue().getElapsedTime());
         }
+
+        jsonObject.put("projects", projectObject);
+        jsonObject.put("phases", phaseObject);
+        jsonObject.put("plugins", pluginsObject);
 
         return jsonObject;
     }
