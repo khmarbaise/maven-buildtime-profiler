@@ -161,16 +161,13 @@ class MojoTimer
             // Projects section
 
             JSONObject artifactObject = projectObject.has(artifactId) ? projectObject.getJSONObject(artifactId) : new JSONObject();
-            long phaseResult = artifactObject.has(phase) ? (long) artifactObject.get(phase) : 0;
 
-            phaseResult += time;
-
-            artifactObject.put(phase, phaseResult);
+            artifactObject.put(phase, artifactObject.has(phase) ? (long) artifactObject.get(phase) + time : time);
             projectObject.put(artifactId, artifactObject);
 
             // Phases section
 
-            phaseObject.put(phase, phaseObject.has(phase) ? (long) phaseObject.get(phase) + phaseResult : phaseResult);
+            phaseObject.put(phase, phaseObject.has(phase) ? (long) phaseObject.get(phase) + time : time);
 
             // Plugins section
 
