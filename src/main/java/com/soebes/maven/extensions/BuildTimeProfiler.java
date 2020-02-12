@@ -416,7 +416,7 @@ public class BuildTimeProfiler
 
             File dest = event.getProject().getProperties().containsKey("maven-buildtime-profiler-directory") ?
                 new File(event.getProject().getProperties().getProperty("maven-buildtime-profiler-directory"), filename) :
-                new File(event.getProject().getBasedir(), filename);
+                new File("target/", filename);
 
             try (FileWriter file = new FileWriter(dest))
             {
