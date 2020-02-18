@@ -518,17 +518,19 @@ public class BuildTimeProfiler
     {
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("discoveryTime", discoveryTimer.getTime());
+        jsonObject.put("discovery-time", discoveryTimer.getTime());
         jsonObject.put("build", mojoTimer.toJSON());
         jsonObject.put("goals", goalTimer.toJSON());
         jsonObject.put("install", installTimer.toJSON());
         jsonObject.put("download", downloadTimer.toJSON());
         jsonObject.put("deploy", deployTimer.toJSON());
-        jsonObject.put("metadataInstall", metadataInstallTimer.toJSON());
-        jsonObject.put("metadataDownload", metadataDownloadTimer.toJSON());
-        jsonObject.put("metadataDeployment", metadataDeploymentTimer.toJSON());
-        jsonObject.put("forkTime", forkTimer.getTime());
-        jsonObject.put("forkProject", forkProject.toJSON());
+        JSONObject metadata = new JSONObject();
+        metadata.put("install", metadataInstallTimer.toJSON());
+        metadata.put("download", metadataDownloadTimer.toJSON());
+        metadata.put("deployment", metadataDeploymentTimer.toJSON());
+        jsonObject.put("metadata", metadata);
+        jsonObject.put("fork-time", forkTimer.getTime());
+        jsonObject.put("fork-project", forkProject.toJSON());
 
         return jsonObject;
     }
