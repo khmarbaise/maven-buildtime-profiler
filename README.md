@@ -53,6 +53,8 @@ the destination folder of the `report.json` file:
 
 <small>Note that in this example we can also set the output mode adding `-Dmaven-buildtime-profiler=stdout`</small> to the maven command.
 
+Also, if somehow you don't want to export the profiling result you can set `<maven-buildtime-profiler-output>` to `none`.
+
 Here's an example of what the output will look like:
 
 ```
