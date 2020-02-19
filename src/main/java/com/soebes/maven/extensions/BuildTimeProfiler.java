@@ -396,41 +396,40 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        String output = event.getProject().getProperties().getProperty("maven-buildtime-profiler-output");
-        String filename = "";
-        String body = "";
+        String output = event.getProject().getProperties().containsKey("maven-buildtime-profiler-output") ?
+            event.getProject().getProperties().getProperty("maven-buildtime-profiler-output") :
+            "stdout";
+        String filename = null;
+        String body = null;
 
-        if (output != null)
-        {
             switch (output.toLowerCase())
             {
                 case "json":
                     body = toJSON().toString();
                     filename = "report.json";
                     break;
+                case "none":
+                    break;
                 case "stdout":
                 default:
                     report(event);
-                    return;
             }
 
-            File dest = event.getProject().getProperties().containsKey("maven-buildtime-profiler-directory") ?
-                new File(event.getProject().getProperties().getProperty("maven-buildtime-profiler-directory"), filename) :
-                new File("target/", filename);
-
-            try (FileWriter file = new FileWriter(dest))
+            if (filename != null && body != null)
             {
-                file.write(body);
-                return;
-            }
-            catch (IOException e)
-            {
-                LOGGER.error("Couldn't write to file at {}: {}", dest, e.getMessage());
-                return;
-            }
-        }
+                File dest = event.getProject().getProperties().containsKey("maven-buildtime-profiler-directory") ?
+                    new File(event.getProject().getProperties().getProperty("maven-buildtime-profiler-directory"), filename) :
+                    new File("target/", filename);
 
-        report(event);
+                try (FileWriter file = new FileWriter(dest))
+                {
+                    file.write(body);
+                }
+                catch (IOException e)
+                {
+                    LOGGER.warn("Couldn't write to file at {}: {}", dest, e.getMessage());
+                }
+            }
     }
 
     private void report(MavenExecutionResult event)
