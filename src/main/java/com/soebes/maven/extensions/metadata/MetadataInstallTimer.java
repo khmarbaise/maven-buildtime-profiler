@@ -21,7 +21,6 @@ package com.soebes.maven.extensions.metadata;
 
 import java.text.NumberFormat;
 import java.util.Map.Entry;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
