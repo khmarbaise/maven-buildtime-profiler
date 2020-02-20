@@ -396,8 +396,8 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        String output = event.getProject().getProperties().containsKey("maven-buildtime-profiler-output") ?
-            event.getProject().getProperties().getProperty("maven-buildtime-profiler-output") :
+        String output = event.getProject().getProperties().containsKey("maven-buildtime-profiler.output") ?
+            event.getProject().getProperties().getProperty("maven-buildtime-profiler.output") :
             "stdout";
         String filename = null;
         String body = null;
@@ -417,8 +417,8 @@ public class BuildTimeProfiler
 
             if (filename != null && body != null)
             {
-                File dest = event.getProject().getProperties().containsKey("maven-buildtime-profiler-directory") ?
-                    new File(event.getProject().getProperties().getProperty("maven-buildtime-profiler-directory"), filename) :
+                File dest = event.getProject().getProperties().containsKey("maven-buildtime-profiler.directory") ?
+                    new File(event.getProject().getProperties().getProperty("maven-buildtime-profiler.directory"), filename) :
                     new File("target/", filename);
 
                 try (FileWriter file = new FileWriter(dest))
