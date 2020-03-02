@@ -24,7 +24,7 @@ public class Execution
   public void setExecutionRequest(MavenExecutionRequest executionRequest)
   {
     this.execution = executionRequest;
-    initCommand();
+    // initCommand();
   }
 
   private void initCommand() {
@@ -35,15 +35,13 @@ public class Execution
       cmd.append(" ").append("-U");
     }
 
-    if (this.execution.isThreadConfigurationPresent())
-    {
-      cmd.append(" ").append("-T").append(this.execution.getThreadCount());
-    }
-
-    if (this.execution.isRecursive())
+    if (!this.execution.isRecursive())
     {
       cmd.append(" ").append("-N");
     }
+
+    this.execution.getActiveProfiles()
+        .forEach(profile -> cmd.append(" -P").append(profile));
 
     this.execution.getUserProperties()
         .keySet()
@@ -76,7 +74,7 @@ public class Execution
     execution.put("user-properties", userProperties);
     execution.put("selected-projects", selectedProjects);
     execution.put("active-profiles", profiles);
-    execution.put("command", this.command);
+    // execution.put("command", this.command);
 
     return execution;
   }
