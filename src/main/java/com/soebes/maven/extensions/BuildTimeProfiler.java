@@ -89,6 +89,8 @@ public class BuildTimeProfiler
 
     private final ProjectTimer forkProject;
 
+    private final Execution execution;
+
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
@@ -107,7 +109,7 @@ public class BuildTimeProfiler
         this.metadataInstallTimer = new MetadataInstallTimer();
         this.forkTimer = new ForkTimer();
         this.forkProject = new ProjectTimer();
-
+        this.execution = new Execution();
     }
 
     @Override
@@ -391,6 +393,7 @@ public class BuildTimeProfiler
         // event.getUserProperties().put( "revision", "1.2.3-SNAPSHOT" );
         // event.getSystemProperties().put( "revision", "1.2.3-SNAPSHOT" );
         // Can we do something more useful here?
+        this.execution.setExecutionRequest(event);
         LOGGER.debug( "MBTP: executionRequestEventHandler: {}", event.getExecutionListener() );
     }
 
@@ -530,6 +533,7 @@ public class BuildTimeProfiler
         jsonObject.put("metadata", metadata);
         jsonObject.put("fork-time", forkTimer.getTime());
         jsonObject.put("fork-project", forkProject.toJSON());
+        jsonObject.put("maven-execution", execution.toJSON());
 
         return jsonObject;
     }
