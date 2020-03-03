@@ -19,13 +19,14 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -33,21 +34,17 @@ import org.testng.annotations.Test;
 public class GoalTimerTest
 {
 
-    @Test( expectedExceptions = {
-        IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Unknown mojoId \\(execution-groupId:execution-artifactId:execution-version:execution-goal \\(Egon\\)\\)" )
+    @Test
     public void mojoStopShouldFailWithIllegalArgumentException()
     {
         GoalTimer t = new GoalTimer();
 
-        ExecutionEvent event = createEvent( "Anton" );
+        t.mojoStart(createEvent( "Anton" ));
 
-        t.mojoStart( event );
-
-        ExecutionEvent unknownEvent = createEvent( "Egon" );
-
-        t.mojoStop( unknownEvent );
-
-        // Intentionally no assertThat(..) cause we expect to get an IllegalArgumentException
+        assertThatIllegalArgumentException()
+          .isThrownBy(() -> t.mojoStop(createEvent( "Egon" )))
+          .withMessage("Unknown mojoId (execution-groupId:execution-artifactId:execution-version" +
+            ":execution-goal (Egon))");
     }
 
     private ExecutionEvent createEvent( String id )
