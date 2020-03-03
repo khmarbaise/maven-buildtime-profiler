@@ -13,8 +13,8 @@
   <name>Maven :: Build Time Profiler</name>
   <properties>
     <mavenVersion>3.1.1</mavenVersion>
-    <maven.compiler.target>1.7</maven.compiler.target>
-    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <smpp.component>maven-buildtime-profiler</smpp.component>
     <!--
       ! Make mvn site:stage working correctly in combination with scm-publish.
