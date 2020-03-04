@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.soebes.smpp</groupId>
     <artifactId>smpp-plugins</artifactId>
-    <version>4.0.1</version>
+    <version>4.1.2</version>
   </parent>
 
   <groupId>com.soebes.maven.extensions</groupId>
@@ -73,6 +73,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
+      <version>3.15.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -144,7 +145,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.1</version>
+          <version>0.8.5</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>

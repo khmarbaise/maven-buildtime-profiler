@@ -19,8 +19,7 @@ package com.soebes.maven.extensions.artifact;
  * under the License.
  */
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -152,8 +151,7 @@ public class AbstractArtifactTimerTest
         assertThat( timePlusSize.getSize() ).isEqualTo( 1000L );
     }
 
-    @Test( expectedExceptions = {
-        IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Unknown artifactId \\(groupId:artifactId:version:classifier:jar\\)" )
+    @Test
     public void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongArtifact()
     {
         Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
@@ -168,18 +166,15 @@ public class AbstractArtifactTimerTest
             new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
                                          EventType.ARTIFACT_DEPLOYED ).setArtifact( unKnownArtifact ).build();
 
-        aat.stop( buildUnknown );
-
-        // Intentionally no assertThat () cause we expect to get an IllegalArgumentException
+        assertThatIllegalArgumentException().isThrownBy(() -> aat.stop( buildUnknown )).withMessage("Unknown artifactId (groupId:artifactId:version:classifier:jar)");
     }
 
     @Test
     public void calculateMegabytesPerSecondsShouldReturnOneMegabytePerSecond()
-        throws InterruptedException
     {
         long timeInMilliseconds = 1000;
         long sizeInBytes = 1 * 1024 * 1024;
-        assertThat( aat.calculateMegabytesPerSeconds( timeInMilliseconds, sizeInBytes ) ).isEqualTo( 1.0,
+        assertThat( aat. calculateMegabytesPerSeconds( timeInMilliseconds, sizeInBytes ) ).isEqualTo( 1.0,
                                                                                                      offset( 0.0002 ) );
 
     }

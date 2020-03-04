@@ -1,6 +1,6 @@
 package com.soebes.maven.extensions;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,8 +26,7 @@ public class ProjectTimerTest
         assertThat( t.getTimeForProject( event.getProject() ) ).isGreaterThanOrEqualTo( 10L );
     }
 
-    @Test( expectedExceptions = {
-        IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Unknown projectId \\(Egon\\)" )
+    @Test
     public void projectStopShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
     {
         ProjectTimer t = new ProjectTimer();
@@ -38,22 +37,17 @@ public class ProjectTimerTest
 
         ExecutionEvent unknownEvent = createEvent( "Egon" );
 
-        t.projectStop( unknownEvent );
-
-        // Intentionally no assertThat(..) cause we expect to get an IllegalArgumentException
+        assertThatIllegalArgumentException().isThrownBy(() -> t.projectStop( unknownEvent )).withMessage("Unknown projectId (Egon)");
     }
 
-    @Test( expectedExceptions = {
-        IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Unknown projectId \\(Anton\\)" )
+    @Test
     public void getTimeForProjectShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
     {
         ProjectTimer t = new ProjectTimer();
 
         ExecutionEvent event = createEvent( "Anton" );
 
-        t.getTimeForProject( event.getProject() );
-
-        // Intentionally no assertThat(..) cause we expect to get an IllegalArgumentException
+        assertThatIllegalArgumentException().isThrownBy(() -> t.getTimeForProject( event.getProject() )).withMessage("Unknown projectId (Anton)");
     }
 
     private ExecutionEvent createEvent( String id )

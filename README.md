@@ -172,7 +172,7 @@ And much more important are things like the time for the deployment:
 [INFO] 1,114 ms  34,888,754 bytes. 29.868 MiB / s
 ```
 
-Prerequisites minimum for this is Maven 3.1.1+ and Java 1.7 as run time.
+Prerequisites minimum for this is Maven 3.1.1+ and Java 1.8 as run time.
 
 If you have ideas for improvements etc. just fill in issues in the tracking system.
 
