@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,5 +142,55 @@ class MojoTimer
         {
             LOGGER.info( "{} : {}", item.getKey().getId(), item.getValue().getElapsedTime() );
         }
+    }
+
+    public JSONObject toJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject projectObject = new JSONObject();
+        JSONObject phaseObject = new JSONObject();
+        JSONObject pluginsObject = new JSONObject();
+
+        long totalTime = 0;
+
+        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
+        {
+            String artifactId = item.getKey().getProject().getArtifactId();
+            String phase = item.getKey().getMojo().getPhase();
+            String plugin = item.getKey().getMojo().getFullId();
+            long time = item.getValue().getElapsedTime();
+
+            // Projects section
+
+            JSONObject artifactObject = projectObject.has(artifactId) ? projectObject.getJSONObject(artifactId) : new JSONObject();
+
+            artifactObject.put(phase, artifactObject.has(phase) ? (long) artifactObject.get(phase) + time : time);
+            projectObject.put(artifactId, artifactObject);
+
+            // Phases section
+
+            phaseObject.put(phase, phaseObject.has(phase) ? (long) phaseObject.get(phase) + time : time);
+
+            // Plugins section
+
+            if (!pluginsObject.has(phase))
+                pluginsObject.put(phase, new JSONObject());
+
+            long pluginResult = ((JSONObject) pluginsObject.get(phase)).has(plugin) ?
+                (long) ((JSONObject) pluginsObject.get(phase)).get(plugin) : 0;
+
+            pluginResult += time;
+
+            ((JSONObject) pluginsObject.get(phase)).put(plugin, pluginResult);
+
+            totalTime += time;
+        }
+
+        jsonObject.put("projects", projectObject);
+        jsonObject.put("phases", phaseObject);
+        jsonObject.put("plugins", pluginsObject);
+        jsonObject.put("time", totalTime);
+
+        return jsonObject;
     }
 }

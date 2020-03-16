@@ -52,4 +52,8 @@ class DiscoveryTimer
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 
+    public long getTime()
+    {
+        return this.time.getElapsedTime();
+    }
 }

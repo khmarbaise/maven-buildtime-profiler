@@ -6,6 +6,8 @@ target
 .project
 .classpath
 .settings
+# IDEA generated
+.idea
 # Release plugin
 release.properties
 # TestNG within Eclipse.

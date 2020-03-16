@@ -19,6 +19,9 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +40,7 @@ import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +89,8 @@ public class BuildTimeProfiler
 
     private final ProjectTimer forkProject;
 
+    private final Execution execution;
+
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
@@ -103,7 +109,7 @@ public class BuildTimeProfiler
         this.metadataInstallTimer = new MetadataInstallTimer();
         this.forkTimer = new ForkTimer();
         this.forkProject = new ProjectTimer();
-
+        this.execution = new Execution();
     }
 
     @Override
@@ -387,10 +393,50 @@ public class BuildTimeProfiler
         // event.getUserProperties().put( "revision", "1.2.3-SNAPSHOT" );
         // event.getSystemProperties().put( "revision", "1.2.3-SNAPSHOT" );
         // Can we do something more useful here?
+        this.execution.setExecutionRequest(event);
         LOGGER.debug( "MBTP: executionRequestEventHandler: {}", event.getExecutionListener() );
     }
 
     private void executionResultEventHandler( MavenExecutionResult event )
+    {
+        String OUTPUT_PROPERTY = "maven-buildtime-profiler.directory";
+        String output = System.getProperty(OUTPUT_PROPERTY, event.getProject().getProperties().containsKey(OUTPUT_PROPERTY)
+            ? event.getProject().getProperties().getProperty(OUTPUT_PROPERTY) : "stdout");
+        String filename = null;
+        String body = null;
+
+            switch (output.toLowerCase())
+            {
+                case "json":
+                    body = toJSON().toString();
+                    filename = "report.json";
+                    break;
+                case "none":
+                    break;
+                case "stdout":
+                default:
+                    report(event);
+            }
+
+            if (filename != null && body != null)
+            {
+                String DIRECTORY_PROPERTY = "maven-buildtime-profiler.directory";
+                String directory = System.getProperty(DIRECTORY_PROPERTY, event.getProject().getProperties().containsKey(DIRECTORY_PROPERTY)
+                    ? event.getProject().getProperties().getProperty(DIRECTORY_PROPERTY) : "target/");
+                File dest = new File(directory, filename);
+
+                try (FileWriter file = new FileWriter(dest))
+                {
+                    file.write(body);
+                }
+                catch (IOException e)
+                {
+                    LOGGER.warn("Couldn't write to file at {}: {}", dest, e.getMessage());
+                }
+            }
+    }
+
+    private void report(MavenExecutionResult event)
     {
         orderLifeCycleOnPreparedOrder( lifeCyclePhases );
 
@@ -445,7 +491,7 @@ public class BuildTimeProfiler
                 for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
                 {
                     LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
-                                 pluginInPhase.getKey().getMojo().getFullId() );
+                        pluginInPhase.getKey().getMojo().getFullId() );
                 }
 
             }
@@ -469,6 +515,28 @@ public class BuildTimeProfiler
 
         forkTimer.report();
         forkProject.report();
+    }
+
+    private JSONObject toJSON()
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("discovery-time", discoveryTimer.getTime());
+        jsonObject.put("build", mojoTimer.toJSON());
+        jsonObject.put("goals", goalTimer.toJSON());
+        jsonObject.put("install", installTimer.toJSON());
+        jsonObject.put("download", downloadTimer.toJSON());
+        jsonObject.put("deploy", deployTimer.toJSON());
+        JSONObject metadata = new JSONObject();
+        metadata.put("install", metadataInstallTimer.toJSON());
+        metadata.put("download", metadataDownloadTimer.toJSON());
+        metadata.put("deployment", metadataDeploymentTimer.toJSON());
+        jsonObject.put("metadata", metadata);
+        jsonObject.put("fork-time", forkTimer.getTime());
+        jsonObject.put("fork-project", forkProject.toJSON());
+        jsonObject.put("maven-execution", execution.toJSON());
+
+        return jsonObject;
     }
 
     private ProjectKey mavenProjectToProjectKey( MavenProject project )

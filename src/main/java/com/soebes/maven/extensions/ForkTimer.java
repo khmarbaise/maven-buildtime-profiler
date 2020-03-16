@@ -53,4 +53,7 @@ class ForkTimer
         LOGGER.info( "ForkTime: {}", this.time.getElapsedTime() );
     }
 
+    public long getTime() {
+        return this.time.getElapsedTime();
+    }
 }
