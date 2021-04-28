@@ -1,0 +1,15 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.soebes.smpp:smpp-plugins
+    versions:
+    - 5.3.2
+  - dependency-name: org.apache.maven:maven-core
+    versions:
+    - 3.6.3
