@@ -2,7 +2,7 @@
 
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/khmarbaise/maven-buildtime-profiler.svg?label=License)](http://www.apache.org/licenses/)
 [![Maven Central](https://img.shields.io/maven-central/v/com.soebes.maven.extensions/maven-buildtime-profiler.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.soebes.maven.extensions%22%20a%3A%22maven-buildtime-profiler%22)
-[![Build Status](https://travis-ci.org/khmarbaise/maven-buildtime-profiler.svg?branch=master)](https://travis-ci.org/khmarbaise/maven-buildtime-profiler)
+[![Build Status](https://cloud.drone.io/api/badges/khmarbaise/maven-buildtime-profiler/status.svg)](https://cloud.drone.io/khmarbaise/maven-buildtime-profiler)
 
 Often you have the problem that in large builds, you need to find
 where time is consumed.
