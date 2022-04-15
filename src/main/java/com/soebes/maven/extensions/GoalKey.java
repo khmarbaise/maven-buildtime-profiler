@@ -25,9 +25,10 @@ package com.soebes.maven.extensions;
 final class GoalKey
     extends ProjectKey
 {
-    final private String goal;
 
-    final private String executionId;
+    private final String goal;
+
+    private final String executionId;
 
     public GoalKey( final String groupId, final String artifactId, final String version, final String goal, final String executionId )
     {

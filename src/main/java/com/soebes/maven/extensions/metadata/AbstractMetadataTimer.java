@@ -34,7 +34,7 @@ public abstract class AbstractMetadataTimer
 {
     private Map<String, TimePlusSize> timerEvents;
 
-    public AbstractMetadataTimer()
+    protected AbstractMetadataTimer()
     {
         this.timerEvents = new ConcurrentHashMap<>();
     }

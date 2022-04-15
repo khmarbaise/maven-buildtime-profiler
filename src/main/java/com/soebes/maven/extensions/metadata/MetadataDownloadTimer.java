@@ -33,7 +33,7 @@ import com.soebes.maven.extensions.TimePlusSize;
 public class MetadataDownloadTimer
     extends AbstractMetadataTimer
 {
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataDownloadTimer.class);
 
     public MetadataDownloadTimer()
     {

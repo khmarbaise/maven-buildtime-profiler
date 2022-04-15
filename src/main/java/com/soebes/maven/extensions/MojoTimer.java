@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 class MojoTimer
 {
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+    private static final Logger LOGGER = LoggerFactory.getLogger(MojoTimer.class);
 
     private Map<ProjectMojo, SystemTime> timerEvents;
 
@@ -95,7 +95,7 @@ class MojoTimer
 
     public Map<ProjectMojo, SystemTime> getPluginsInPhase( String phase )
     {
-        Map<ProjectMojo, SystemTime> result = new LinkedHashMap<ProjectMojo, SystemTime>();
+        Map<ProjectMojo, SystemTime> result = new LinkedHashMap<>();
 
         for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
         {

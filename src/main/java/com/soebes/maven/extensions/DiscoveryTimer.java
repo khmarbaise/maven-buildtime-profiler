@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 class DiscoveryTimer
 {
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTimer.class);
 
     private SystemTime time;
 

@@ -33,7 +33,7 @@ import com.soebes.maven.extensions.TimePlusSize;
 public class InstallTimer
     extends AbstractArtifactTimer
 {
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstallTimer.class);
 
     public InstallTimer()
     {

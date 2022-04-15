@@ -55,7 +55,7 @@ import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
 public class BuildTimeProfiler
     extends LifeCycleOrdering
 {
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+    private static final Logger LOGGER = LoggerFactory.getLogger(BuildTimeProfiler.class);
 
     final List<String> lifeCyclePhases;
 
@@ -115,10 +115,10 @@ public class BuildTimeProfiler
 
         // Is this always in the context? Based on Maven Core yes.
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
-        LOGGER.debug( "MBTP: workingDirectory: " + workingDirectory );
+        LOGGER.debug( "MBTP: workingDirectory: {}", workingDirectory );
 
         String multiModuleProjectDirectory = (String) context.getData().get( "multiModuleProjectDirectory" );
-        LOGGER.debug( "MBTP: multiModuleProjectDirectory: " + multiModuleProjectDirectory );
+        LOGGER.debug( "MBTP: multiModuleProjectDirectory: {}", multiModuleProjectDirectory );
 
         // Properties systemProperties = (Properties) context.getData().get( "systemProperties" );
         // for ( String propName : systemProperties.stringPropertyNames() )

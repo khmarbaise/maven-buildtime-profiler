@@ -1,33 +1,39 @@
 package com.soebes.maven.extensions;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.project.MavenProject;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-public class ProjectTimerTest
+class ProjectTimerTest
 {
-    
+
     @Test
-    public void shouldMeasureTheTime()
-        throws InterruptedException
-    {
+    void shouldMeasureTheTime() {
         ProjectTimer t = new ProjectTimer();
 
         ExecutionEvent event = createEvent( "Anton" );
 
         t.projectStart( event );
-        Thread.sleep( 10L );
+
+        await()
+            .pollInterval(Duration.ofMillis(10))
+            .atLeast(Duration.ofMillis(10)).until(() -> true);
+
         t.projectStop( event );
 
         assertThat( t.getTimeForProject( event.getProject() ) ).isGreaterThanOrEqualTo( 10L );
     }
 
     @Test
-    public void projectStopShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
+    void projectStopShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
     {
         ProjectTimer t = new ProjectTimer();
 
@@ -41,7 +47,7 @@ public class ProjectTimerTest
     }
 
     @Test
-    public void getTimeForProjectShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
+    void getTimeForProjectShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
     {
         ProjectTimer t = new ProjectTimer();
 

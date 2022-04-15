@@ -19,27 +19,30 @@ package com.soebes.maven.extensions.artifact;
  * under the License.
  */
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.offset;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.soebes.maven.extensions.TimePlusSize;
 import java.io.File;
-
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.soebes.maven.extensions.TimePlusSize;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public class AbstractArtifactTimerTest
+class AbstractArtifactTimerTest
 {
-    class XAbstractArtifactTimer
+    static class XAbstractArtifactTimer
         extends AbstractArtifactTimer
     {
         public XAbstractArtifactTimer()
@@ -50,8 +53,8 @@ public class AbstractArtifactTimerTest
 
     private AbstractArtifactTimer aat;
 
-    @BeforeMethod
-    public void beforeMethod()
+    @BeforeEach
+    void beforeMethod()
     {
         aat = new XAbstractArtifactTimer();
     }
@@ -84,7 +87,7 @@ public class AbstractArtifactTimerTest
     }
 
     @Test
-    public void shouldResultWithoutClassifier()
+    void shouldResultWithoutClassifier()
     {
         Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
 
@@ -94,7 +97,7 @@ public class AbstractArtifactTimerTest
     }
 
     @Test
-    public void shouldResultWitClassifier()
+    void shouldResultWitClassifier()
     {
         Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "classifier" );
 
@@ -105,9 +108,7 @@ public class AbstractArtifactTimerTest
     }
 
     @Test
-    public void shouldResultInSingleEntryInTimerEvents()
-        throws InterruptedException
-    {
+    void shouldResultInSingleEntryInTimerEvents() {
         Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" ); // as per javadoc, extension is never null
 
         RepositoryEvent build =
@@ -115,7 +116,9 @@ public class AbstractArtifactTimerTest
                                          EventType.ARTIFACT_DEPLOYED ).setArtifact( artifact ).build();
         aat.start( build );
 
-        Thread.sleep( 10L );
+        await()
+            .pollInterval(Duration.ofMillis(10))
+            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
 
         aat.stop( build );
 
@@ -128,7 +131,7 @@ public class AbstractArtifactTimerTest
     }
 
     @Test
-    public void shouldResultInSingleEntryInTimerEventsWithLengthEntry()
+    void shouldResultInSingleEntryInTimerEventsWithLengthEntry()
         throws InterruptedException
     {
         Artifact artifact = createMockArtifactWithLength( "groupId", "artifactId", "version", "jar", "" );
@@ -138,7 +141,9 @@ public class AbstractArtifactTimerTest
                                          EventType.ARTIFACT_DEPLOYED ).setArtifact( artifact ).build();
         aat.start( build );
 
-        Thread.sleep( 10L );
+        await()
+            .pollInterval(Duration.ofMillis(10))
+            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
 
         aat.stop( build );
 
@@ -152,7 +157,7 @@ public class AbstractArtifactTimerTest
     }
 
     @Test
-    public void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongArtifact()
+    void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongArtifact()
     {
         Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
         Artifact unKnownArtifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "classifier" );
@@ -170,7 +175,7 @@ public class AbstractArtifactTimerTest
     }
 
     @Test
-    public void calculateMegabytesPerSecondsShouldReturnOneMegabytePerSecond()
+    void calculateMegabytesPerSecondsShouldReturnOneMegabytePerSecond()
     {
         long timeInMilliseconds = 1000;
         long sizeInBytes = 1 * 1024 * 1024;

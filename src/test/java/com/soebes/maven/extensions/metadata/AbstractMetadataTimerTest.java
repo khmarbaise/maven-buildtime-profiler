@@ -1,24 +1,28 @@
 package com.soebes.maven.extensions.metadata;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.metadata.Metadata.Nature;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import com.soebes.maven.extensions.TimePlusSize;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class AbstractMetadataTimerTest
+class AbstractMetadataTimerTest
 {
-    class XAbstractMetadataTimer
+    static class XAbstractMetadataTimer
         extends AbstractMetadataTimer
     {
         public XAbstractMetadataTimer()
@@ -29,7 +33,7 @@ public class AbstractMetadataTimerTest
 
     private AbstractMetadataTimer aat;
 
-    @BeforeMethod
+    @BeforeEach
     public void beforeMethod()
     {
         aat = new XAbstractMetadataTimer();
@@ -63,7 +67,7 @@ public class AbstractMetadataTimerTest
     }
 
     @Test
-    public void shouldResultWithoutClassifier()
+    void shouldResultWithoutClassifier()
     {
         Metadata artifact = createMockMetadata( "groupId", "artifactId", "version", "type", Nature.RELEASE );
 
@@ -73,7 +77,7 @@ public class AbstractMetadataTimerTest
     }
 
     @Test
-    public void shouldResultWitClassifier()
+    void shouldResultWitClassifier()
     {
         Metadata artifact = createMockMetadata( "groupId", "artifactId", "version", "type", Nature.RELEASE );
 
@@ -84,9 +88,7 @@ public class AbstractMetadataTimerTest
     }
 
     @Test
-    public void shouldResultInSingleEntryInTimerEvents()
-        throws InterruptedException
-    {
+    void shouldResultInSingleEntryInTimerEvents() {
         Metadata artifact = createMockMetadata( "groupId", "artifactId", "version", "jar", null );
 
         RepositoryEvent build =
@@ -94,7 +96,9 @@ public class AbstractMetadataTimerTest
                                          EventType.ARTIFACT_DEPLOYED ).setMetadata( artifact ).build();
         aat.start( build );
 
-        Thread.sleep( 10L );
+        await()
+            .pollInterval(Duration.ofMillis(10))
+            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
 
         aat.stop( build );
 
@@ -107,7 +111,7 @@ public class AbstractMetadataTimerTest
     }
 
     @Test
-    public void shouldResultInSingleEntryInTimerEventsWithLengthEntry()
+    void shouldResultInSingleEntryInTimerEventsWithLengthEntry()
         throws InterruptedException
     {
         Metadata metadata = createMockMetadataWithLength( "groupId", "artifactId", "version", "type", Nature.RELEASE );
@@ -117,7 +121,9 @@ public class AbstractMetadataTimerTest
                                          EventType.ARTIFACT_DEPLOYED ).setMetadata( metadata ).build();
         aat.start( build );
 
-        Thread.sleep( 10L );
+        await()
+            .pollInterval(Duration.ofMillis(10))
+            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
 
         aat.stop( build );
 
@@ -130,9 +136,8 @@ public class AbstractMetadataTimerTest
         assertThat( timePlusSize.getSize() ).isEqualTo( 1000L );
     }
 
-    @Test( expectedExceptions = {
-        IllegalArgumentException.class }, expectedExceptionsMessageRegExp = "Unknown metadataId \\(groupId:artifactId:version:xtype:RELEASE\\)" )
-    public void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongMetadata()
+    @Test
+    void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongMetadata()
     {
         Metadata metadata = createMockMetadata( "groupId", "artifactId", "version", "type", Nature.RELEASE );
         Metadata unKnownMetadata = createMockMetadata( "groupId", "artifactId", "version", "xtype", Nature.RELEASE );
@@ -146,9 +151,9 @@ public class AbstractMetadataTimerTest
             new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
                                          EventType.ARTIFACT_DEPLOYED ).setMetadata( unKnownMetadata ).build();
 
-        aat.stop( buildUnknown );
+        assertThatIllegalArgumentException().isThrownBy(() -> aat.stop(buildUnknown))
+            .withMessage("Unknown metadataId (groupId:artifactId:version:xtype:RELEASE)");
 
-        // Intentionally no assertThat () cause we expect to get an IllegalArgumentException
     }
 
 }

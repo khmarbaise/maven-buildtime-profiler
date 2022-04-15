@@ -20,22 +20,25 @@ package com.soebes.maven.extensions;
  */
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
-import org.testng.annotations.Test;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public class SystemTimeTest
+class SystemTimeTest
 {
 
     @Test
-    public void shouldResultInMeasuredTime()
-        throws InterruptedException
-    {
+    void shouldResultInMeasuredTime() {
         SystemTime s = new SystemTime();
         s.start();
-        Thread.sleep( 10L );
+        await()
+            .pollInterval(Duration.ofMillis(10))
+            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
         s.stop();
 
         assertThat( s.getElapsedTime() ).isGreaterThanOrEqualTo( 10L );

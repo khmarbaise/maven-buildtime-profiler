@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.soebes.smpp</groupId>
     <artifactId>smpp-plugins</artifactId>
-    <version>4.1.2</version>
+    <version>5.3.8</version>
   </parent>
 
   <groupId>com.soebes.maven.extensions</groupId>
@@ -13,8 +13,7 @@
   <name>Maven :: Build Time Profiler</name>
   <properties>
     <mavenVersion>3.1.1</mavenVersion>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.release>8</maven.compiler.release>
     <smpp.component>maven-buildtime-profiler</smpp.component>
     <!--
       ! Make mvn site:stage working correctly in combination with scm-publish.
@@ -33,6 +32,40 @@
       <url>scm:git:ssh://git@github.com/khmarbaise/maven-buildtime-profiler.git</url>
     </site>
   </distributionManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.8.2</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.22.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>4.4.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>nl.jqno.equalsverifier</groupId>
+        <artifactId>equalsverifier</artifactId>
+        <version>3.10</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>4.1.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>javax.inject</groupId>
@@ -60,15 +93,15 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.15.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -79,7 +112,11 @@
     <dependency>
       <groupId>nl.jqno.equalsverifier</groupId>
       <artifactId>equalsverifier</artifactId>
-      <version>3.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -111,13 +148,8 @@
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>3.0.4</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.10.0</version>
       </plugin>
     </plugins>
   </reporting>
@@ -130,17 +162,17 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>3.0.0-M6</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>3.0.0-M6</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.5</version>
+          <version>0.8.8</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -166,6 +198,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>templating-maven-plugin</artifactId>
+        <version>1.0.0</version>
         <executions>
           <execution>
             <goals>
@@ -181,6 +214,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>3.3.0</version>
         <configuration>
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <shadedClassifierName>mvn311</shadedClassifierName>
@@ -191,6 +225,16 @@
             <goals>
               <goal>shade</goal>
             </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -224,6 +268,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>3.2.2</version>
             <configuration>
               <addTestClassPath>true</addTestClassPath>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -240,9 +285,9 @@
               </pomIncludes>
               <preBuildHookScript>setup</preBuildHookScript>
               <postBuildHookScript>verify</postBuildHookScript>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <!-- Currently working with more than one thread does not work, cause it is not guaranteed that the setup-config project
-                is build at first. see also http://jira.codehaus.org/browse/MINVOKER-147 -->
+<!--              <settingsFile>src/it/settings.xml</settingsFile>-->
+<!--              &lt;!&ndash; Currently working with more than one thread does not work, cause it is not guaranteed that the setup-config project-->
+<!--                is build at first. see also http://jira.codehaus.org/browse/MINVOKER-147 &ndash;&gt;-->
               <parallelThreads>1</parallelThreads>
               <filterProperties>
                 <repository.proxy.url>${repository.proxy.url}</repository.proxy.url>
@@ -260,13 +305,10 @@
                     <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:3.0.0:jar</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.6:jar</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.22.0:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.surefire:surefire-testng:2.22.0:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.surefire:surefire-testng-utils:2.22.0:jar</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-failsafe-plugin:2.22.0:jar</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:3.0.2:jar</extraArtifact>
                     <extraArtifact>org.apache.maven.plugins:maven-assembly-plugin:2.6:jar</extraArtifact>
                     <extraArtifact>com.soebes.smpp:smpp:1.2.0:pom</extraArtifact>
-                    <extraArtifact>org.testng:testng:6.8.8:jar</extraArtifact>
                     <extraArtifact>com.beust:jcommander:1.35:jar</extraArtifact>
                     <extraArtifact>org.assertj:assertj-core:2.1.0:jar</extraArtifact>
                   </extraArtifacts>

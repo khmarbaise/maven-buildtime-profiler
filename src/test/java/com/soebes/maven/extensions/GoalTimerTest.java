@@ -22,7 +22,7 @@ package com.soebes.maven.extensions;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
@@ -31,11 +31,11 @@ import static org.mockito.Mockito.when;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public class GoalTimerTest
+class GoalTimerTest
 {
 
     @Test
-    public void mojoStopShouldFailWithIllegalArgumentException()
+    void mojoStopShouldFailWithIllegalArgumentException()
     {
         GoalTimer t = new GoalTimer();
 

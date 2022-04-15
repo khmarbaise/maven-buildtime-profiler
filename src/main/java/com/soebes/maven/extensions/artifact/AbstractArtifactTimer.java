@@ -19,26 +19,21 @@ package com.soebes.maven.extensions.artifact;
  * under the License.
  */
 
+import com.soebes.maven.extensions.TimePlusSize;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.artifact.Artifact;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.soebes.maven.extensions.TimePlusSize;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public abstract class AbstractArtifactTimer
 {
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
     private Map<String, TimePlusSize> timerEvents;
 
-    public AbstractArtifactTimer()
+    protected AbstractArtifactTimer()
     {
         this.timerEvents = new ConcurrentHashMap<>();
     }
@@ -90,12 +85,12 @@ public abstract class AbstractArtifactTimer
         getTimerEvents().get( artifactId ).setSize( size );
     }
 
-    private final double MiB = 1024 * 1024;
+    private static final double MIBI_BYTES = 1024d * 1024d;
 
     protected double calculateMegabytesPerSeconds( long timeInMilliseconds, long sizeInBytes )
     {
         double dividerTime = ( timeInMilliseconds / 1000.0 );
-        return (double) sizeInBytes / dividerTime / MiB;
+        return sizeInBytes / dividerTime / MIBI_BYTES;
     }
 
 }

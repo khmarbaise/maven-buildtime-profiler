@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: linux-pipeline-jdk8
+name: linux-pipeline-jdk11
 type: docker
 
 image_pull_secrets:
@@ -32,7 +32,7 @@ steps:
 
   - name: mavenjdk8
     pull: always
-    image: docker.io/maven:3.8.2-openjdk-8-slim
+    image: docker.io/maven:3.8.4-openjdk-11-slim
     volumes:
       - name: jdk8m2cache
         path: /drone/src/.repo

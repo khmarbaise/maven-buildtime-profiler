@@ -1,13 +1,12 @@
 package com.soebes.maven.extensions;
 
-import org.testng.annotations.Test;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
-public class ProjectGoalTest
+class ProjectGoalTest
 {
     @Test
-    public void checkEqualsAndHashCodeContract()
+    void checkEqualsAndHashCodeContract()
     {
         EqualsVerifier.forClass( ProjectGoal.class ).verify();
     }
