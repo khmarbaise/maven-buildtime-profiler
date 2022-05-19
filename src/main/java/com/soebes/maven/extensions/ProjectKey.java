@@ -19,6 +19,8 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
+
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
@@ -29,6 +31,10 @@ class ProjectKey
     private final String artifactId;
 
     private final String version;
+
+    public static ProjectKey fromMavenProject(MavenProject project) {
+        return new ProjectKey(project.getGroupId(), project.getArtifactId(), project.getVersion());
+    }
 
     public ProjectKey( final String groupId, final String artifactId, final String version )
     {

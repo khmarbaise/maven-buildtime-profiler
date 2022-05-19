@@ -19,6 +19,10 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
+
+import static com.soebes.maven.extensions.ProjectKey.fromMavenProject;
+
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
@@ -26,12 +30,15 @@ class ProjectMojo
 {
     private ProjectKey project;
 
+    private String projectName;
+
     private MojoKey mojo;
 
-    public ProjectMojo( ProjectKey project, MojoKey mojo )
+    public ProjectMojo( MavenProject project, MojoKey mojo )
     {
         super();
-        this.project = project;
+        this.project = fromMavenProject( project );
+        this.projectName = project.getName();
         this.mojo = mojo;
     }
 
@@ -65,12 +72,14 @@ class ProjectMojo
         return result;
     }
 
-    public String getId()
+    public String getLifecycleId()
     {
-        String s1 = getMojo().getGroupId() + ":" + getMojo().getArtifactId() + ":" + getMojo().getVersion() + ":"
-            + getMojo().getGoal() + " (" + getMojo().getExecutionId() + ":" + getMojo().getPhase() + ")";
-        String s2 = getProject().getGroupId() + ":" + getProject().getArtifactId() + ":" + getProject().getVersion();
-        return s1 + " @ " + s2;
+        return projectName + "@" + mojo.getFullId();
+    }
+
+    public String getFullId()
+    {
+        return mojo.getFullIdWithPhase() + " @ " + project.getId();
     }
 
     @Override

@@ -19,6 +19,8 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import org.apache.maven.plugin.MojoExecution;
+
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
@@ -30,6 +32,11 @@ class MojoKey
     private String executionId;
 
     private String phase;
+
+    public static MojoKey fromMojo(MojoExecution mojo) {
+        return new MojoKey( mojo.getGroupId(), mojo.getArtifactId(), mojo.getVersion(), mojo.getGoal(),
+                            mojo.getExecutionId(), mojo.getLifecyclePhase() );
+    }
 
     public MojoKey( String groupId, String artifactId, String version, String goal, String executionId,
                     String lifeCyclePhase )
@@ -73,6 +80,11 @@ class MojoKey
     public String getFullId()
     {
         return super.getId() + ":" + getGoal() + " (" + getExecutionId() + ")";
+    }
+
+    public String getFullIdWithPhase()
+    {
+        return super.getId() + ":" + getGoal() + " (" + getExecutionId() + ":" + getPhase() + ")";
     }
 
     @Override
