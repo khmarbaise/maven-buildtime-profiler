@@ -19,12 +19,12 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -38,7 +38,7 @@ class SystemTimeTest
         s.start();
         await()
             .pollInterval(Duration.ofMillis(10))
-            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
+            .atLeast(Duration.ofMillis(10)).until(() -> true);
         s.stop();
 
         assertThat( s.getElapsedTime() ).isGreaterThanOrEqualTo( 10L );

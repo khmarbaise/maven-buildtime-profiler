@@ -19,23 +19,23 @@ package com.soebes.maven.extensions.artifact;
  * under the License.
  */
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.offset;
-import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.soebes.maven.extensions.TimePlusSize;
-import java.io.File;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryEvent.EventType;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.time.Duration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.offset;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -118,7 +118,7 @@ class AbstractArtifactTimerTest
 
         await()
             .pollInterval(Duration.ofMillis(10))
-            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
+            .atLeast(Duration.ofMillis(10)).until(() -> true);
 
         aat.stop( build );
 
@@ -143,7 +143,7 @@ class AbstractArtifactTimerTest
 
         await()
             .pollInterval(Duration.ofMillis(10))
-            .atLeast(10L, TimeUnit.MILLISECONDS).until(() -> true);
+            .atLeast(Duration.ofMillis(10)).until(() -> true);
 
         aat.stop( build );
 
