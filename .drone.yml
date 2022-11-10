@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: linux-pipeline-jdk11
+name: linux-pipeline
 type: docker
 
 image_pull_secrets:
@@ -12,10 +12,10 @@ platform:
 
 steps:
   - name: restore
-    image: meltwater/drone-cache:v1.2.1
+    image: meltwater/drone-cache:v1.4.0
     pull: always
     volumes:
-      - name: jdk8m2cache
+      - name: m2cache
         path: /drone/src/.repo
     settings:
       cache_key: "{{ .Repo.Owner }}_{{ .Repo.Name }}_{{ .Commit.Branch }}_{{ checksum \"pom.xml\" }}"
@@ -32,17 +32,17 @@ steps:
 
   - name: mavenjdk8
     pull: always
-    image: docker.io/maven:3.8.4-openjdk-11-slim
+    image: docker.io/maven:3.8.6-openjdk-11-slim
     volumes:
-      - name: jdk8m2cache
+      - name: m2cache
         path: /drone/src/.repo
     commands:
       - mvn -Dmaven.repo.local=/drone/src/.repo -Prun-its -V --no-transfer-progress clean verify --fail-at-end --batch-mode
   - name: rebuild
-    image: meltwater/drone-cache:v1.2.1
+    image: meltwater/drone-cache:v1.4.0
     pull: always
     volumes:
-      - name: jdk8m2cache
+      - name: m2cache
         path: /drone/src/.repo
     settings:
       cache_key: "{{ .Repo.Owner }}_{{ .Repo.Name }}_{{ .Commit.Branch }}_{{ checksum \"pom.xml\" }}"
@@ -59,5 +59,5 @@ steps:
       when:
         event: push
 volumes:
-  - name: jdk8m2cache
+  - name: m2cache
     temp: { }
