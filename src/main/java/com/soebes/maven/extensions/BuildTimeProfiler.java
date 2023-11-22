@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -47,6 +49,8 @@ import com.soebes.maven.extensions.metadata.MetadataDeploymentTimer;
 import com.soebes.maven.extensions.metadata.MetadataDownloadTimer;
 import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
 
+import static com.soebes.maven.extensions.ProjectKey.fromMavenProject;
+
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
@@ -56,6 +60,8 @@ public class BuildTimeProfiler
     extends LifeCycleOrdering
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BuildTimeProfiler.class);
+
+    private static final String DIVIDER = "------------------------------------------------------------------------";
 
     final List<String> lifeCyclePhases;
 
@@ -397,59 +403,21 @@ public class BuildTimeProfiler
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 
         LOGGER.info( "--             Maven Build Time Profiler Summary                      --" );
-        LOGGER.info( "------------------------------------------------------------------------" );
+        LOGGER.info(DIVIDER);
 
         discoveryTimer.report();
 
         if ( mojoTimer.hasEvents() )
         {
-            LOGGER.info( "Project Build Time (reactor order):" );
-            LOGGER.info( "" );
-            for ( MavenProject mavenProject : event.getTopologicallySortedProjects() )
-            {
-                LOGGER.info( "{}:", mavenProject.getName() );
+            logProjects(event);
+            LOGGER.info(DIVIDER);
 
-                for ( String phase : lifeCyclePhases )
-                {
-                    ProjectKey projectKey = mavenProjectToProjectKey( mavenProject );
-
-                    if ( !mojoTimer.hasTimeForProjectAndPhase( projectKey, phase ) )
-                    {
-                        continue;
-                    }
-
-                    long timeForPhaseAndProjectInMillis =
-                        mojoTimer.getTimeForProjectAndPhaseInMillis( projectKey, phase );
-                    LOGGER.info( "    {} ms : {}", String.format( "%8d", timeForPhaseAndProjectInMillis ), phase );
-
-                }
-
-            }
-            LOGGER.info( "------------------------------------------------------------------------" );
-            LOGGER.info( "Lifecycle Phase summary:" );
-            LOGGER.info( "" );
-            for ( String phase : lifeCyclePhases )
-            {
-                long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
-                LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase );
-            }
+            logPhaseSummary();
+            LOGGER.info(DIVIDER);
 
             // List all plugins per phase
-            LOGGER.info( "------------------------------------------------------------------------" );
-            LOGGER.info( "Plugins in lifecycle Phases:" );
-            LOGGER.info( "" );
-            for ( String phase : lifeCyclePhases )
-            {
-                LOGGER.info( "{}:", phase );
-                Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
-                for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
-                {
-                    LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
-                                 pluginInPhase.getKey().getMojo().getFullId() );
-                }
-
-            }
-            LOGGER.info( "------------------------------------------------------------------------" );
+            logDetailedPhaseExecutions();
+            LOGGER.info(DIVIDER);
         }
 
         if ( goalTimer.hasEvents() )
@@ -457,7 +425,7 @@ public class BuildTimeProfiler
             LOGGER.info( "Plugins directly called via goals:" );
             LOGGER.info( "" );
             goalTimer.report();
-            LOGGER.info( "------------------------------------------------------------------------" );
+            LOGGER.info(DIVIDER);
         }
 
         installTimer.report();
@@ -471,9 +439,59 @@ public class BuildTimeProfiler
         forkProject.report();
     }
 
-    private ProjectKey mavenProjectToProjectKey( MavenProject project )
+
+    private void logProjects(MavenExecutionResult event)
     {
-        return new ProjectKey( project.getGroupId(), project.getArtifactId(), project.getVersion() );
+        LOGGER.info( "Project Build Time (reactor order):" );
+        LOGGER.info( "" );
+        for ( MavenProject mavenProject : event.getTopologicallySortedProjects() )
+        {
+            LOGGER.info( "{}:", mavenProject.getName() );
+
+            for ( String phase : lifeCyclePhases )
+            {
+                ProjectKey projectKey = fromMavenProject( mavenProject );
+
+                if ( !mojoTimer.hasTimeForProjectAndPhase( projectKey, phase ) )
+                {
+                    continue;
+                }
+
+                logTime( mojoTimer.getTimeForProjectAndPhaseInMillis( projectKey, phase ), phase );
+            }
+
+        }
+    }
+
+    private void logPhaseSummary()
+    {
+        LOGGER.info( "Lifecycle Phase summary:" );
+        LOGGER.info( "" );
+        for ( String phase : lifeCyclePhases )
+        {
+            logTime( mojoTimer.getTimeForPhaseInMillis( phase ), phase );
+        }
+    }
+
+    private void logDetailedPhaseExecutions()
+    {
+        LOGGER.info( "Plugins in lifecycle Phases:" );
+        LOGGER.info( "" );
+        for ( String phase : lifeCyclePhases )
+        {
+            LOGGER.info( "{}:", phase );
+            Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
+            for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
+            {
+                logTime( pluginInPhase.getValue().getElapsedTime(), pluginInPhase.getKey().getLifecycleId() );
+            }
+
+        }
+    }
+
+    private void logTime(long millis, String label)
+    {
+        LOGGER.info( "{} ms : {}", String.format( "%8d", millis ), label );
     }
 
     private void collectAllLifeCylcePhases( String phase )
