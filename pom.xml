@@ -3,16 +3,16 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.soebes.smpp</groupId>
-    <artifactId>smpp-plugins</artifactId>
-    <version>6.0.3</version>
+    <artifactId>smpp</artifactId>
+    <version>7.0.1</version>
   </parent>
 
   <groupId>com.soebes.maven.extensions</groupId>
   <artifactId>maven-buildtime-profiler</artifactId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <name>Maven :: Build Time Profiler</name>
   <properties>
-    <mavenVersion>3.1.1</mavenVersion>
+    <mavenVersion>3.6.3</mavenVersion>
     <maven.compiler.release>8</maven.compiler.release>
     <smpp.component>maven-buildtime-profiler</smpp.component>
     <!--
@@ -33,7 +33,26 @@
     </site>
   </distributionManagement>
   <dependencyManagement>
+
     <dependencies>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${mavenVersion}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${mavenVersion}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>3.15.1</version>
+        <scope>provided</scope>
+      </dependency>
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -68,30 +87,16 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <version>1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>${mavenVersion}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-annotations</artifactId>
-      <!--
-        ! Overwrite the scope from parent, cause
-        ! we use LifeCyclePhases from this package.
-      -->
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.maven</groupId>
-          <artifactId>maven-artifact</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -125,7 +130,7 @@
       <version>1.7.5</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -147,9 +152,22 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.15.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>helpmojo</goal>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
-        <version>1.1</version>
+        <version>0.3.5</version>
         <executions>
           <execution>
             <id>generate-index</id>
@@ -170,37 +188,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--
-        ! Create extension for Maven version less than 3.3.1
-        ! works for Maven 3.1.1 till 3.2.5
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <configuration>
-          <shadedArtifactAttached>true</shadedArtifactAttached>
-          <shadedClassifierName>mvn311</shadedClassifierName>
-          <createDependencyReducedPom>false</createDependencyReducedPom>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <filters>
-                <filter>
-                  <artifact>*:*</artifact>
-                  <excludes>
-                    <exclude>META-INF/MANIFEST.MF</exclude>
-                  </excludes>
-                </filter>
-              </filters>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
   </build>
 
@@ -210,27 +197,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <configuration>
-              <debug>false</debug>
-              <verbose>true</verbose>
-              <stacktrace>true</stacktrace>
-              <defaultScriptExtension>.groovy</defaultScriptExtension>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>3.2.2</version>
+            <version>3.9.0</version>
             <configuration>
               <addTestClassPath>true</addTestClassPath>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -247,9 +216,9 @@
               </pomIncludes>
               <preBuildHookScript>setup</preBuildHookScript>
               <postBuildHookScript>verify</postBuildHookScript>
-<!--              <settingsFile>src/it/settings.xml</settingsFile>-->
-<!--              &lt;!&ndash; Currently working with more than one thread does not work, cause it is not guaranteed that the setup-config project-->
-<!--                is build at first. see also http://jira.codehaus.org/browse/MINVOKER-147 &ndash;&gt;-->
+              <!--              <settingsFile>src/it/settings.xml</settingsFile>-->
+              <!--              &lt;!&ndash; Currently working with more than one thread does not work, cause it is not guaranteed that the setup-config project-->
+              <!--                is build at first. see also http://jira.codehaus.org/browse/MINVOKER-147 &ndash;&gt;-->
               <parallelThreads>1</parallelThreads>
               <filterProperties>
                 <repository.proxy.url>${repository.proxy.url}</repository.proxy.url>

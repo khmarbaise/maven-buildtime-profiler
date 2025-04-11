@@ -131,9 +131,7 @@ class AbstractArtifactTimerTest
     }
 
     @Test
-    void shouldResultInSingleEntryInTimerEventsWithLengthEntry()
-        throws InterruptedException
-    {
+    void shouldResultInSingleEntryInTimerEventsWithLengthEntry() {
         Artifact artifact = createMockArtifactWithLength( "groupId", "artifactId", "version", "jar", "" );
 
         RepositoryEvent build =

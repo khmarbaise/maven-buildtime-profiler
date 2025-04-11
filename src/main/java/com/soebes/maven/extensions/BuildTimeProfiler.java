@@ -19,33 +19,29 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.apache.maven.execution.ExecutionEvent;
-import org.apache.maven.execution.ExecutionEvent.Type;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionResult;
-import org.apache.maven.project.DependencyResolutionRequest;
-import org.apache.maven.project.DependencyResolutionResult;
-import org.apache.maven.project.MavenProject;
-import org.eclipse.aether.RepositoryEvent;
-import org.eclipse.aether.RepositoryEvent.EventType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.soebes.maven.extensions.artifact.DeployTimer;
 import com.soebes.maven.extensions.artifact.DownloadTimer;
 import com.soebes.maven.extensions.artifact.InstallTimer;
 import com.soebes.maven.extensions.metadata.MetadataDeploymentTimer;
 import com.soebes.maven.extensions.metadata.MetadataDownloadTimer;
 import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
+import org.apache.maven.execution.ExecutionEvent;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionResult;
+import org.apache.maven.project.DependencyResolutionRequest;
+import org.apache.maven.project.DependencyResolutionResult;
+import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositoryEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -57,7 +53,7 @@ public class BuildTimeProfiler
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BuildTimeProfiler.class);
 
-    final List<String> lifeCyclePhases;
+    private final List<String> lifeCyclePhases;
 
     private final DiscoveryTimer discoveryTimer;
 
@@ -88,7 +84,7 @@ public class BuildTimeProfiler
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
-        this.lifeCyclePhases = Collections.<String>synchronizedList( new LinkedList<String>() );
+        this.lifeCyclePhases = Collections.synchronizedList(new LinkedList<>() );
         this.discoveryTimer = new DiscoveryTimer();
         this.goalTimer = new GoalTimer();
         this.mojoTimer = new MojoTimer();
@@ -112,6 +108,9 @@ public class BuildTimeProfiler
     {
         super.init( context );
         LOGGER.info( "Maven Build Time Profiler started. (Version {})", BuildTimeProfilerVersion.getVersion() );
+
+        boolean enabled = Boolean.getBoolean( "maven-build-time-profiler.enabled" );
+        LOGGER.debug("Maven Build Time Profiler enabled: {}", enabled );
 
         // Is this always in the context? Based on Maven Core yes.
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
@@ -147,7 +146,7 @@ public class BuildTimeProfiler
     {
         try
         {
-            if ( event instanceof ExecutionEvent )
+            if ( event instanceof ExecutionEvent)
             {
                 executionEventHandler( (ExecutionEvent) event );
             }
@@ -155,19 +154,19 @@ public class BuildTimeProfiler
             {
                 repositoryEventHandler( (RepositoryEvent) event );
             }
-            else if ( event instanceof MavenExecutionRequest )
+            else if ( event instanceof MavenExecutionRequest)
             {
                 executionRequestEventHandler( (MavenExecutionRequest) event );
             }
-            else if ( event instanceof MavenExecutionResult )
+            else if ( event instanceof MavenExecutionResult)
             {
                 executionResultEventHandler( (MavenExecutionResult) event );
             }
-            else if ( event instanceof DependencyResolutionRequest )
+            else if ( event instanceof DependencyResolutionRequest)
             {
                 dependencyResolutionRequest( (DependencyResolutionRequest) event );
             }
-            else if ( event instanceof DependencyResolutionResult )
+            else if ( event instanceof DependencyResolutionResult)
             {
                 dependencyResolutionResult( (DependencyResolutionResult) event );
             }
@@ -234,7 +233,7 @@ public class BuildTimeProfiler
 
     private void repositoryEventHandler( org.eclipse.aether.RepositoryEvent repositoryEvent )
     {
-        EventType type = repositoryEvent.getType();
+        RepositoryEvent.EventType type = repositoryEvent.getType();
         switch ( type )
         {
             case ARTIFACT_DOWNLOADING:
@@ -304,7 +303,7 @@ public class BuildTimeProfiler
     private void executionEventHandler( ExecutionEvent executionEvent )
     {
         LOGGER.debug( "executionEventHandler: {}", executionEvent.getType() );
-        Type type = executionEvent.getType();
+        ExecutionEvent.Type type = executionEvent.getType();
         switch ( type )
         {
             case ProjectDiscoveryStarted:
@@ -392,7 +391,7 @@ public class BuildTimeProfiler
 
     private void executionResultEventHandler( MavenExecutionResult event )
     {
-        orderLifeCycleOnPreparedOrder( lifeCyclePhases );
+//        orderLifeCycleOnPreparedOrder( lifeCyclePhases );
 
         LOGGER.debug( "MBTP: executionResultEventHandler: {}", event.getProject() );
 

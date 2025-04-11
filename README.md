@@ -10,17 +10,9 @@ This is an [EventSpy][1] implementation which collects all the information of
 all phases and mojo executions and make a summarization output at the end of
 the build.
 
-If you like to use this EventSpy with Maven 3.1.1+ till Maven 3.2.5 you need
-to manually download it from Maven Central and put the resulting jar
-file into the `${M2_HOME}/lib/ext` directory or if you
-like to use it directly you have to add the following parameter on command line:
+This extension will only work for Maven 3.3.1+ (>= 0.5.0).
 
-```
-mvn -Dmaven.ext.class.path=PathWhereItIsLocated/maven-buildtime-profiler-0.2.0-mvn311.jar clean package
-```
-
-If you like to use this extension for Maven 3.3.1+ you
-have to define the following `.mvn/extensions.xml` file:
+If you like to use this extension for Maven you have to define the following `.mvn/extensions.xml` file:
 
 ``` xml
 <extensions xmlns="http://maven.apache.org/EXTENSIONS/1.1.0"
@@ -29,7 +21,7 @@ have to define the following `.mvn/extensions.xml` file:
   <extension>
     <groupId>com.soebes.maven.extensions</groupId>
     <artifactId>maven-buildtime-profiler</artifactId>
-    <version>0.2.0</version>
+    <version>0XXXX</version>
   </extension>
 </extensions>
 ```

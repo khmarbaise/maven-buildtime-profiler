@@ -19,13 +19,14 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
+import org.apache.maven.eventspy.AbstractEventSpy;
+
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.maven.eventspy.AbstractEventSpy;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -33,32 +34,52 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 class LifeCycleOrdering
     extends AbstractEventSpy
 {
-    private final List<String> predefinedPhases = new LinkedList<>();
+    private final List<String> predefinedPhases;
 
-    private void initializePredefinedPhases()
-    {
-        // We do that explicitly here, cause otherwise
-        // the clean life cycle and site life cycle are positioned
-        // at the end. Looks a bit strange. Technically it's
-        // not a problem.
-        initPredefinedFromTo( LifecyclePhase.PRE_CLEAN, LifecyclePhase.POST_CLEAN );
-        initPredefinedFromTo( LifecyclePhase.VALIDATE, LifecyclePhase.DEPLOY );
-        initPredefinedFromTo( LifecyclePhase.PRE_SITE, LifecyclePhase.SITE_DEPLOY );
-    }
+    private enum Phases {
+        PRE_CLEAN("pre-clean"),
+        CLEAN("clean"),
+        POST_CLEAN("post-clean"),
+        VALIDATE("validate"),
+        INITIALIZE("initialize"),
+        GENERATE_SOURCES("generate-sources"),
+        PROCESS_SOURCES("process-sources"),
+        GENERATE_RESOURCES("generate-resources"),
+        PROCESS_RESOURCES("process-resources"),
+        COMPILE("compile"),
+        PROCESS_CLASSES("process-classes"),
+        GENERATE_TEST_SOURCES("generate-test-sources"),
+        PROCESS_TEST_SOURCES("process-test-sources"),
+        GENERATE_TEST_RESOURCES("generate-test-resources"),
+        PROCESS_TEST_RESOURCES("process-test-resources"),
+        TEST_COMPILE("test-compile"),
+        PROCESS_TEST_CLASSES("process-test-classes"),
+        TEST("test"),
+        PREPARE_PACKAGE("prepare-package"),
+        PACKAGE("package"),
+        PRE_INTEGRATION_TEST("pre-integration-test"),
+        INTEGRATION_TEST("integration-test"),
+        POST_INTEGRATION_TEST("post-integration-test"),
+        VERIFY("verify"),
+        INSTALL("install"),
+        DEPLOY("deploy");
 
-    private void initPredefinedFromTo( LifecyclePhase from, LifecyclePhase to )
-    {
-        LifecyclePhase[] values = LifecyclePhase.values();
+        private final String lifeCyclePhaseName;
 
-        for ( int item = from.ordinal(); item <= to.ordinal(); item++ )
-        {
-            predefinedPhases.add( values[item].id() );
+        Phases(String lifeCyclePhaseName) {
+            this.lifeCyclePhaseName = lifeCyclePhaseName;
+        }
+
+        public String getLifeCyclePhaseName() {
+            return lifeCyclePhaseName;
         }
     }
 
     public LifeCycleOrdering()
     {
-        initializePredefinedPhases();
+        this.predefinedPhases = Arrays.stream(Phases.values())
+            .map(Phases::getLifeCyclePhaseName)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     public List<String> getPredefinedPhases()
@@ -69,13 +90,7 @@ class LifeCycleOrdering
     protected void orderLifeCycleOnPreparedOrder( List<String> lifeCyclePhases )
     {
         // Sort the lifeCyclePhases based on the given in predefinedPhases.
-        Collections.sort( lifeCyclePhases, new Comparator<String>()
-        {
-            public int compare( String left, String right )
-            {
-                return Integer.compare( predefinedPhases.indexOf( left ), predefinedPhases.indexOf( right ) );
-            }
-        } );
+        Collections.sort( lifeCyclePhases, (left, right) -> Integer.compare( predefinedPhases.indexOf( left ), predefinedPhases.indexOf( right ) ));
     }
 
 }

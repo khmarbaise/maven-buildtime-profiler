@@ -19,16 +19,18 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -37,7 +39,7 @@ class MojoTimer
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MojoTimer.class);
 
-    private Map<ProjectMojo, SystemTime> timerEvents;
+    private final Map<ProjectMojo, SystemTime> timerEvents;
 
     public MojoTimer()
     {
@@ -81,58 +83,39 @@ class MojoTimer
 
     public long getTimeForPhaseInMillis( String phase )
     {
-        long result = 0;
-
-        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
-        {
-            if ( phase.equals( item.getKey().getMojo().getPhase() ) )
-            {
-                result += item.getValue().getElapsedTime();
-            }
-        }
-        return result;
+        return this.timerEvents.entrySet().stream()
+            .filter( mojoPhase(phase))
+            .mapToLong( s -> s.getValue().getElapsedTime())
+            .sum();
     }
 
     public Map<ProjectMojo, SystemTime> getPluginsInPhase( String phase )
     {
-        Map<ProjectMojo, SystemTime> result = new LinkedHashMap<>();
+        return this.timerEvents.entrySet().stream()
+            .filter(mojoPhase(phase))
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+    }
 
-        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
-        {
-            if ( phase.equals( item.getKey().getMojo().getPhase() ) )
-            {
-                result.put( item.getKey(), item.getValue() );
-            }
-        }
-        return result;
+    private static Predicate<Entry<ProjectMojo, SystemTime>> mojoPhase(String phase) {
+        return item -> item.getKey().getMojo().getPhase().equals(phase);
+    }
+    private static Predicate<Entry<ProjectMojo, SystemTime>> projectKey(ProjectKey projectKey) {
+        return item -> item.getKey().getProject().equals( projectKey );
     }
 
     public boolean hasTimeForProjectAndPhase( ProjectKey proKey, String phase )
     {
-        boolean result = false;
-        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
-        {
-            if ( item.getKey().getProject().equals( proKey ) && phase.equals( item.getKey().getMojo().getPhase() ) )
-            {
-                result = true;
-            }
-        }
-        return result;
+        return this.timerEvents.entrySet().stream()
+            .anyMatch(mojoPhase(phase).and(projectKey(proKey)));
     }
 
     public long getTimeForProjectAndPhaseInMillis( ProjectKey proKey, String phase )
     {
-        long result = 0;
-
-        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
-        {
-            if ( item.getKey().getProject().equals( proKey ) && phase.equals( item.getKey().getMojo().getPhase() ) )
-            {
-                result += item.getValue().getElapsedTime();
-            }
-        }
-
-        return result;
+        return this.timerEvents.entrySet().stream()
+            .filter( mojoPhase(phase))
+            .filter( projectKey(proKey))
+            .mapToLong( s -> s.getValue().getElapsedTime())
+            .sum();
     }
 
     public void report()

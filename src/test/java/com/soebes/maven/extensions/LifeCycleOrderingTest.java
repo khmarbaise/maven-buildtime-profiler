@@ -19,12 +19,13 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -35,7 +36,7 @@ class LifeCycleOrderingTest
     LifeCycleOrdering snippet;
     
     @BeforeEach
-    public void beforeMethod()
+    void beforeMethod()
     {
         snippet = new LifeCycleOrdering();
     }
