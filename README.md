@@ -10,7 +10,7 @@ This is an [EventSpy][1] implementation which collects all the information of
 all phases and mojo executions and make a summarization output at the end of
 the build.
 
-This extension will only work for Maven 3.3.1+ (>= 0.5.0).
+This extension will only work for Maven 3.3.1+ (>= 0.5.0) and requires JDK8+
 
 If you like to use this extension for Maven you have to define the following `.mvn/extensions.xml` file:
 
@@ -149,4 +149,4 @@ Prerequisites minimum for this is Maven 3.1.1+ and Java 1.8 as run time.
 
 If you have ideas for improvements etc. just fill in issues in the tracking system.
 
-[1]: https://maven.apache.org/ref/3.0.3/maven-core/apidocs/org/apache/maven/eventspy/AbstractEventSpy.html
+[1]: https://maven.apache.org/ref/3.3.1/maven-core/apidocs/org/apache/maven/eventspy/AbstractEventSpy.html
