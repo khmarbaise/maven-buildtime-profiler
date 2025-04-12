@@ -40,7 +40,7 @@ jobs:
           maven-version: 3.9.9
       - name: 'Build'
         shell: bash
-        run: mvn -V --color always --no-transfer-progress clean verify --fail-at-end
+        run: mvn -V --color always --no-transfer-progress clean verify --fail-at-end -Prun-its
 
   dependabot:
     runs-on: ubuntu-latest
