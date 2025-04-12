@@ -425,8 +425,7 @@ public class BuildTimeProfiler
             for ( String phase : lifeCyclePhases )
             {
                 long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );
-                String formattedTime = String.format("%8d", timeForPhaseInMillis);
-                LOGGER.info( "{} ms : {}", formattedTime, phase );
+                LOGGER.info( "{} ms : {}", String.format( "%8d", timeForPhaseInMillis ), phase );
             }
 
             // List all plugins per phase
@@ -439,19 +438,16 @@ public class BuildTimeProfiler
                 Map<ProjectMojo, SystemTime> plugisInPhase = mojoTimer.getPluginsInPhase( phase );
                 for ( Entry<ProjectMojo, SystemTime> pluginInPhase : plugisInPhase.entrySet() )
                 {
-                    String formattedTime = String.format("%8d", pluginInPhase.getValue().getElapsedTime());
-                    LOGGER.info( "{} ms: {}", formattedTime,
+                    LOGGER.info( "{} ms: {}", String.format( "%8d", pluginInPhase.getValue().getElapsedTime() ),
                                  pluginInPhase.getKey().getMojo().getFullId() );
                 }
 
             }
-            LOGGER.info(SEPARATION_LINE);
 
-            LOGGER.info( "Plugins execution Summary:" );
             LOGGER.info( "" );
             long timeForPlugins = mojoTimer.getTimeForPlugins();
             String formattedTime = String.format("%8d", timeForPlugins);
-            LOGGER.info("{} ms", formattedTime);
+            LOGGER.info("{} ms plugins execution summary.", formattedTime);
             LOGGER.info(SEPARATION_LINE);
         }
 

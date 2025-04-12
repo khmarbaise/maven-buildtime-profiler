@@ -33,10 +33,14 @@ public class InstallTimer
     extends AbstractArtifactTimer
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(InstallTimer.class);
+    private final NumberFormat numberFormat;
+    private final NumberFormat integerFormat;
 
     public InstallTimer()
     {
         super();
+        this.integerFormat = NumberFormat.getIntegerInstance();
+        this.numberFormat = NumberFormat.getNumberInstance();
     }
 
     public void report()
@@ -57,9 +61,11 @@ public class InstallTimer
         }
 
         double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
-        LOGGER.info( "{} ms  {} bytes. {} MiB / s", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-                     NumberFormat.getIntegerInstance().format( totalInstallationSize ),
-                     NumberFormat.getNumberInstance().format( mibPerSeconds ) );
+        String totalInstallationTimeFormatted = String.format("%8d", totalInstallationTime);
+        LOGGER.info( "" );
+        LOGGER.info( "{} ms  {} bytes. {} MiB / s", totalInstallationTimeFormatted,
+                     integerFormat.format( totalInstallationSize ),
+                     numberFormat.format( mibPerSeconds ) );
         LOGGER.info( "------------------------------------------------------------------------" );
     }
 

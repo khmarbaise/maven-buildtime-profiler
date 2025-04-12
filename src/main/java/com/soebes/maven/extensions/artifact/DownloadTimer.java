@@ -19,48 +19,50 @@ package com.soebes.maven.extensions.artifact;
  * under the License.
  */
 
-import java.text.NumberFormat;
-import java.util.Map.Entry;
-
+import com.soebes.maven.extensions.TimePlusSize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.soebes.maven.extensions.TimePlusSize;
+import java.text.NumberFormat;
+import java.util.Map.Entry;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public class DownloadTimer
-    extends AbstractArtifactTimer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadTimer.class);
+    extends AbstractArtifactTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DownloadTimer.class);
 
-    public DownloadTimer()
-    {
-        super();
+  private final NumberFormat integerFormat;
+  private final NumberFormat numberFormat;
+
+  public DownloadTimer() {
+    super();
+    this.integerFormat = NumberFormat.getIntegerInstance();
+    this.numberFormat = NumberFormat.getNumberInstance();
+  }
+
+  public void report() {
+    if (getTimerEvents().isEmpty()) {
+      return;
     }
-
-    public void report()
-    {
-        if ( getTimerEvents().isEmpty() )
-        {
-            return;
-        }
-        LOGGER.info( "Artifact Download summary:" );
-        long totalInstallationTime = 0;
-        long totalInstallationSize = 0;
-        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
-        {
-            totalInstallationTime += item.getValue().getElapsedTime();
-            totalInstallationSize += item.getValue().getSize();
-            LOGGER.info( "{} ms : {} ({} bytes)", String.format( "%8d", item.getValue().getElapsedTime() ),
-                         item.getKey(), NumberFormat.getIntegerInstance().format( item.getValue().getSize() ) );
-        }
-        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
-        LOGGER.info( "{} ms  {} bytes. {} MiB / s", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-                     NumberFormat.getIntegerInstance().format( totalInstallationSize ),
-                     NumberFormat.getNumberInstance().format( mibPerSeconds ) );
-
+    LOGGER.info("Artifact Download summary:");
+    long totalInstallationTime = 0;
+    long totalInstallationSize = 0;
+    for (Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet()) {
+      totalInstallationTime += item.getValue().getElapsedTime();
+      totalInstallationSize += item.getValue().getSize();
+      String formattedTime = String.format("%8d", item.getValue().getElapsedTime());
+      LOGGER.info("{} ms : {} ({} bytes)", formattedTime,
+          item.getKey(), integerFormat.format(item.getValue().getSize()));
     }
+    double mibPerSeconds = calculateMegabytesPerSeconds(totalInstallationTime, totalInstallationSize);
+    LOGGER.info("");
+
+    LOGGER.info("{} ms  {} bytes. {} MiB / s", integerFormat.format(totalInstallationTime),
+        integerFormat.format(totalInstallationSize),
+        numberFormat.format(mibPerSeconds));
+
+  }
 
 }
