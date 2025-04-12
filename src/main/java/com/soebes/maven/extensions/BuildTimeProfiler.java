@@ -317,6 +317,7 @@ public class BuildTimeProfiler
                 break;
             case SessionEnded:
                 // Everything is done.
+                LOGGER.info( "MBTP: Session Ended");
                 sessionTimer.sessionStop();
                 break;
 

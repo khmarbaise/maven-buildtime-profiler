@@ -29,7 +29,7 @@ class DiscoveryTimer
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTimer.class);
 
-    private SystemTime time;
+    private final SystemTime time;
 
     public DiscoveryTimer()
     {
@@ -48,8 +48,9 @@ class DiscoveryTimer
 
     public void report()
     {
-        LOGGER.info( "Project discovery time: {} ms", String.format( "%8d", time.getElapsedTime() ) );
-        LOGGER.info( "------------------------------------------------------------------------" );
+        String format = String.format("%8d", time.getElapsedTime());
+        LOGGER.info( "Project discovery time: {} ms", format);
+        LOGGER.info( "------------------------------------------------------------------------");
     }
 
 }
