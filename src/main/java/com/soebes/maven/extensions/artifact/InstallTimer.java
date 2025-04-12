@@ -19,13 +19,12 @@ package com.soebes.maven.extensions.artifact;
  * under the License.
  */
 
-import java.text.NumberFormat;
-import java.util.Map.Entry;
-
+import com.soebes.maven.extensions.TimePlusSize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.soebes.maven.extensions.TimePlusSize;
+import java.text.NumberFormat;
+import java.util.Map.Entry;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -53,7 +52,8 @@ public class InstallTimer
         {
             totalInstallationTime += item.getValue().getElapsedTime();
             totalInstallationSize += item.getValue().getSize();
-            LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
+            String formattedTime = String.format("%8d", item.getValue().getElapsedTime());
+            LOGGER.info( "{} ms : {}", formattedTime, item.getKey() );
         }
 
         double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );

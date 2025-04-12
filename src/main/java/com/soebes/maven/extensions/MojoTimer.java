@@ -118,6 +118,13 @@ class MojoTimer
             .sum();
     }
 
+    public long getTimeForPlugins( )
+    {
+        return this.timerEvents.values().stream()
+            .mapToLong(SystemTime::getElapsedTime)
+            .sum();
+    }
+
     public void report()
     {
         for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
