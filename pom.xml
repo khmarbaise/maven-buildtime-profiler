@@ -12,7 +12,7 @@
   <version>0.5.0-SNAPSHOT</version>
   <name>Maven :: Build Time Profiler</name>
   <properties>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.9.9</mavenVersion>
     <maven.compiler.release>8</maven.compiler.release>
     <smpp.component>maven-buildtime-profiler</smpp.component>
     <!--
