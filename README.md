@@ -10,8 +10,10 @@ This is an [EventSpy][1] implementation which collects all the information of
 all phases and mojo executions and make a summarization output at the end of
 the build.
 
+## Minimum Requirements
 This extension will only work for Maven 3.3.1+ (>= 0.5.0) and requires JDK8+
 
+## Configuration
 If you like to use this extension for Maven you have to define the following `.mvn/extensions.xml` file:
 
 ``` xml
@@ -21,13 +23,32 @@ If you like to use this extension for Maven you have to define the following `.m
   <extension>
     <groupId>com.soebes.maven.extensions</groupId>
     <artifactId>maven-buildtime-profiler</artifactId>
-    <version>0XXXX</version>
+    <version>0.5.0</version> <!-- NOT YET RELEASED !!! -->
   </extension>
 </extensions>
+```
+If you don't like to add the `.mvn/extensions.xml` to your project you can also go via command line like this:
+```
+mvn verify -Dmaven.ext.class.path=$HOME/.m2/repository/com/soebes/maven/extensions/maven-buildtime-profiles/0.5.0/maven-buildtime-profiles-0.5.0.jar
 ```
 
 The download from Maven Central will be done by Maven itself.
 
+### Deactivation
+If you like to deactivate the extension without removing the `.mvn/extensions.xml` file this can easily achieved, 
+by adding the following to your command line:
+```
+mvn -Dmaven-build-time-profiler.disabled verify 
+```
+That means only the following lines will appear in your console output:
+```text
+[INFO] Maven Build Time Profiler started. (Version 0.5.0)
+[INFO] Maven Build Time Profiler deactivated.
+```
+That will give you the explicit hint that the extension has been deactivated.
+
+
+## Example Output
 Here's an example of what the output will look like:
 
 ```
@@ -86,7 +107,7 @@ Here's an example of what the output will look like:
 [INFO] ForkTime: 0
 ```
 
-Most important might be in this relationship that you will get also informations about the 
+Most important might be in this relationship that you will get also information about the 
 time taken to install artifacts:
 
 ```
@@ -144,8 +165,6 @@ And much more important are things like the time for the deployment:
 [INFO]       18 ms : com.soebes.examples.j2ee:domain:1.1.2-20160306.145401-11:pom
 [INFO] 1,114 ms  34,888,754 bytes. 29.868 MiB / s
 ```
-
-Prerequisites minimum for this is Maven 3.3.1+ and Java 8 as run time.
 
 If you have ideas for improvements etc. just fill in issues in the tracking system.
 

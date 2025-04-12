@@ -81,6 +81,8 @@ public class BuildTimeProfiler
 
     private final ProjectTimer forkProject;
 
+    private boolean activated;
+
     public BuildTimeProfiler()
     {
         LOGGER.debug( "LifeCycleProfiler ctor called." );
@@ -100,6 +102,9 @@ public class BuildTimeProfiler
         this.forkTimer = new ForkTimer();
         this.forkProject = new ProjectTimer();
 
+        String disabled = System.getProperty("maven-build-time-profiler.disabled", "unknown");
+        LOGGER.debug("MBTP: maven-build-time-profiler.disabled {}", disabled);
+        this.activated = !disabled.equals("true");
     }
 
     @Override
@@ -107,10 +112,12 @@ public class BuildTimeProfiler
         throws Exception
     {
         super.init( context );
-        LOGGER.info( "Maven Build Time Profiler started. (Version {})", BuildTimeProfilerVersion.getVersion() );
 
-        boolean enabled = Boolean.getBoolean( "maven-build-time-profiler.enabled" );
-        LOGGER.debug("Maven Build Time Profiler enabled: {}", enabled );
+        LOGGER.info( "Maven Build Time Profiler started. (Version {})", BuildTimeProfilerVersion.getVersion() );
+        if ( !activated ) {
+            LOGGER.info("Maven Build Time Profiler deactivated.");
+            return;
+        }
 
         // Is this always in the context? Based on Maven Core yes.
         String workingDirectory = (String) context.getData().get( "workingDirectory" );
@@ -118,26 +125,6 @@ public class BuildTimeProfiler
 
         String multiModuleProjectDirectory = (String) context.getData().get( "multiModuleProjectDirectory" );
         LOGGER.debug( "MBTP: multiModuleProjectDirectory: {}", multiModuleProjectDirectory );
-
-        // Properties systemProperties = (Properties) context.getData().get( "systemProperties" );
-        // for ( String propName : systemProperties.stringPropertyNames() )
-        // {
-        // String propValue = systemProperties.getProperty( propName );
-        // LOGGER.info( " systemProperty " + propName + ": '" + propValue + "'" );
-        // }
-        //
-        // Properties userProperties = (Properties) context.getData().get( "userProperties" );
-        // for ( String propName : userProperties.stringPropertyNames() )
-        // {
-        // String propValue = userProperties.getProperty( propName );
-        // LOGGER.info( " userProperty " + propName + ": '" + propValue + "'" );
-        // }
-        // data.put( "plexus", container );
-        // data.put( "workingDirectory", cliRequest.workingDirectory );
-        // data.put( "systemProperties", cliRequest.systemProperties );
-        // data.put( "userProperties", cliRequest.userProperties );
-        // data.put( "versionProperties", CLIReportingUtils.getBuildProperties() );
-
     }
 
     @Override
@@ -146,6 +133,10 @@ public class BuildTimeProfiler
     {
         try
         {
+            if ( !activated ) {
+                return;
+            }
+
             if ( event instanceof ExecutionEvent)
             {
                 executionEventHandler( (ExecutionEvent) event );
@@ -218,6 +209,9 @@ public class BuildTimeProfiler
     @Override
     public void close()
     {
+        if ( !activated ) {
+            return;
+        }
         LOGGER.debug( "MBTP: done." );
     }
 
@@ -302,6 +296,9 @@ public class BuildTimeProfiler
 
     private void executionEventHandler( ExecutionEvent executionEvent )
     {
+        if ( !activated ) {
+            return;
+        }
         LOGGER.debug( "executionEventHandler: {}", executionEvent.getType() );
         ExecutionEvent.Type type = executionEvent.getType();
         switch ( type )
