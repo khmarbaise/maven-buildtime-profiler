@@ -35,7 +35,7 @@ if (!logFile.contains ( '[INFO] BUILD SUCCESS') ) {
 }
 
 if (!logFile.contains ( '[INFO] Project Build Time (reactor order):') ) {
-    throw new FileNotFoundException("build measuremet is not active.")
+    throw new FileNotFoundException("build measurement is not active.")
 }
 
 if (!logFile.contains ( '[INFO] non-lifecycle-goal-pom:' ) ) {
@@ -73,7 +73,6 @@ if (!logFile.contains ( ' ms : site' ) ) {
 if (!logFile.contains ( '[INFO] Lifecycle Phase summary:' ) ) {
     throw new FileNotFoundException("Phase summary is missing.")
 }
-
 
 if (!logFile.contains ( '[INFO] ForkTime: 0' ) ) {
     throw new FileNotFoundException("ForkTime 0 is missing.")

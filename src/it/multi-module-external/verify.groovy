@@ -25,16 +25,10 @@ if (!buildLogFile.exists()) {
 
 def logFile = buildLogFile.text
 
-if (!logFile.contains ( '[INFO] BUILD SUCCESS') ) {
-    throw new FileNotFoundException("Build is not successful.")
+if (!logFile.contains ( '[INFO] Maven Build Time Profiler started. (Version ') ) {
+    throw new FileNotFoundException("Build Time Profiles has not been activated")
 }
 
-if (!logFile.contains ( '[INFO] Project discovery time: ') ) {
-    throw new FileNotFoundException("Project discovery has not been measured.")
-}
-if (!logFile.contains ( '[INFO] Plugins directly called via goals:') ) {
-    throw new FileNotFoundException("Plugins called directly via goal have not been recorded.")
-}
-if (!logFile.contains ( ' ms : org.apache.maven.plugins:maven-clean-plugin:3.4.1:clean (default-cli)') ) {
-    throw new FileNotFoundException("maven-clean-plugin has not been recorded.")
+if (!logFile.contains ( '[INFO] MBTP: Session Ended') ) {
+    throw new FileNotFoundException("The Session ended couldn't be found!")
 }

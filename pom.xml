@@ -221,6 +221,7 @@
               <!--                is build at first. see also http://jira.codehaus.org/browse/MINVOKER-147 &ndash;&gt;-->
               <parallelThreads>1</parallelThreads>
               <filterProperties>
+                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                 <repository.proxy.url>${repository.proxy.url}</repository.proxy.url>
               </filterProperties>
             </configuration>
@@ -232,16 +233,18 @@
                 </goals>
                 <configuration>
                   <extraArtifacts>
-                    <extraArtifact>org.apache.maven.plugins:maven-install-plugin:2.5.2:maven-plugin</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:3.0.0:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.6:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.22.0:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-failsafe-plugin:2.22.0:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:3.0.2:jar</extraArtifact>
-                    <extraArtifact>org.apache.maven.plugins:maven-assembly-plugin:2.6:jar</extraArtifact>
-                    <extraArtifact>com.soebes.smpp:smpp:1.2.0:pom</extraArtifact>
-                    <extraArtifact>com.beust:jcommander:1.35:jar</extraArtifact>
-                    <extraArtifact>org.assertj:assertj-core:2.1.0:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-assembly-plugin:3.7.1:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-clean-plugin:3.4.1:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:3.14.0:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-failsafe-plugin:3.5.3:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-install-plugin:3.1.4:maven-plugin</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:3.4.2:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-war-plugin:3.4.0:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:3.3.1:jar</extraArtifact>
+                    <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:3.5.3:jar</extraArtifact>
+                    <extraArtifact>com.soebes.smpp:smpp:7.0.2:pom</extraArtifact>
+                    <extraArtifact>com.beust:jcommander:1.82:jar</extraArtifact>
+                    <extraArtifact>org.assertj:assertj-core:3.27.3:jar</extraArtifact>
                   </extraArtifacts>
                 </configuration>
               </execution>
