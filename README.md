@@ -36,7 +36,7 @@ The download from Maven Central will be done by Maven itself.
 
 ### Deactivation
 If you like to deactivate the extension without removing the `.mvn/extensions.xml` file this can easily achieved, 
-by adding the following to your command line:
+by adding the following to your command line (system property):
 ```
 mvn -Dmaven-build-time-profiler.disabled verify 
 ```
@@ -46,6 +46,8 @@ That means only the following lines will appear in your console output:
 [INFO] Maven Build Time Profiler deactivated.
 ```
 That will give you the explicit hint that the extension has been deactivated.
+
+Hint: It is **NOT** possible to deactivate the extension via properties from your `pom.xml` file!
 
 
 ## Example Output
