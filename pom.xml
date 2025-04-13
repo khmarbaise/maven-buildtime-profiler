@@ -10,7 +10,7 @@
 
   <groupId>com.soebes.maven.extensions</groupId>
   <artifactId>maven-buildtime-profiler</artifactId>
-  <version>0.5.0</version>
+  <version>0.5.1-SNAPSHOT</version>
   <name>Maven :: Build Time Profiler</name>
   <properties>
     <mavenVersion>3.6.3</mavenVersion>
@@ -26,7 +26,7 @@
     <connection>scm:git:https://github.com/khmarbaise/maven-buildtime-profiler.git</connection>
     <developerConnection>scm:git:git@github.com:khmarbaise/maven-buildtime-profiler.git</developerConnection>
     <url>https://github.com/khmarbaise/maven-buildtime-profiler</url>
-    <tag>maven-buildtime-profiler-0.5.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
