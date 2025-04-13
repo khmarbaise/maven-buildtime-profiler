@@ -22,11 +22,12 @@
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>
   <scm>
-    <developerConnection>scm:git:ssh://git@github.com/khmarbaise/maven-buildtime-profiler.git</developerConnection>
     <connection>scm:git:https://github.com/khmarbaise/maven-buildtime-profiler.git</connection>
-    <url>https://github.com/khmarbaise/maven-buildtime-profiler/</url>
+    <developerConnection>scm:git:git@github.com:khmarbaise/maven-buildtime-profiler.git</developerConnection>
+    <url>https://github.com/khmarbaise/maven-buildtime-profiler</url>
     <tag>HEAD</tag>
   </scm>
+
   <distributionManagement>
     <site>
       <id>github</id>
