@@ -30,8 +30,8 @@
 
   <distributionManagement>
     <site>
-      <id>github</id>
-      <url>scm:git:ssh://git@github.com/khmarbaise/maven-buildtime-profiler.git</url>
+      <id>site</id>
+      <url>https://github.com/khmarbaise/maven-buildtime-profiler</url>
     </site>
   </distributionManagement>
   <dependencyManagement>
