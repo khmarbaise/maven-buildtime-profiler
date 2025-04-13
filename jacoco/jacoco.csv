@@ -1,0 +1,26 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Maven :: Build Time Profiler,com.soebes.maven.extensions,ProjectMojo,181,0,22,0,37,0,19,0,8,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,DiscoveryTimer,42,0,0,0,12,0,5,0,5,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,ProjectTimer,25,93,2,4,4,17,2,7,1,5
+Maven :: Build Time Profiler,com.soebes.maven.extensions,SessionTimer,32,0,0,0,10,0,4,0,4,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,MojoKey,173,0,30,0,44,0,25,0,10,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,ProjectKey,45,106,15,15,10,28,13,9,1,6
+Maven :: Build Time Profiler,com.soebes.maven.extensions,ProjectGoal,3,130,0,22,1,30,1,16,1,5
+Maven :: Build Time Profiler,com.soebes.maven.extensions,GoalKey,40,84,11,11,8,22,10,7,1,5
+Maven :: Build Time Profiler,com.soebes.maven.extensions,LifeCycleOrdering,3,28,0,0,1,7,1,3,1,3
+Maven :: Build Time Profiler,com.soebes.maven.extensions,LifeCycleOrdering.Phases,0,196,0,0,0,31,0,3,0,3
+Maven :: Build Time Profiler,com.soebes.maven.extensions,BuildTimeProfiler,706,0,72,0,196,0,60,0,13,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,TimePlusSize,0,10,0,0,0,5,0,3,0,3
+Maven :: Build Time Profiler,com.soebes.maven.extensions,BuildTimeProfilerVersion,6,0,0,0,3,0,3,0,3,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,SystemTime,0,19,0,0,0,7,0,4,0,4
+Maven :: Build Time Profiler,com.soebes.maven.extensions,ForkTimer,32,0,0,0,10,0,5,0,5,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,MojoTimer,225,0,6,0,41,0,23,0,20,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions,GoalTimer,49,90,5,1,8,15,5,6,2,6
+Maven :: Build Time Profiler,com.soebes.maven.extensions.metadata,MetadataDownloadTimer,53,0,4,0,14,0,5,0,3,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions.metadata,MetadataDeploymentTimer,53,0,4,0,15,0,5,0,3,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions.metadata,MetadataInstallTimer,53,0,4,0,14,0,5,0,3,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions.metadata,AbstractMetadataTimer,0,113,0,4,0,25,0,7,0,5
+Maven :: Build Time Profiler,com.soebes.maven.extensions.artifact,AbstractArtifactTimer,0,134,0,6,0,28,0,9,0,6
+Maven :: Build Time Profiler,com.soebes.maven.extensions.artifact,DownloadTimer,124,0,4,0,23,0,5,0,3,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions.artifact,InstallTimer,116,0,4,0,24,0,5,0,3,0
+Maven :: Build Time Profiler,com.soebes.maven.extensions.artifact,DeployTimer,116,0,4,0,24,0,5,0,3,0

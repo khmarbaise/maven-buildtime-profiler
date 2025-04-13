@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuildTimeProfiler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Maven :: Build Time Profiler</a> &gt; <a href="index.source.html" class="el_package">com.soebes.maven.extensions</a> &gt; <span class="el_source">BuildTimeProfiler.java</span></div><h1>BuildTimeProfiler.java</h1><pre class="source lang-java linenums">package com.soebes.maven.extensions;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import com.soebes.maven.extensions.artifact.DeployTimer;
+import com.soebes.maven.extensions.artifact.DownloadTimer;
+import com.soebes.maven.extensions.artifact.InstallTimer;
+import com.soebes.maven.extensions.metadata.MetadataDeploymentTimer;
+import com.soebes.maven.extensions.metadata.MetadataDownloadTimer;
+import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
+import org.apache.maven.execution.ExecutionEvent;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionResult;
+import org.apache.maven.project.DependencyResolutionRequest;
+import org.apache.maven.project.DependencyResolutionResult;
+import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositoryEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * @author Karl Heinz Marbaise &lt;a href=&quot;mailto:kama@soebes.de&quot;&gt;kama@soebes.de&lt;/a&gt;
+ */
+@Named
+@Singleton
+public class BuildTimeProfiler
+    extends LifeCycleOrdering
+{
+    private static final String SEPARATION_LINE = &quot;------------------------------------------------------------------------&quot;;
+
+<span class="nc" id="L56">    private static final Logger LOGGER = LoggerFactory.getLogger(BuildTimeProfiler.class);</span>
+
+    private final List&lt;String&gt; lifeCyclePhases;
+
+    private final DiscoveryTimer discoveryTimer;
+
+    private final GoalTimer goalTimer;
+
+    private final MojoTimer mojoTimer;
+
+    private final ProjectTimer projectTimer;
+
+    private final SessionTimer sessionTimer;
+
+    private final InstallTimer installTimer;
+
+    private final DeployTimer deployTimer;
+
+    private final DownloadTimer downloadTimer;
+
+    private final MetadataDownloadTimer metadataDownloadTimer;
+
+    private final MetadataDeploymentTimer metadataDeploymentTimer;
+
+    private final MetadataInstallTimer metadataInstallTimer;
+
+    private final ForkTimer forkTimer;
+
+    private final ProjectTimer forkProject;
+
+    private boolean activated;
+
+    public BuildTimeProfiler()
+<span class="nc" id="L89">    {</span>
+<span class="nc" id="L90">        LOGGER.debug( &quot;LifeCycleProfiler ctor called.&quot; );</span>
+<span class="nc" id="L91">        this.lifeCyclePhases = Collections.synchronizedList(new LinkedList&lt;&gt;() );</span>
+<span class="nc" id="L92">        this.discoveryTimer = new DiscoveryTimer();</span>
+<span class="nc" id="L93">        this.goalTimer = new GoalTimer();</span>
+<span class="nc" id="L94">        this.mojoTimer = new MojoTimer();</span>
+<span class="nc" id="L95">        this.projectTimer = new ProjectTimer();</span>
+<span class="nc" id="L96">        this.sessionTimer = new SessionTimer();</span>
+<span class="nc" id="L97">        this.installTimer = new InstallTimer();</span>
+<span class="nc" id="L98">        this.deployTimer = new DeployTimer();</span>
+<span class="nc" id="L99">        this.downloadTimer = new DownloadTimer();</span>
+
+<span class="nc" id="L101">        this.metadataDownloadTimer = new MetadataDownloadTimer();</span>
+<span class="nc" id="L102">        this.metadataDeploymentTimer = new MetadataDeploymentTimer();</span>
+<span class="nc" id="L103">        this.metadataInstallTimer = new MetadataInstallTimer();</span>
+<span class="nc" id="L104">        this.forkTimer = new ForkTimer();</span>
+<span class="nc" id="L105">        this.forkProject = new ProjectTimer();</span>
+
+<span class="nc" id="L107">        String disabled = System.getProperty(&quot;maven-build-time-profiler.disabled&quot;, &quot;unknown&quot;);</span>
+<span class="nc" id="L108">        LOGGER.debug(&quot;MBTP: maven-build-time-profiler.disabled {}&quot;, disabled);</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        this.activated = !disabled.equals(&quot;true&quot;);</span>
+<span class="nc" id="L110">    }</span>
+
+    @Override
+    public void init( Context context )
+        throws Exception
+    {
+<span class="nc" id="L116">        super.init( context );</span>
+
+<span class="nc" id="L118">        LOGGER.info( &quot;Maven Build Time Profiler started. (Version {})&quot;, BuildTimeProfilerVersion.getVersion() );</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if ( !activated ) {</span>
+<span class="nc" id="L120">            LOGGER.info(&quot;Maven Build Time Profiler deactivated.&quot;);</span>
+<span class="nc" id="L121">            return;</span>
+        }
+
+        // Is this always in the context? Based on Maven Core yes.
+<span class="nc" id="L125">        String workingDirectory = (String) context.getData().get( &quot;workingDirectory&quot; );</span>
+<span class="nc" id="L126">        LOGGER.debug( &quot;MBTP: workingDirectory: {}&quot;, workingDirectory );</span>
+
+<span class="nc" id="L128">        String multiModuleProjectDirectory = (String) context.getData().get( &quot;multiModuleProjectDirectory&quot; );</span>
+<span class="nc" id="L129">        LOGGER.debug( &quot;MBTP: multiModuleProjectDirectory: {}&quot;, multiModuleProjectDirectory );</span>
+<span class="nc" id="L130">    }</span>
+
+    @Override
+    public void onEvent( Object event )
+        throws Exception
+    {
+        try
+        {
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            if ( !activated ) {</span>
+<span class="nc" id="L139">                return;</span>
+            }
+
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            if ( event instanceof ExecutionEvent)</span>
+            {
+<span class="nc" id="L144">                executionEventHandler( (ExecutionEvent) event );</span>
+            }
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            else if ( event instanceof org.eclipse.aether.RepositoryEvent )</span>
+            {
+<span class="nc" id="L148">                repositoryEventHandler( (RepositoryEvent) event );</span>
+            }
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            else if ( event instanceof MavenExecutionRequest)</span>
+            {
+<span class="nc" id="L152">                executionRequestEventHandler( (MavenExecutionRequest) event );</span>
+            }
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            else if ( event instanceof MavenExecutionResult)</span>
+            {
+<span class="nc" id="L156">                executionResultEventHandler( (MavenExecutionResult) event );</span>
+            }
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            else if ( event instanceof DependencyResolutionRequest)</span>
+            {
+<span class="nc" id="L160">                dependencyResolutionRequest( (DependencyResolutionRequest) event );</span>
+            }
+<span class="nc bnc" id="L162" title="All 2 branches missed.">            else if ( event instanceof DependencyResolutionResult)</span>
+            {
+<span class="nc" id="L164">                dependencyResolutionResult( (DependencyResolutionResult) event );</span>
+            }
+            // The following event type is available since Maven 3.3.1+
+            // else if ( event instanceof DefaultSettingsBuildingRequest) {
+            // DefaultSettingsBuildingRequest r = null;
+            // r.getGlobalSettingsFile();
+            // r.getGlobalSettingsSource();
+            // r.getSystemProperties();
+            // r.getUserSettingsFile();
+            // r.getUserSettingsSource();
+            //
+            // r.setGlobalSettingsFile( globalSettingsFile );
+            // r.setGlobalSettingsSource( globalSettingsSource );
+            // r.setSystemProperties( systemProperties );
+            // r.setUserProperties( userProperties );
+            // r.setUserSettingsFile( userSettingsFile );
+            // r.setUserSettingsSource( userSettingsSource );
+            // }
+            // The following event type is available since Maven 3.3.1+
+            // else if (event instanceof DefaultSettingsBuildingRequest) {
+            //
+            // DefaultSettingsBuildingRequest r = null;
+            // r.getGlobalSettingsSource().getLocation()
+            // }
+            // The following event type is available since Maven 3.3.1+
+            // else if (event instanceof DefaultToolchainsBuildingRequest) {
+            // DefaultToolchainsBuildingRequest r = null;
+            // r.getGlobalToolchainsSource().
+            // }
+            // The following event type is available since Maven 3.3.1+
+            // else if (event instanceof DefaultToolchainsBuildingResult) {
+            // DefaultToolchainsBuildingResult r = null;
+            // r.getEffectiveToolchains();
+            // r.getProblems();
+            // }
+            else
+            {
+                // TODO: What kind of event we haven't considered?
+<span class="nc" id="L202">                LOGGER.debug( &quot;MBTP: Event {}&quot;, event.getClass().getCanonicalName() );</span>
+            }
+        }
+<span class="nc" id="L205">        catch ( Exception e )</span>
+        {
+<span class="nc" id="L207">            LOGGER.error( &quot;MBTP: Exception&quot;, e );</span>
+<span class="nc" id="L208">        }</span>
+<span class="nc" id="L209">    }</span>
+
+    @Override
+    public void close()
+    {
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if ( !activated ) {</span>
+<span class="nc" id="L215">            return;</span>
+        }
+<span class="nc" id="L217">        LOGGER.debug( &quot;MBTP: done.&quot; );</span>
+<span class="nc" id="L218">    }</span>
+
+    private void dependencyResolutionResult( DependencyResolutionResult event )
+    {
+<span class="nc" id="L222">        LOGGER.debug( &quot;MBTP: dependencyResolutionResult() {}&quot;, event.getResolvedDependencies().size() );</span>
+<span class="nc" id="L223">    }</span>
+
+    private void dependencyResolutionRequest( DependencyResolutionRequest event )
+    {
+<span class="nc" id="L227">        LOGGER.debug( &quot;MBTP: dependencyResolutionRequest()&quot; );</span>
+<span class="nc" id="L228">    }</span>
+
+    private void repositoryEventHandler( org.eclipse.aether.RepositoryEvent repositoryEvent )
+    {
+<span class="nc" id="L232">        RepositoryEvent.EventType type = repositoryEvent.getType();</span>
+<span class="nc bnc" id="L233" title="All 14 branches missed.">        switch ( type )</span>
+        {
+            case ARTIFACT_DOWNLOADING:
+<span class="nc" id="L236">                LOGGER.debug( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+<span class="nc" id="L237">                downloadTimer.start( repositoryEvent );</span>
+<span class="nc" id="L238">                break;</span>
+            case ARTIFACT_DOWNLOADED:
+<span class="nc" id="L240">                LOGGER.debug( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+<span class="nc" id="L241">                downloadTimer.stop( repositoryEvent );</span>
+<span class="nc" id="L242">                break;</span>
+
+            case ARTIFACT_DEPLOYING:
+<span class="nc" id="L245">                deployTimer.start( repositoryEvent );</span>
+<span class="nc" id="L246">                break;</span>
+            case ARTIFACT_DEPLOYED:
+<span class="nc" id="L248">                deployTimer.stop( repositoryEvent );</span>
+<span class="nc" id="L249">                break;</span>
+
+            case ARTIFACT_INSTALLING:
+<span class="nc" id="L252">                installTimer.start( repositoryEvent );</span>
+<span class="nc" id="L253">                break;</span>
+            case ARTIFACT_INSTALLED:
+<span class="nc" id="L255">                installTimer.stop( repositoryEvent );</span>
+<span class="nc" id="L256">                break;</span>
+
+            case METADATA_DEPLOYING:
+<span class="nc" id="L259">                metadataDeploymentTimer.start( repositoryEvent );</span>
+<span class="nc" id="L260">                break;</span>
+            case METADATA_DEPLOYED:
+<span class="nc" id="L262">                metadataDeploymentTimer.stop( repositoryEvent );</span>
+<span class="nc" id="L263">                break;</span>
+
+            case METADATA_DOWNLOADING:
+<span class="nc" id="L266">                LOGGER.debug( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+<span class="nc" id="L267">                metadataDownloadTimer.start( repositoryEvent );</span>
+<span class="nc" id="L268">                break;</span>
+            case METADATA_DOWNLOADED:
+<span class="nc" id="L270">                LOGGER.debug( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+<span class="nc" id="L271">                metadataDownloadTimer.stop( repositoryEvent );</span>
+<span class="nc" id="L272">                break;</span>
+
+            case METADATA_INSTALLING:
+<span class="nc" id="L275">                LOGGER.debug( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+<span class="nc" id="L276">                metadataInstallTimer.start( repositoryEvent );</span>
+<span class="nc" id="L277">                break;</span>
+            case METADATA_INSTALLED:
+<span class="nc" id="L279">                LOGGER.debug( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+<span class="nc" id="L280">                metadataInstallTimer.stop( repositoryEvent );</span>
+<span class="nc" id="L281">                break;</span>
+
+            case ARTIFACT_RESOLVING:
+            case ARTIFACT_RESOLVED:
+            case ARTIFACT_DESCRIPTOR_INVALID:
+            case ARTIFACT_DESCRIPTOR_MISSING:
+            case METADATA_RESOLVED:
+            case METADATA_RESOLVING:
+            case METADATA_INVALID:
+                // Those events are not recorded.
+<span class="nc" id="L291">                break;</span>
+
+            default:
+<span class="nc" id="L294">                LOGGER.error( &quot;MBTP: repositoryEventHandler {}&quot;, type );</span>
+                break;
+        }
+<span class="nc" id="L297">    }</span>
+
+    private void executionEventHandler( ExecutionEvent executionEvent )
+    {
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        if ( !activated ) {</span>
+<span class="nc" id="L302">            return;</span>
+        }
+<span class="nc" id="L304">        LOGGER.debug( &quot;executionEventHandler: {}&quot;, executionEvent.getType() );</span>
+<span class="nc" id="L305">        ExecutionEvent.Type type = executionEvent.getType();</span>
+<span class="nc bnc" id="L306" title="All 12 branches missed.">        switch ( type )</span>
+        {
+            case ProjectDiscoveryStarted:
+                // Start reading the pom files..
+<span class="nc" id="L310">                discoveryTimer.discoveryStart();</span>
+<span class="nc" id="L311">                break;</span>
+            case SessionStarted:
+                // Reading of pom files done and structure now there.
+<span class="nc" id="L314">                discoveryTimer.discoveryStop();</span>
+<span class="nc" id="L315">                sessionTimer.sessionStart();</span>
+<span class="nc" id="L316">                break;</span>
+            case SessionEnded:
+                // Everything is done.
+<span class="nc" id="L319">                LOGGER.info( &quot;MBTP: Session Ended&quot;);</span>
+<span class="nc" id="L320">                sessionTimer.sessionStop();</span>
+<span class="nc" id="L321">                break;</span>
+
+            case ForkStarted:
+<span class="nc" id="L324">                forkTimer.start();</span>
+<span class="nc" id="L325">                break;</span>
+            case ForkFailed:
+            case ForkSucceeded:
+<span class="nc" id="L328">                forkTimer.stop();</span>
+<span class="nc" id="L329">                break;</span>
+
+            case ForkedProjectStarted:
+<span class="nc" id="L332">                forkProject.projectStart( executionEvent );</span>
+<span class="nc" id="L333">                break;</span>
+            case ForkedProjectFailed:
+            case ForkedProjectSucceeded:
+<span class="nc" id="L336">                forkProject.projectStop( executionEvent );</span>
+<span class="nc" id="L337">                break;</span>
+
+            case MojoStarted:
+<span class="nc" id="L340">                String phaseStart = executionEvent.getMojoExecution().getLifecyclePhase();</span>
+                // Key: phase, project, mojo
+<span class="nc bnc" id="L342" title="All 2 branches missed.">                if ( phaseStart == null )</span>
+                {
+<span class="nc" id="L344">                    goalTimer.mojoStart( executionEvent );</span>
+                }
+                else
+                {
+<span class="nc" id="L348">                    collectAllLifeCyclePhases( phaseStart );</span>
+<span class="nc" id="L349">                    mojoTimer.mojoStart( executionEvent );</span>
+                }
+<span class="nc" id="L351">                break;</span>
+
+            case MojoFailed:
+            case MojoSucceeded:
+            case MojoSkipped:
+<span class="nc" id="L356">                String phaseStop = executionEvent.getMojoExecution().getLifecyclePhase();</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">                if ( phaseStop == null )</span>
+                {
+<span class="nc" id="L359">                    goalTimer.mojoStop( executionEvent );</span>
+                }
+                else
+                {
+<span class="nc" id="L363">                    mojoTimer.mojoStop( executionEvent );</span>
+                }
+<span class="nc" id="L365">                break;</span>
+
+            case ProjectStarted:
+<span class="nc" id="L368">                projectTimer.projectStart( executionEvent );</span>
+<span class="nc" id="L369">                break;</span>
+
+            case ProjectFailed:
+            case ProjectSucceeded:
+            case ProjectSkipped:
+<span class="nc" id="L374">                projectTimer.projectStop( executionEvent );</span>
+<span class="nc" id="L375">                break;</span>
+
+            default:
+<span class="nc" id="L378">                LOGGER.error( &quot;MBTP: executionEventHandler: {}&quot;, type );</span>
+                break;
+        }
+
+<span class="nc" id="L382">    }</span>
+
+    private void executionRequestEventHandler( MavenExecutionRequest event )
+    {
+<span class="nc" id="L386">        LOGGER.debug( &quot;MBTP: executionRequestEventHandler: {}&quot;, event.getExecutionListener() );</span>
+<span class="nc" id="L387">    }</span>
+
+    private void executionResultEventHandler( MavenExecutionResult event )
+    {
+<span class="nc" id="L391">        LOGGER.debug( &quot;MBTP: executionResultEventHandler: {}&quot;, event.getProject() );</span>
+<span class="nc" id="L392">        LOGGER.info( &quot;--             Maven Build Time Profiler Summary                      --&quot; );</span>
+<span class="nc" id="L393">        LOGGER.info(SEPARATION_LINE);</span>
+
+<span class="nc" id="L395">        discoveryTimer.report();</span>
+
+<span class="nc bnc" id="L397" title="All 2 branches missed.">        if ( mojoTimer.hasEvents() )</span>
+        {
+<span class="nc" id="L399">            LOGGER.info( &quot;Project Build Time (reactor order):&quot; );</span>
+<span class="nc" id="L400">            LOGGER.info( &quot;&quot; );</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            for ( MavenProject mavenProject : event.getTopologicallySortedProjects() )</span>
+            {
+<span class="nc" id="L403">                LOGGER.info( &quot;{}:&quot;, mavenProject.getName() );</span>
+
+<span class="nc bnc" id="L405" title="All 2 branches missed.">                for ( String phase : lifeCyclePhases )</span>
+                {
+<span class="nc" id="L407">                    ProjectKey projectKey = mavenProjectToProjectKey( mavenProject );</span>
+
+<span class="nc bnc" id="L409" title="All 2 branches missed.">                    if ( !mojoTimer.hasTimeForProjectAndPhase( projectKey, phase ) )</span>
+                    {
+<span class="nc" id="L411">                        continue;</span>
+                    }
+
+<span class="nc" id="L414">                    long timeForPhaseAndProjectInMillis =</span>
+<span class="nc" id="L415">                        mojoTimer.getTimeForProjectAndPhaseInMillis( projectKey, phase );</span>
+<span class="nc" id="L416">                    String formattedTime = String.format(&quot;%8d&quot;, timeForPhaseAndProjectInMillis);</span>
+<span class="nc" id="L417">                    LOGGER.info( &quot;    {} ms : {}&quot;, formattedTime, phase );</span>
+
+<span class="nc" id="L419">                }</span>
+
+<span class="nc" id="L421">            }</span>
+<span class="nc" id="L422">            LOGGER.info(SEPARATION_LINE);</span>
+<span class="nc" id="L423">            LOGGER.info( &quot;Lifecycle Phase summary:&quot; );</span>
+<span class="nc" id="L424">            LOGGER.info( &quot;&quot; );</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            for ( String phase : lifeCyclePhases )</span>
+            {
+<span class="nc" id="L427">                long timeForPhaseInMillis = mojoTimer.getTimeForPhaseInMillis( phase );</span>
+<span class="nc" id="L428">                LOGGER.info( &quot;{} ms : {}&quot;, String.format( &quot;%8d&quot;, timeForPhaseInMillis ), phase );</span>
+<span class="nc" id="L429">            }</span>
+
+            // List all plugins per phase
+<span class="nc" id="L432">            LOGGER.info(SEPARATION_LINE);</span>
+<span class="nc" id="L433">            LOGGER.info( &quot;Plugins in lifecycle Phases:&quot; );</span>
+<span class="nc" id="L434">            LOGGER.info( &quot;&quot; );</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">            for ( String phase : lifeCyclePhases )</span>
+            {
+<span class="nc" id="L437">                LOGGER.info( &quot;{}:&quot;, phase );</span>
+<span class="nc" id="L438">                Map&lt;ProjectMojo, SystemTime&gt; plugisInPhase = mojoTimer.getPluginsInPhase( phase );</span>
+<span class="nc bnc" id="L439" title="All 2 branches missed.">                for ( Entry&lt;ProjectMojo, SystemTime&gt; pluginInPhase : plugisInPhase.entrySet() )</span>
+                {
+<span class="nc" id="L441">                    LOGGER.info( &quot;{} ms: {}&quot;, String.format( &quot;%8d&quot;, pluginInPhase.getValue().getElapsedTime() ),</span>
+<span class="nc" id="L442">                                 pluginInPhase.getKey().getMojo().getFullId() );</span>
+<span class="nc" id="L443">                }</span>
+
+<span class="nc" id="L445">            }</span>
+
+<span class="nc" id="L447">            LOGGER.info( &quot;&quot; );</span>
+<span class="nc" id="L448">            long timeForPlugins = mojoTimer.getTimeForPlugins();</span>
+<span class="nc" id="L449">            String formattedTime = String.format(&quot;%8d&quot;, timeForPlugins);</span>
+<span class="nc" id="L450">            LOGGER.info(&quot;{} ms plugins execution summary.&quot;, formattedTime);</span>
+<span class="nc" id="L451">            LOGGER.info(SEPARATION_LINE);</span>
+        }
+
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        if ( goalTimer.hasEvents() )</span>
+        {
+<span class="nc" id="L456">            LOGGER.info( &quot;Plugins directly called via goals:&quot; );</span>
+<span class="nc" id="L457">            LOGGER.info( &quot;&quot; );</span>
+<span class="nc" id="L458">            goalTimer.report();</span>
+<span class="nc" id="L459">            LOGGER.info(SEPARATION_LINE);</span>
+        }
+
+<span class="nc" id="L462">        installTimer.report();</span>
+<span class="nc" id="L463">        downloadTimer.report();</span>
+<span class="nc" id="L464">        deployTimer.report();</span>
+<span class="nc" id="L465">        metadataInstallTimer.report();</span>
+<span class="nc" id="L466">        metadataDownloadTimer.report();</span>
+<span class="nc" id="L467">        metadataDeploymentTimer.report();</span>
+
+<span class="nc" id="L469">        forkTimer.report();</span>
+<span class="nc" id="L470">        forkProject.report();</span>
+<span class="nc" id="L471">    }</span>
+
+    private ProjectKey mavenProjectToProjectKey( MavenProject project )
+    {
+<span class="nc" id="L475">        return new ProjectKey( project.getGroupId(), project.getArtifactId(), project.getVersion() );</span>
+    }
+
+    private void collectAllLifeCyclePhases(String phase )
+    {
+        // Phase can be null if you call maven via:
+        // mvn site:stage (no life cycle started.)
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        if ( phase == null )</span>
+        {
+<span class="nc" id="L484">            return;</span>
+        }
+<span class="nc" id="L486">        LOGGER.debug( &quot;collectAllLifeCyclePhases({})&quot;, phase );</span>
+<span class="nc bnc" id="L487" title="All 2 branches missed.">        if ( !lifeCyclePhases.contains( phase ) )</span>
+        {
+<span class="nc" id="L489">            lifeCyclePhases.add( phase );</span>
+        }
+<span class="nc" id="L491">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

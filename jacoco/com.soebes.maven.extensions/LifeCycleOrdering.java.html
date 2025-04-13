@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LifeCycleOrdering.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Maven :: Build Time Profiler</a> &gt; <a href="index.source.html" class="el_package">com.soebes.maven.extensions</a> &gt; <span class="el_source">LifeCycleOrdering.java</span></div><h1>LifeCycleOrdering.java</h1><pre class="source lang-java linenums">package com.soebes.maven.extensions;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.apache.maven.eventspy.AbstractEventSpy;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+/**
+ * @author Karl Heinz Marbaise &lt;a href=&quot;mailto:kama@soebes.de&quot;&gt;kama@soebes.de&lt;/a&gt;
+ */
+class LifeCycleOrdering
+    extends AbstractEventSpy
+{
+    private final List&lt;String&gt; predefinedPhases;
+
+<span class="fc" id="L39">    private enum Phases {</span>
+<span class="fc" id="L40">        PRE_CLEAN(&quot;pre-clean&quot;),</span>
+<span class="fc" id="L41">        CLEAN(&quot;clean&quot;),</span>
+<span class="fc" id="L42">        POST_CLEAN(&quot;post-clean&quot;),</span>
+<span class="fc" id="L43">        VALIDATE(&quot;validate&quot;),</span>
+<span class="fc" id="L44">        INITIALIZE(&quot;initialize&quot;),</span>
+<span class="fc" id="L45">        GENERATE_SOURCES(&quot;generate-sources&quot;),</span>
+<span class="fc" id="L46">        PROCESS_SOURCES(&quot;process-sources&quot;),</span>
+<span class="fc" id="L47">        GENERATE_RESOURCES(&quot;generate-resources&quot;),</span>
+<span class="fc" id="L48">        PROCESS_RESOURCES(&quot;process-resources&quot;),</span>
+<span class="fc" id="L49">        COMPILE(&quot;compile&quot;),</span>
+<span class="fc" id="L50">        PROCESS_CLASSES(&quot;process-classes&quot;),</span>
+<span class="fc" id="L51">        GENERATE_TEST_SOURCES(&quot;generate-test-sources&quot;),</span>
+<span class="fc" id="L52">        PROCESS_TEST_SOURCES(&quot;process-test-sources&quot;),</span>
+<span class="fc" id="L53">        GENERATE_TEST_RESOURCES(&quot;generate-test-resources&quot;),</span>
+<span class="fc" id="L54">        PROCESS_TEST_RESOURCES(&quot;process-test-resources&quot;),</span>
+<span class="fc" id="L55">        TEST_COMPILE(&quot;test-compile&quot;),</span>
+<span class="fc" id="L56">        PROCESS_TEST_CLASSES(&quot;process-test-classes&quot;),</span>
+<span class="fc" id="L57">        TEST(&quot;test&quot;),</span>
+<span class="fc" id="L58">        PREPARE_PACKAGE(&quot;prepare-package&quot;),</span>
+<span class="fc" id="L59">        PACKAGE(&quot;package&quot;),</span>
+<span class="fc" id="L60">        PRE_INTEGRATION_TEST(&quot;pre-integration-test&quot;),</span>
+<span class="fc" id="L61">        INTEGRATION_TEST(&quot;integration-test&quot;),</span>
+<span class="fc" id="L62">        POST_INTEGRATION_TEST(&quot;post-integration-test&quot;),</span>
+<span class="fc" id="L63">        VERIFY(&quot;verify&quot;),</span>
+<span class="fc" id="L64">        INSTALL(&quot;install&quot;),</span>
+<span class="fc" id="L65">        DEPLOY(&quot;deploy&quot;);</span>
+
+        private final String lifeCyclePhaseName;
+
+<span class="fc" id="L69">        Phases(String lifeCyclePhaseName) {</span>
+<span class="fc" id="L70">            this.lifeCyclePhaseName = lifeCyclePhaseName;</span>
+<span class="fc" id="L71">        }</span>
+
+        public String getLifeCyclePhaseName() {
+<span class="fc" id="L74">            return lifeCyclePhaseName;</span>
+        }
+    }
+
+    public LifeCycleOrdering()
+<span class="fc" id="L79">    {</span>
+<span class="fc" id="L80">        this.predefinedPhases = Arrays.stream(Phases.values())</span>
+<span class="fc" id="L81">            .map(Phases::getLifeCyclePhaseName)</span>
+<span class="fc" id="L82">            .collect(Collectors.toCollection(LinkedList::new));</span>
+<span class="fc" id="L83">    }</span>
+
+    public List&lt;String&gt; getPredefinedPhases()
+    {
+<span class="nc" id="L87">        return predefinedPhases;</span>
+    }
+
+    protected void orderLifeCycleOnPreparedOrder( List&lt;String&gt; lifeCyclePhases )
+    {
+        // Sort the lifeCyclePhases based on the given in predefinedPhases.
+<span class="fc" id="L93">        Collections.sort( lifeCyclePhases, (left, right) -&gt; Integer.compare( predefinedPhases.indexOf( left ), predefinedPhases.indexOf( right ) ));</span>
+<span class="fc" id="L94">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

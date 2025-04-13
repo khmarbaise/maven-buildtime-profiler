@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.soebes.maven.extensions"},{"l":"com.soebes.maven.extensions.artifact"},{"l":"com.soebes.maven.extensions.metadata"}];updateSearchResults();
