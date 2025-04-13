@@ -23,13 +23,13 @@ If you like to use this extension for Maven you have to define the following `.m
   <extension>
     <groupId>com.soebes.maven.extensions</groupId>
     <artifactId>maven-buildtime-profiler</artifactId>
-    <version>0.5.0</version> <!-- NOT YET RELEASED !!! -->
+    <version>0.5.0</version>
   </extension>
 </extensions>
 ```
 If you don't like to add the `.mvn/extensions.xml` to your project you can also go via command line like this:
 ```
-mvn verify -Dmaven.ext.class.path=$HOME/.m2/repository/com/soebes/maven/extensions/maven-buildtime-profiles/0.5.0/maven-buildtime-profiles-0.5.0.jar
+mvn verify -Dmaven.ext.class.path=$HOME/.m2/repository/com/soebes/maven/extensions/maven-buildtime-profiles/0.5.0/maven-buildtime-profiler-0.5.0.jar
 ```
 
 The download from Maven Central will be done by Maven itself.
