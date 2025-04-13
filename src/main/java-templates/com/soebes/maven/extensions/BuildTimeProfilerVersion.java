@@ -4,7 +4,6 @@ public final class BuildTimeProfilerVersion {
 
     private static final String VERSION = "${project.version}";
     private static final String GROUPID = "${project.groupId}";
-    private static final String SVN_BRANCH = "${scmBranch}";
     private static final String REVISION = "${buildNumber}";
 
     
@@ -24,7 +23,4 @@ public final class BuildTimeProfilerVersion {
         return REVISION;
     }
 
-    public static String getSVNBranch() {
-        return SVN_BRANCH;
-    }
 }
