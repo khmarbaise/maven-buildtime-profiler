@@ -23,9 +23,9 @@ package com.soebes.maven.extensions;
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 class ProjectMojo {
-  private ProjectKey project;
+  private final ProjectKey project;
 
-  private MojoKey mojo;
+  private final MojoKey mojo;
 
   public ProjectMojo(ProjectKey project, MojoKey mojo) {
     super();
@@ -37,16 +37,8 @@ class ProjectMojo {
     return project;
   }
 
-  public void setProject(ProjectKey project) {
-    this.project = project;
-  }
-
   public MojoKey getMojo() {
     return mojo;
-  }
-
-  public void setMojo(MojoKey mojo) {
-    this.mojo = mojo;
   }
 
   @Override
@@ -67,12 +59,15 @@ class ProjectMojo {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     ProjectMojo other = (ProjectMojo) obj;
     if (mojo == null) {
       if (other.mojo != null)
@@ -80,11 +75,8 @@ class ProjectMojo {
     } else if (!mojo.equals(other.mojo))
       return false;
     if (project == null) {
-      if (other.project != null)
-        return false;
-    } else if (!project.equals(other.project))
-      return false;
-    return true;
+      return other.project == null;
+    } else return project.equals(other.project);
   }
 
 }
