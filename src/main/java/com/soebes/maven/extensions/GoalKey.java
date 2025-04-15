@@ -22,8 +22,7 @@ package com.soebes.maven.extensions;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-final class GoalKey
-    extends ProjectKey {
+final class GoalKey extends ProjectKey {
 
   private final String goal;
 

@@ -25,6 +25,7 @@ import com.soebes.maven.extensions.artifact.InstallTimer;
 import com.soebes.maven.extensions.metadata.MetadataDeploymentTimer;
 import com.soebes.maven.extensions.metadata.MetadataDownloadTimer;
 import com.soebes.maven.extensions.metadata.MetadataInstallTimer;
+import org.apache.maven.eventspy.AbstractEventSpy;
 import org.apache.maven.execution.ExecutionEvent;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
@@ -49,7 +50,7 @@ import java.util.Map.Entry;
 @Named
 @Singleton
 public class BuildTimeProfiler
-    extends LifeCycleOrdering {
+    extends AbstractEventSpy {
   private static final String SEPARATION_LINE = "------------------------------------------------------------------------";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BuildTimeProfiler.class);
@@ -105,6 +106,8 @@ public class BuildTimeProfiler
     String disabled = System.getProperty("maven-build-time-profiler.disabled", "unknown");
     LOGGER.debug("MBTP: maven-build-time-profiler.disabled {}", disabled);
     this.activated = !disabled.equals("true");
+    String mavenVersion = MavenVersion.getMavenVersion();
+    LOGGER.debug("MBTP: maven.version {}", mavenVersion);
   }
 
   @Override

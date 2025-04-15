@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 class ForkTimer {
   private static final Logger LOGGER = LoggerFactory.getLogger(ForkTimer.class);
 
-  private SystemTime time;
+  private final SystemTime time;
 
   public ForkTimer() {
     this.time = new SystemTime();

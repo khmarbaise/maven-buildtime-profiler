@@ -19,8 +19,6 @@ package com.soebes.maven.extensions;
  * under the License.
  */
 
-import org.apache.maven.eventspy.AbstractEventSpy;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,8 +29,7 @@ import java.util.stream.Collectors;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class LifeCycleOrdering
-    extends AbstractEventSpy {
+class LifeCycleOrdering {
   private final List<String> predefinedPhases;
 
   private enum Phases {

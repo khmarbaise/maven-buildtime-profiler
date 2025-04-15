@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 class GoalTimer {
   private static final Logger LOGGER = LoggerFactory.getLogger(GoalTimer.class);
 
-  private Map<ProjectGoal, SystemTime> timerEvents;
+  private final Map<ProjectGoal, SystemTime> timerEvents;
 
   public GoalTimer() {
     this.timerEvents = new ConcurrentHashMap<>();

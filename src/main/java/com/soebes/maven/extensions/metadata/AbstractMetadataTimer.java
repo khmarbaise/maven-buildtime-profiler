@@ -37,14 +37,12 @@ public abstract class AbstractMetadataTimer {
   }
 
   protected String getArtifactId(Metadata artifact) {
-    StringBuilder sb = new StringBuilder(128);
-    sb.append(artifact.getGroupId()) //
-        .append(":").append(artifact.getArtifactId()) //
-        .append(":").append(artifact.getVersion()) //
-        .append(':').append(artifact.getType()) //
-        .append(':').append(artifact.getNature());
-
-    return sb.toString();
+    String sb = artifact.getGroupId() + //
+                ":" + artifact.getArtifactId() +
+                ":" + artifact.getVersion() +
+                ':' + artifact.getType() +
+                ':' + artifact.getNature();
+    return sb;
   }
 
   protected Map<String, TimePlusSize> getTimerEvents() {
