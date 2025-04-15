@@ -103,9 +103,9 @@ public class BuildTimeProfiler
     this.forkTimer = new ForkTimer();
     this.forkProject = new ProjectTimer();
 
-    String disabled = System.getProperty("maven-build-time-profiler.disabled", "unknown");
-    LOGGER.debug("MBTP: maven-build-time-profiler.disabled {}", disabled);
-    this.extensionActivated = !disabled.equals("true");
+    String mavenBuildTimeProfilerDisabled = System.getProperty("maven-build-time-profiler.disabled", "unknown");
+    LOGGER.debug("MBTP: maven-build-time-profiler.disabled {}", mavenBuildTimeProfilerDisabled);
+    this.extensionActivated = !mavenBuildTimeProfilerDisabled.equals("true");
     String mavenVersion = MavenVersion.getMavenVersion();
     LOGGER.debug("MBTP: maven.version {}", mavenVersion);
   }
