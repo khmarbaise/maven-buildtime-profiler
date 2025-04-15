@@ -83,7 +83,7 @@ public class BuildTimeProfiler
 
   private final ProjectTimer forkProject;
 
-  private boolean activated;
+  private boolean extensionActivated;
 
   public BuildTimeProfiler() {
     LOGGER.debug("LifeCycleProfiler ctor called.");
@@ -105,9 +105,13 @@ public class BuildTimeProfiler
 
     String disabled = System.getProperty("maven-build-time-profiler.disabled", "unknown");
     LOGGER.debug("MBTP: maven-build-time-profiler.disabled {}", disabled);
-    this.activated = !disabled.equals("true");
+    this.extensionActivated = !disabled.equals("true");
     String mavenVersion = MavenVersion.getMavenVersion();
     LOGGER.debug("MBTP: maven.version {}", mavenVersion);
+  }
+
+  private boolean isExtensionActivated() {
+    return extensionActivated;
   }
 
   @Override
@@ -116,7 +120,7 @@ public class BuildTimeProfiler
     super.init(context);
 
     LOGGER.info("Maven Build Time Profiler started. (Version {})", BuildTimeProfilerVersion.getVersion());
-    if (!activated) {
+    if (!isExtensionActivated()) {
       LOGGER.info("Maven Build Time Profiler deactivated.");
       return;
     }
@@ -132,7 +136,7 @@ public class BuildTimeProfiler
   @Override
   public void onEvent(Object event) {
     try {
-      if (!activated) {
+      if (!isExtensionActivated()) {
         return;
       }
 
@@ -193,7 +197,7 @@ public class BuildTimeProfiler
 
   @Override
   public void close() {
-    if (!activated) {
+    if (!isExtensionActivated()) {
       return;
     }
     LOGGER.debug("MBTP: done.");
@@ -275,7 +279,7 @@ public class BuildTimeProfiler
   }
 
   private void executionEventHandler(ExecutionEvent executionEvent) {
-    if (!activated) {
+    if (!isExtensionActivated()) {
       return;
     }
     LOGGER.debug("executionEventHandler: {}", executionEvent.getType());
