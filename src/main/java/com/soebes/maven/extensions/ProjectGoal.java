@@ -22,84 +22,66 @@ package com.soebes.maven.extensions;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class ProjectGoal
-{
-    private final ProjectKey project;
+class ProjectGoal {
+  private final ProjectKey project;
 
-    private final GoalKey mojo;
+  private final GoalKey mojo;
 
-    public ProjectGoal( ProjectKey project, GoalKey mojo )
-    {
-        super();
-        this.project = project;
-        this.mojo = mojo;
+  public ProjectGoal(ProjectKey project, GoalKey mojo) {
+    super();
+    this.project = project;
+    this.mojo = mojo;
+  }
+
+  public ProjectKey getProject() {
+    return project;
+  }
+
+  public GoalKey getMojo() {
+    return mojo;
+  }
+
+  @Override
+  public final int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((mojo == null) ? 0 : mojo.hashCode());
+    result = prime * result + ((project == null) ? 0 : project.hashCode());
+    return result;
+  }
+
+  public String getId() {
+    return getMojo().getGroupId() + ":" + getMojo().getArtifactId() + ":" + getMojo().getVersion() + ":"
+           + getMojo().getGoal() + " (" + getMojo().getExecutionId() + ")";
+  }
+
+  @Override
+  public final boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public ProjectKey getProject()
-    {
-        return project;
+    if (obj == null) {
+      return false;
     }
-
-    public GoalKey getMojo()
-    {
-        return mojo;
+    if (!(obj instanceof ProjectGoal)) {
+      return false;
     }
-
-    @Override
-    public final int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( mojo == null ) ? 0 : mojo.hashCode() );
-        result = prime * result + ( ( project == null ) ? 0 : project.hashCode() );
-        return result;
+    ProjectGoal other = (ProjectGoal) obj;
+    if (mojo == null) {
+      if (other.mojo != null) {
+        return false;
+      }
+    } else if (!mojo.equals(other.mojo)) {
+      return false;
     }
-
-    public String getId()
-    {
-        return getMojo().getGroupId() + ":" + getMojo().getArtifactId() + ":" + getMojo().getVersion() + ":"
-            + getMojo().getGoal() + " (" + getMojo().getExecutionId() + ")";
+    if (project == null) {
+      if (other.project != null) {
+        return false;
+      }
+    } else if (!project.equals(other.project)) {
+      return false;
     }
-
-    @Override
-    public final boolean equals( Object obj )
-    {
-        if ( this == obj )
-        {
-            return true;
-        }
-        if ( obj == null )
-        {
-            return false;
-        }
-        if ( !( obj instanceof ProjectGoal ) )
-        {
-            return false;
-        }
-        ProjectGoal other = (ProjectGoal) obj;
-        if ( mojo == null )
-        {
-            if ( other.mojo != null )
-            {
-                return false;
-            }
-        }
-        else if ( !mojo.equals( other.mojo ) )
-        {
-            return false;
-        }
-        if ( project == null )
-        {
-            if ( other.project != null )
-            {
-                return false;
-            }
-        }
-        else if ( !project.equals( other.project ) )
-        {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 
 }

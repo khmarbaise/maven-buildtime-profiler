@@ -35,101 +35,87 @@ import java.util.stream.Collectors;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class MojoTimer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(MojoTimer.class);
+class MojoTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MojoTimer.class);
 
-    private final Map<ProjectMojo, SystemTime> timerEvents;
+  private final Map<ProjectMojo, SystemTime> timerEvents;
 
-    public MojoTimer()
-    {
-        this.timerEvents = new ConcurrentHashMap<>();
+  public MojoTimer() {
+    this.timerEvents = new ConcurrentHashMap<>();
+  }
+
+  private ProjectKey createProjectKey(MavenProject project) {
+    return new ProjectKey(project.getGroupId(), project.getArtifactId(), project.getVersion());
+  }
+
+  private MojoKey createMojoKey(MojoExecution mojo) {
+    return new MojoKey(mojo.getGroupId(), mojo.getArtifactId(), mojo.getVersion(), mojo.getGoal(),
+        mojo.getExecutionId(), mojo.getLifecyclePhase());
+  }
+
+  public boolean hasEvents() {
+    return !this.timerEvents.isEmpty();
+  }
+
+  public void mojoStart(ExecutionEvent event) {
+
+    ProjectMojo pm =
+        new ProjectMojo(createProjectKey(event.getProject()), createMojoKey(event.getMojoExecution()));
+    timerEvents.put(pm, new SystemTime().start());
+  }
+
+  public void mojoStop(ExecutionEvent event) {
+    ProjectMojo pm =
+        new ProjectMojo(createProjectKey(event.getProject()), createMojoKey(event.getMojoExecution()));
+    if (!timerEvents.containsKey(pm)) {
+      throw new IllegalArgumentException("Unknown mojoId (" + pm + ")");
     }
+    timerEvents.get(pm).stop();
+  }
 
-    private ProjectKey createProjectKey( MavenProject project )
-    {
-        return new ProjectKey( project.getGroupId(), project.getArtifactId(), project.getVersion() );
-    }
+  public long getTimeForPhaseInMillis(String phase) {
+    return this.timerEvents.entrySet().stream()
+        .filter(mojoPhase(phase))
+        .mapToLong(s -> s.getValue().getElapsedTime())
+        .sum();
+  }
 
-    private MojoKey createMojoKey( MojoExecution mojo )
-    {
-        return new MojoKey( mojo.getGroupId(), mojo.getArtifactId(), mojo.getVersion(), mojo.getGoal(),
-                            mojo.getExecutionId(), mojo.getLifecyclePhase() );
-    }
+  public Map<ProjectMojo, SystemTime> getPluginsInPhase(String phase) {
+    return this.timerEvents.entrySet().stream()
+        .filter(mojoPhase(phase))
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+  }
 
-    public boolean hasEvents()
-    {
-        return !this.timerEvents.isEmpty();
-    }
+  private static Predicate<Entry<ProjectMojo, SystemTime>> mojoPhase(String phase) {
+    return item -> item.getKey().getMojo().getPhase().equals(phase);
+  }
 
-    public void mojoStart( ExecutionEvent event )
-    {
+  private static Predicate<Entry<ProjectMojo, SystemTime>> projectKey(ProjectKey projectKey) {
+    return item -> item.getKey().getProject().equals(projectKey);
+  }
 
-        ProjectMojo pm =
-            new ProjectMojo( createProjectKey( event.getProject() ), createMojoKey( event.getMojoExecution() ) );
-        timerEvents.put( pm, new SystemTime().start() );
-    }
+  public boolean hasTimeForProjectAndPhase(ProjectKey proKey, String phase) {
+    return this.timerEvents.entrySet().stream()
+        .anyMatch(mojoPhase(phase).and(projectKey(proKey)));
+  }
 
-    public void mojoStop( ExecutionEvent event )
-    {
-        ProjectMojo pm =
-            new ProjectMojo( createProjectKey( event.getProject() ), createMojoKey( event.getMojoExecution() ) );
-        if ( !timerEvents.containsKey( pm ) )
-        {
-            throw new IllegalArgumentException( "Unknown mojoId (" + pm + ")" );
-        }
-        timerEvents.get( pm ).stop();
-    }
+  public long getTimeForProjectAndPhaseInMillis(ProjectKey proKey, String phase) {
+    return this.timerEvents.entrySet().stream()
+        .filter(mojoPhase(phase))
+        .filter(projectKey(proKey))
+        .mapToLong(s -> s.getValue().getElapsedTime())
+        .sum();
+  }
 
-    public long getTimeForPhaseInMillis( String phase )
-    {
-        return this.timerEvents.entrySet().stream()
-            .filter( mojoPhase(phase))
-            .mapToLong( s -> s.getValue().getElapsedTime())
-            .sum();
-    }
+  public long getTimeForPlugins() {
+    return this.timerEvents.values().stream()
+        .mapToLong(SystemTime::getElapsedTime)
+        .sum();
+  }
 
-    public Map<ProjectMojo, SystemTime> getPluginsInPhase( String phase )
-    {
-        return this.timerEvents.entrySet().stream()
-            .filter(mojoPhase(phase))
-            .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+  public void report() {
+    for (Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet()) {
+      LOGGER.info("{} : {}", item.getKey().getId(), item.getValue().getElapsedTime());
     }
-
-    private static Predicate<Entry<ProjectMojo, SystemTime>> mojoPhase(String phase) {
-        return item -> item.getKey().getMojo().getPhase().equals(phase);
-    }
-    private static Predicate<Entry<ProjectMojo, SystemTime>> projectKey(ProjectKey projectKey) {
-        return item -> item.getKey().getProject().equals( projectKey );
-    }
-
-    public boolean hasTimeForProjectAndPhase( ProjectKey proKey, String phase )
-    {
-        return this.timerEvents.entrySet().stream()
-            .anyMatch(mojoPhase(phase).and(projectKey(proKey)));
-    }
-
-    public long getTimeForProjectAndPhaseInMillis( ProjectKey proKey, String phase )
-    {
-        return this.timerEvents.entrySet().stream()
-            .filter( mojoPhase(phase))
-            .filter( projectKey(proKey))
-            .mapToLong( s -> s.getValue().getElapsedTime())
-            .sum();
-    }
-
-    public long getTimeForPlugins( )
-    {
-        return this.timerEvents.values().stream()
-            .mapToLong(SystemTime::getElapsedTime)
-            .sum();
-    }
-
-    public void report()
-    {
-        for ( Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet() )
-        {
-            LOGGER.info( "{} : {}", item.getKey().getId(), item.getValue().getElapsedTime() );
-        }
-    }
+  }
 }

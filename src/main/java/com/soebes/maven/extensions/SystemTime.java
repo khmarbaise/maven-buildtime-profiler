@@ -22,31 +22,26 @@ package com.soebes.maven.extensions;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class SystemTime
-{
+class SystemTime {
 
-    private long startTime;
+  private long startTime;
 
-    private long stopTime;
+  private long stopTime;
 
-    public SystemTime()
-    {
-    }
+  public SystemTime() {
+  }
 
-    public SystemTime start()
-    {
-        this.startTime = System.currentTimeMillis();
-        return this;
-    }
+  public SystemTime start() {
+    this.startTime = System.currentTimeMillis();
+    return this;
+  }
 
-    public SystemTime stop()
-    {
-        this.stopTime = System.currentTimeMillis();
-        return this;
-    }
+  public SystemTime stop() {
+    this.stopTime = System.currentTimeMillis();
+    return this;
+  }
 
-    public long getElapsedTime()
-    {
-        return this.stopTime - this.startTime;
-    }
+  public long getElapsedTime() {
+    return this.stopTime - this.startTime;
+  }
 }

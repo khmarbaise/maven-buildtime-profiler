@@ -23,24 +23,20 @@ package com.soebes.maven.extensions;
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public class TimePlusSize
-    extends SystemTime
-{
+    extends SystemTime {
 
-    private long size;
+  private long size;
 
-    public TimePlusSize()
-    {
-        super();
-    }
+  public TimePlusSize() {
+    super();
+  }
 
-    public long getSize()
-    {
-        return size;
-    }
+  public long getSize() {
+    return size;
+  }
 
-    public void setSize( long size )
-    {
-        this.size = size;
-    }
+  public void setSize(long size) {
+    this.size = size;
+  }
 
 }

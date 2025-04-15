@@ -23,84 +23,66 @@ package com.soebes.maven.extensions;
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 final class GoalKey
-    extends ProjectKey
-{
+    extends ProjectKey {
 
-    private final String goal;
+  private final String goal;
 
-    private final String executionId;
+  private final String executionId;
 
-    public GoalKey( final String groupId, final String artifactId, final String version, final String goal, final String executionId )
-    {
-        super( groupId, artifactId, version );
-        this.goal = goal;
-        this.executionId = executionId;
+  public GoalKey(final String groupId, final String artifactId, final String version, final String goal, final String executionId) {
+    super(groupId, artifactId, version);
+    this.goal = goal;
+    this.executionId = executionId;
+  }
+
+  public String getGoal() {
+    return goal;
+  }
+
+  public String getExecutionId() {
+    return executionId;
+  }
+
+  public String getFullId() {
+    return super.getId() + ":" + getGoal() + " (" + getExecutionId() + ")";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((executionId == null) ? 0 : executionId.hashCode());
+    result = prime * result + ((goal == null) ? 0 : goal.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getGoal()
-    {
-        return goal;
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    public String getExecutionId()
-    {
-        return executionId;
+    if (!(obj instanceof GoalKey)) {
+      return false;
     }
-
-    public String getFullId()
-    {
-        return super.getId() + ":" + getGoal() + " (" + getExecutionId() + ")";
+    GoalKey other = (GoalKey) obj;
+    if (executionId == null) {
+      if (other.executionId != null) {
+        return false;
+      }
+    } else if (!executionId.equals(other.executionId)) {
+      return false;
     }
-
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ( ( executionId == null ) ? 0 : executionId.hashCode() );
-        result = prime * result + ( ( goal == null ) ? 0 : goal.hashCode() );
-        return result;
+    if (goal == null) {
+      if (other.goal != null) {
+        return false;
+      }
+    } else if (!goal.equals(other.goal)) {
+      return false;
     }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if ( this == obj )
-        {
-            return true;
-        }
-        if ( !super.equals( obj ) )
-        {
-            return false;
-        }
-        if ( !( obj instanceof GoalKey ) )
-        {
-            return false;
-        }
-        GoalKey other = (GoalKey) obj;
-        if ( executionId == null )
-        {
-            if ( other.executionId != null )
-            {
-                return false;
-            }
-        }
-        else if ( !executionId.equals( other.executionId ) )
-        {
-            return false;
-        }
-        if ( goal == null )
-        {
-            if ( other.goal != null )
-            {
-                return false;
-            }
-        }
-        else if ( !goal.equals( other.goal ) )
-        {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 
 }

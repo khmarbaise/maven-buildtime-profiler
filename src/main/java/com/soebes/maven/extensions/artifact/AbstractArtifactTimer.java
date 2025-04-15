@@ -20,77 +20,68 @@ package com.soebes.maven.extensions.artifact;
  */
 
 import com.soebes.maven.extensions.TimePlusSize;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.artifact.Artifact;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-public abstract class AbstractArtifactTimer
-{
+public abstract class AbstractArtifactTimer {
 
-    private Map<String, TimePlusSize> timerEvents;
+  private Map<String, TimePlusSize> timerEvents;
 
-    protected AbstractArtifactTimer()
-    {
-        this.timerEvents = new ConcurrentHashMap<>();
+  protected AbstractArtifactTimer() {
+    this.timerEvents = new ConcurrentHashMap<>();
+  }
+
+  protected String getArtifactId(Artifact artifact) {
+    StringBuilder sb = new StringBuilder(128);
+    sb.append(artifact.getGroupId()) //
+        .append(":").append(artifact.getArtifactId()) //
+        .append(":").append(artifact.getVersion());
+
+    if (!"".equals(artifact.getClassifier())) {
+      sb.append(':').append(artifact.getClassifier());
     }
 
-    protected String getArtifactId( Artifact artifact )
-    {
-        StringBuilder sb = new StringBuilder( 128 );
-        sb.append( artifact.getGroupId() ) //
-          .append( ":" ).append( artifact.getArtifactId() ) //
-          .append( ":" ).append( artifact.getVersion() );
+    sb.append(':').append(artifact.getExtension());
+    return sb.toString();
+  }
 
-        if ( !"".equals( artifact.getClassifier() ) )
-        {
-            sb.append( ':' ).append( artifact.getClassifier() );
-        }
-        
-        sb.append( ':' ).append( artifact.getExtension() );
-        return sb.toString();
+  protected Map<String, TimePlusSize> getTimerEvents() {
+    return timerEvents;
+  }
+
+  public void start(RepositoryEvent event) {
+    String artifactId = getArtifactId(event.getArtifact());
+    TimePlusSize systemTime = new TimePlusSize();
+    systemTime.start();
+    getTimerEvents().put(artifactId, systemTime);
+  }
+
+  public void stop(RepositoryEvent event) {
+    String artifactId = getArtifactId(event.getArtifact());
+    if (!getTimerEvents().containsKey(artifactId)) {
+      throw new IllegalArgumentException("Unknown artifactId (" + artifactId + ")");
     }
+    getTimerEvents().get(artifactId).stop();
 
-    protected Map<String, TimePlusSize> getTimerEvents()
-    {
-        return timerEvents;
+    long size = 0;
+    // This could happen if an artifact could not be found for download (like site_..xml etc.)
+    if (event.getArtifact().getFile() != null) {
+      size = event.getArtifact().getFile().length();
     }
+    getTimerEvents().get(artifactId).setSize(size);
+  }
 
-    public void start( RepositoryEvent event )
-    {
-        String artifactId = getArtifactId( event.getArtifact() );
-        TimePlusSize systemTime = new TimePlusSize();
-        systemTime.start();
-        getTimerEvents().put( artifactId, systemTime );
-    }
+  private static final double MIBI_BYTES = 1024d * 1024d;
 
-    public void stop( RepositoryEvent event )
-    {
-        String artifactId = getArtifactId( event.getArtifact() );
-        if ( !getTimerEvents().containsKey( artifactId ) )
-        {
-            throw new IllegalArgumentException( "Unknown artifactId (" + artifactId + ")" );
-        }
-        getTimerEvents().get( artifactId ).stop();
-
-        long size = 0;
-        // This could happen if an artifact could not be found for download (like site_..xml etc.)
-        if ( event.getArtifact().getFile() != null )
-        {
-            size = event.getArtifact().getFile().length();
-        }
-        getTimerEvents().get( artifactId ).setSize( size );
-    }
-
-    private static final double MIBI_BYTES = 1024d * 1024d;
-
-    protected double calculateMegabytesPerSeconds( long timeInMilliseconds, long sizeInBytes )
-    {
-        double dividerTime = ( timeInMilliseconds / 1000.0 );
-        return sizeInBytes / dividerTime / MIBI_BYTES;
-    }
+  protected double calculateMegabytesPerSeconds(long timeInMilliseconds, long sizeInBytes) {
+    double dividerTime = (timeInMilliseconds / 1000.0);
+    return sizeInBytes / dividerTime / MIBI_BYTES;
+  }
 
 }

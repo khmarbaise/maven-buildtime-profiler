@@ -25,32 +25,27 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class DiscoveryTimer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTimer.class);
+class DiscoveryTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTimer.class);
 
-    private final SystemTime time;
+  private final SystemTime time;
 
-    public DiscoveryTimer()
-    {
-        this.time = new SystemTime();
-    }
+  public DiscoveryTimer() {
+    this.time = new SystemTime();
+  }
 
-    public void discoveryStart()
-    {
-        time.start();
-    }
+  public void discoveryStart() {
+    time.start();
+  }
 
-    public void discoveryStop()
-    {
-        time.stop();
-    }
+  public void discoveryStop() {
+    time.stop();
+  }
 
-    public void report()
-    {
-        String format = String.format("%8d", time.getElapsedTime());
-        LOGGER.info( "Project discovery time: {} ms", format);
-        LOGGER.info( "------------------------------------------------------------------------");
-    }
+  public void report() {
+    String format = String.format("%8d", time.getElapsedTime());
+    LOGGER.info("Project discovery time: {} ms", format);
+    LOGGER.info("------------------------------------------------------------------------");
+  }
 
 }

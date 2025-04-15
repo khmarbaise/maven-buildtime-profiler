@@ -25,32 +25,27 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class ForkTimer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForkTimer.class);
+class ForkTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ForkTimer.class);
 
-    private SystemTime time;
+  private SystemTime time;
 
-    public ForkTimer()
-    {
-        this.time = new SystemTime();
-    }
+  public ForkTimer() {
+    this.time = new SystemTime();
+  }
 
-    public ForkTimer start()
-    {
-        this.time.start();
-        return this;
-    }
+  public ForkTimer start() {
+    this.time.start();
+    return this;
+  }
 
-    public ForkTimer stop()
-    {
-        this.time.stop();
-        return this;
-    }
+  public ForkTimer stop() {
+    this.time.stop();
+    return this;
+  }
 
-    public void report()
-    {
-        LOGGER.info( "ForkTime: {}", this.time.getElapsedTime() );
-    }
+  public void report() {
+    LOGGER.info("ForkTime: {}", this.time.getElapsedTime());
+  }
 
 }

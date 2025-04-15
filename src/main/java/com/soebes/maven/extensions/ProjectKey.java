@@ -22,83 +22,69 @@ package com.soebes.maven.extensions;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class ProjectKey
-{
-    private final String groupId;
+class ProjectKey {
+  private final String groupId;
 
-    private final String artifactId;
+  private final String artifactId;
 
-    private final String version;
+  private final String version;
 
-    public ProjectKey( final String groupId, final String artifactId, final String version )
-    {
-        super();
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
-    }
+  public ProjectKey(final String groupId, final String artifactId, final String version) {
+    super();
+    this.groupId = groupId;
+    this.artifactId = artifactId;
+    this.version = version;
+  }
 
-    public String getGroupId()
-    {
-        return groupId;
-    }
+  public String getGroupId() {
+    return groupId;
+  }
 
-    public String getArtifactId()
-    {
-        return artifactId;
-    }
+  public String getArtifactId() {
+    return artifactId;
+  }
 
-    public String getVersion()
-    {
-        return version;
-    }
+  public String getVersion() {
+    return version;
+  }
 
-    public String getId()
-    {
-        return this.groupId + ":" + this.artifactId + ":" + this.version;
-    }
+  public String getId() {
+    return this.groupId + ":" + this.artifactId + ":" + this.version;
+  }
 
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( artifactId == null ) ? 0 : artifactId.hashCode() );
-        result = prime * result + ( ( groupId == null ) ? 0 : groupId.hashCode() );
-        result = prime * result + ( ( version == null ) ? 0 : version.hashCode() );
-        return result;
-    }
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((artifactId == null) ? 0 : artifactId.hashCode());
+    result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+    result = prime * result + ((version == null) ? 0 : version.hashCode());
+    return result;
+  }
 
-    public boolean equals( Object obj )
-    {
-        if ( this == obj )
-            return true;
-        if ( obj == null )
-            return false;
-        if ( !( obj instanceof ProjectKey ) )
-            return false;
-        ProjectKey other = (ProjectKey) obj;
-        if ( artifactId == null )
-        {
-            if ( other.artifactId != null )
-                return false;
-        }
-        else if ( !artifactId.equals( other.artifactId ) )
-            return false;
-        if ( groupId == null )
-        {
-            if ( other.groupId != null )
-                return false;
-        }
-        else if ( !groupId.equals( other.groupId ) )
-            return false;
-        if ( version == null )
-        {
-            if ( other.version != null )
-                return false;
-        }
-        else if ( !version.equals( other.version ) )
-            return false;
-        return true;
-    }
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (!(obj instanceof ProjectKey))
+      return false;
+    ProjectKey other = (ProjectKey) obj;
+    if (artifactId == null) {
+      if (other.artifactId != null)
+        return false;
+    } else if (!artifactId.equals(other.artifactId))
+      return false;
+    if (groupId == null) {
+      if (other.groupId != null)
+        return false;
+    } else if (!groupId.equals(other.groupId))
+      return false;
+    if (version == null) {
+      if (other.version != null)
+        return false;
+    } else if (!version.equals(other.version))
+      return false;
+    return true;
+  }
 
 }

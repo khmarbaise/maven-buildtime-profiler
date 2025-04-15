@@ -30,43 +30,38 @@ import java.util.Map.Entry;
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public class InstallTimer
-    extends AbstractArtifactTimer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(InstallTimer.class);
-    private final NumberFormat numberFormat;
-    private final NumberFormat integerFormat;
+    extends AbstractArtifactTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InstallTimer.class);
+  private final NumberFormat numberFormat;
+  private final NumberFormat integerFormat;
 
-    public InstallTimer()
-    {
-        super();
-        this.integerFormat = NumberFormat.getIntegerInstance();
-        this.numberFormat = NumberFormat.getNumberInstance();
+  public InstallTimer() {
+    super();
+    this.integerFormat = NumberFormat.getIntegerInstance();
+    this.numberFormat = NumberFormat.getNumberInstance();
+  }
+
+  public void report() {
+    if (getTimerEvents().isEmpty()) {
+      return;
+    }
+    LOGGER.info("Installation summary:");
+    long totalInstallationTime = 0;
+    long totalInstallationSize = 0;
+    for (Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet()) {
+      totalInstallationTime += item.getValue().getElapsedTime();
+      totalInstallationSize += item.getValue().getSize();
+      String formattedTime = String.format("%8d", item.getValue().getElapsedTime());
+      LOGGER.info("{} ms : {}", formattedTime, item.getKey());
     }
 
-    public void report()
-    {
-        if ( getTimerEvents().isEmpty() )
-        {
-            return;
-        }
-        LOGGER.info( "Installation summary:" );
-        long totalInstallationTime = 0;
-        long totalInstallationSize = 0;
-        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
-        {
-            totalInstallationTime += item.getValue().getElapsedTime();
-            totalInstallationSize += item.getValue().getSize();
-            String formattedTime = String.format("%8d", item.getValue().getElapsedTime());
-            LOGGER.info( "{} ms : {}", formattedTime, item.getKey() );
-        }
-
-        double mibPerSeconds = calculateMegabytesPerSeconds( totalInstallationTime, totalInstallationSize );
-        String totalInstallationTimeFormatted = String.format("%8d", totalInstallationTime);
-        LOGGER.info( "" );
-        LOGGER.info( "{} ms  {} bytes. {} MiB / s", totalInstallationTimeFormatted,
-                     integerFormat.format( totalInstallationSize ),
-                     numberFormat.format( mibPerSeconds ) );
-        LOGGER.info( "------------------------------------------------------------------------" );
-    }
+    double mibPerSeconds = calculateMegabytesPerSeconds(totalInstallationTime, totalInstallationSize);
+    String totalInstallationTimeFormatted = String.format("%8d", totalInstallationTime);
+    LOGGER.info("");
+    LOGGER.info("{} ms  {} bytes. {} MiB / s", totalInstallationTimeFormatted,
+        integerFormat.format(totalInstallationSize),
+        numberFormat.format(mibPerSeconds));
+    LOGGER.info("------------------------------------------------------------------------");
+  }
 
 }

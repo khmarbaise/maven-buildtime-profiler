@@ -25,30 +25,25 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class SessionTimer
-{
-    private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
+class SessionTimer {
+  private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private SystemTime time;
+  private SystemTime time;
 
-    public SessionTimer()
-    {
-        this.time = new SystemTime();
-    }
+  public SessionTimer() {
+    this.time = new SystemTime();
+  }
 
-    public void sessionStart( )
-    {
-        time.start();
-    }
+  public void sessionStart() {
+    time.start();
+  }
 
-    public void sessionStop( )
-    {
-        time.stop();
-    }
+  public void sessionStop() {
+    time.stop();
+  }
 
-    public void report()
-    {
-        LOGGER.info( "SessionTime: {}", time.getElapsedTime() );
-    }
+  public void report() {
+    LOGGER.info("SessionTime: {}", time.getElapsedTime());
+  }
 
 }

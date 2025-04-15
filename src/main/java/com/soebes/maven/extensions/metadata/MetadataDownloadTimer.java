@@ -19,47 +19,41 @@ package com.soebes.maven.extensions.metadata;
  * under the License.
  */
 
-import java.text.NumberFormat;
-import java.util.Map.Entry;
-
+import com.soebes.maven.extensions.TimePlusSize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.soebes.maven.extensions.TimePlusSize;
+import java.text.NumberFormat;
+import java.util.Map.Entry;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
 public class MetadataDownloadTimer
-    extends AbstractMetadataTimer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataDownloadTimer.class);
+    extends AbstractMetadataTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MetadataDownloadTimer.class);
 
-    public MetadataDownloadTimer()
-    {
-        super();
-    }
+  public MetadataDownloadTimer() {
+    super();
+  }
 
-    public void report()
-    {
-        if ( getTimerEvents().isEmpty() )
-        {
-            return;
-        }
-        long totalInstallationTime = 0;
-        long totalInstallationSize = 0;
-        for ( Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet() )
-        {
-            totalInstallationTime += item.getValue().getElapsedTime();
-            // Hint: The getSize() will not return something different than zero
-            // I don't know why we don't get the information about the downloaded size here?
-            totalInstallationSize += item.getValue().getSize();
-            // LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
-        }
-        LOGGER.info( "Metadata Download summary: {} ms", NumberFormat.getIntegerInstance().format( totalInstallationTime ) );
-        // LOGGER.info( "{} ms {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
-        // NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
-        LOGGER.info( "------------------------------------------------------------------------" );
+  public void report() {
+    if (getTimerEvents().isEmpty()) {
+      return;
     }
+    long totalInstallationTime = 0;
+    long totalInstallationSize = 0;
+    for (Entry<String, TimePlusSize> item : this.getTimerEvents().entrySet()) {
+      totalInstallationTime += item.getValue().getElapsedTime();
+      // Hint: The getSize() will not return something different than zero
+      // I don't know why we don't get the information about the downloaded size here?
+      totalInstallationSize += item.getValue().getSize();
+      // LOGGER.info( "{} ms : {}", String.format( "%8d", item.getValue().getElapsedTime() ), item.getKey() );
+    }
+    LOGGER.info("Metadata Download summary: {} ms", NumberFormat.getIntegerInstance().format(totalInstallationTime));
+    // LOGGER.info( "{} ms {} bytes.", NumberFormat.getIntegerInstance().format( totalInstallationTime ),
+    // NumberFormat.getIntegerInstance().format( totalInstallationSize ) );
+    LOGGER.info("------------------------------------------------------------------------");
+  }
 
 }
