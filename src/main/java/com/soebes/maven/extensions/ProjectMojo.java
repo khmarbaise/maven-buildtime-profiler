@@ -28,7 +28,6 @@ class ProjectMojo {
   private final MojoKey mojo;
 
   public ProjectMojo(ProjectKey project, MojoKey mojo) {
-    super();
     this.project = project;
     this.mojo = mojo;
   }

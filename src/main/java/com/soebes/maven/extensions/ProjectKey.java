@@ -30,7 +30,6 @@ class ProjectKey {
   private final String version;
 
   public ProjectKey(final String groupId, final String artifactId, final String version) {
-    super();
     this.groupId = groupId;
     this.artifactId = artifactId;
     this.version = version;
