@@ -29,8 +29,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparingLong;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.reducing;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
@@ -83,7 +88,22 @@ class MojoTimer {
   public Map<ProjectMojo, SystemTime> getPluginsInPhase(String phase) {
     return this.timerEvents.entrySet().stream()
         .filter(mojoPhase(phase))
-        .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        .collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+  }
+
+
+  private static final Function<Entry<ProjectMojo, SystemTime>, String> byId = s -> String.format("%s:%s:%s", s.getKey().getMojo().getGroupId(),
+      s.getKey().getMojo().getArtifactId(), s.getKey().getMojo().getVersion());
+
+  private static final Function<Entry<ProjectMojo, SystemTime>, Long> toTime = s -> s.getValue().getElapsedTime();
+
+  public Map<String, Long> getPlugins() {
+    return this.timerEvents.entrySet().stream()
+        .collect(groupingBy(byId,
+            reducing(0L, toTime, Long::sum))
+        ).entrySet().stream()
+        .sorted(comparingLong(Entry::getValue))
+        .collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1 + e2, LinkedHashMap::new));
   }
 
   private static Predicate<Entry<ProjectMojo, SystemTime>> mojoPhase(String phase) {
@@ -113,9 +133,4 @@ class MojoTimer {
         .sum();
   }
 
-  public void report() {
-    for (Entry<ProjectMojo, SystemTime> item : this.timerEvents.entrySet()) {
-      LOGGER.info("{} : {}", item.getKey().getId(), item.getValue().getElapsedTime());
-    }
-  }
 }

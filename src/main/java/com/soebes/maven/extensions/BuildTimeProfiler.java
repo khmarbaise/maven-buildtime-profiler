@@ -409,10 +409,18 @@ public class BuildTimeProfiler
 
       }
 
+      // List total execution time per Plugin
+      LOGGER.info(SEPARATION_LINE);
+      LOGGER.info("Total execution time per plugin (ascending order):");
+      LOGGER.info("");
+      for ( Entry<String, Long> plugin : mojoTimer.getPlugins().entrySet()) {
+        LOGGER.info("{} ms: {}", String.format("%8d", plugin.getValue()), plugin.getKey());
+      }
+
       LOGGER.info("");
       long timeForPlugins = mojoTimer.getTimeForPlugins();
       String formattedTime = String.format("%8d", timeForPlugins);
-      LOGGER.info("{} ms plugins execution summary.", formattedTime);
+      LOGGER.info("{} ms plugins execution total.", formattedTime);
       LOGGER.info(SEPARATION_LINE);
     }
 
