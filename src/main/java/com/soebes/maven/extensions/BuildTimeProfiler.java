@@ -411,7 +411,7 @@ public class BuildTimeProfiler
 
       // List total execution time per Plugin
       LOGGER.info(SEPARATION_LINE);
-      LOGGER.info("Total execution time per plugin (ascending order):");
+      LOGGER.info("Total execution time per plugin (descending order):");
       LOGGER.info("");
       for ( Entry<String, Long> plugin : mojoTimer.getPlugins().entrySet()) {
         LOGGER.info("{} ms: {}", String.format("%8d", plugin.getValue()), plugin.getKey());

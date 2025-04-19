@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toMap;
@@ -102,7 +102,7 @@ class MojoTimer {
         .collect(groupingBy(byId,
             reducing(0L, toTime, Long::sum))
         ).entrySet().stream()
-        .sorted(comparingLong(Entry::getValue))
+        .sorted(Comparator.<Entry<String,Long>>comparingLong(Entry::getValue).reversed())
         .collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1 + e2, LinkedHashMap::new));
   }
 
