@@ -17,3 +17,6 @@ updates:
       - "dependencies"
       - "dependency-upgrade"
       - "dependabot"
+    ignore:
+      - dependency-name: "org.apache.maven:maven-plugin-api"
+      - dependency-name: "org.apache.maven:maven-core"
