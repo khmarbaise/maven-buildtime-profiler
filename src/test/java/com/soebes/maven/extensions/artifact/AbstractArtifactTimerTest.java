@@ -40,146 +40,136 @@ import static org.mockito.Mockito.when;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class AbstractArtifactTimerTest
-{
-    static class XAbstractArtifactTimer
-        extends AbstractArtifactTimer
-    {
-        public XAbstractArtifactTimer()
-        {
-            super();
-        }
+class AbstractArtifactTimerTest {
+  static class XAbstractArtifactTimer
+      extends AbstractArtifactTimer {
+    public XAbstractArtifactTimer() {
+      super();
     }
+  }
 
-    private AbstractArtifactTimer aat;
+  private AbstractArtifactTimer aat;
 
-    @BeforeEach
-    void beforeMethod()
-    {
-        aat = new XAbstractArtifactTimer();
-    }
+  @BeforeEach
+  void beforeMethod() {
+    aat = new XAbstractArtifactTimer();
+  }
 
-    private Artifact createMockArtifactWithLength( String groupId, String artifactId, String version, String extensions,
-                                                   String classifier )
-    {
-        Artifact artifact = createMockArtifact( groupId, artifactId, version, extensions, classifier );
+  private Artifact createMockArtifactWithLength(String groupId, String artifactId, String version, String extensions,
+                                                String classifier) {
+    Artifact artifact = createMockArtifact(groupId, artifactId, version, extensions, classifier);
 
-        File f = mock( File.class );
+    File f = mock(File.class);
 
-        when( f.length() ).thenReturn( 1000L );
-        when( artifact.getFile() ).thenReturn( f );
+    when(f.length()).thenReturn(1000L);
+    when(artifact.getFile()).thenReturn(f);
 
-        return artifact;
-    }
+    return artifact;
+  }
 
-    private Artifact createMockArtifact( String groupId, String artifactId, String version, String extensions,
-                                         String classifier )
-    {
-        Artifact artifact = mock( Artifact.class );
+  private Artifact createMockArtifact(String groupId, String artifactId, String version, String extensions,
+                                      String classifier) {
+    Artifact artifact = mock(Artifact.class);
 
-        when( artifact.getGroupId() ).thenReturn( groupId );
-        when( artifact.getArtifactId() ).thenReturn( artifactId );
-        when( artifact.getVersion() ).thenReturn( version );
-        when( artifact.getExtension() ).thenReturn( extensions );
-        when( artifact.getClassifier() ).thenReturn( classifier );
-        when( artifact.getFile() ).thenReturn( null );
-        return artifact;
-    }
+    when(artifact.getGroupId()).thenReturn(groupId);
+    when(artifact.getArtifactId()).thenReturn(artifactId);
+    when(artifact.getVersion()).thenReturn(version);
+    when(artifact.getExtension()).thenReturn(extensions);
+    when(artifact.getClassifier()).thenReturn(classifier);
+    when(artifact.getFile()).thenReturn(null);
+    return artifact;
+  }
 
-    @Test
-    void shouldResultWithoutClassifier()
-    {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
+  @Test
+  void shouldResultWithoutClassifier() {
+    Artifact artifact = createMockArtifact("groupId", "artifactId", "version", "jar", "");
 
-        String result = aat.getArtifactId( artifact );
+    String result = aat.getArtifactId(artifact);
 
-        assertThat( result ).isEqualTo( "groupId:artifactId:version:jar" );
-    }
+    assertThat(result).isEqualTo("groupId:artifactId:version:jar");
+  }
 
-    @Test
-    void shouldResultWitClassifier()
-    {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "classifier" );
+  @Test
+  void shouldResultWitClassifier() {
+    Artifact artifact = createMockArtifact("groupId", "artifactId", "version", "jar", "classifier");
 
-        String result = aat.getArtifactId( artifact );
+    String result = aat.getArtifactId(artifact);
 
-        assertThat( result ).isEqualTo( "groupId:artifactId:version:classifier:jar" );
+    assertThat(result).isEqualTo("groupId:artifactId:version:classifier:jar");
 
-    }
+  }
 
-    @Test
-    void shouldResultInSingleEntryInTimerEvents() {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" ); // as per javadoc, extension is never null
+  @Test
+  void shouldResultInSingleEntryInTimerEvents() {
+    Artifact artifact = createMockArtifact("groupId", "artifactId", "version", "jar", ""); // as per javadoc, extension is never null
 
-        RepositoryEvent build =
-            new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
-                                         EventType.ARTIFACT_DEPLOYED ).setArtifact( artifact ).build();
-        aat.start( build );
+    RepositoryEvent build =
+        new RepositoryEvent.Builder(mock(RepositorySystemSession.class),
+            EventType.ARTIFACT_DEPLOYED).setArtifact(artifact).build();
+    aat.start(build);
 
-        await()
-            .pollInterval(Duration.ofMillis(10))
-            .atLeast(Duration.ofMillis(10)).until(() -> true);
+    await()
+        .pollInterval(Duration.ofMillis(10))
+        .atLeast(Duration.ofMillis(10)).until(() -> true);
 
-        aat.stop( build );
+    aat.stop(build);
 
-        String key = aat.getArtifactId( artifact );
+    String key = aat.getArtifactId(artifact);
 
-        assertThat( aat.getTimerEvents() ).hasSize( 1 ).containsKey( key );
+    assertThat(aat.getTimerEvents()).hasSize(1).containsKey(key);
 
-        TimePlusSize timePlusSize = aat.getTimerEvents().get( key );
-        assertThat( timePlusSize.getElapsedTime() ).isGreaterThanOrEqualTo( 10L );
-    }
+    TimePlusSize timePlusSize = aat.getTimerEvents().get(key);
+    assertThat(timePlusSize.getElapsedTime()).isGreaterThanOrEqualTo(10L);
+  }
 
-    @Test
-    void shouldResultInSingleEntryInTimerEventsWithLengthEntry() {
-        Artifact artifact = createMockArtifactWithLength( "groupId", "artifactId", "version", "jar", "" );
+  @Test
+  void shouldResultInSingleEntryInTimerEventsWithLengthEntry() {
+    Artifact artifact = createMockArtifactWithLength("groupId", "artifactId", "version", "jar", "");
 
-        RepositoryEvent build =
-            new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
-                                         EventType.ARTIFACT_DEPLOYED ).setArtifact( artifact ).build();
-        aat.start( build );
+    RepositoryEvent build =
+        new RepositoryEvent.Builder(mock(RepositorySystemSession.class),
+            EventType.ARTIFACT_DEPLOYED).setArtifact(artifact).build();
+    aat.start(build);
 
-        await()
-            .pollInterval(Duration.ofMillis(10))
-            .atLeast(Duration.ofMillis(10)).until(() -> true);
+    await()
+        .pollInterval(Duration.ofMillis(10))
+        .atLeast(Duration.ofMillis(10)).until(() -> true);
 
-        aat.stop( build );
+    aat.stop(build);
 
-        String key = aat.getArtifactId( artifact );
+    String key = aat.getArtifactId(artifact);
 
-        assertThat( aat.getTimerEvents() ).hasSize( 1 ).containsKey( key );
+    assertThat(aat.getTimerEvents()).hasSize(1).containsKey(key);
 
-        TimePlusSize timePlusSize = aat.getTimerEvents().get( key );
-        assertThat( timePlusSize.getElapsedTime() ).isGreaterThanOrEqualTo( 10L );
-        assertThat( timePlusSize.getSize() ).isEqualTo( 1000L );
-    }
+    TimePlusSize timePlusSize = aat.getTimerEvents().get(key);
+    assertThat(timePlusSize.getElapsedTime()).isGreaterThanOrEqualTo(10L);
+    assertThat(timePlusSize.getSize()).isEqualTo(1000L);
+  }
 
-    @Test
-    void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongArtifact()
-    {
-        Artifact artifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "" );
-        Artifact unKnownArtifact = createMockArtifact( "groupId", "artifactId", "version", "jar", "classifier" );
+  @Test
+  void stopShouldFailWithIllegalArgumentExceptionBasedOnWrongArtifact() {
+    Artifact artifact = createMockArtifact("groupId", "artifactId", "version", "jar", "");
+    Artifact unKnownArtifact = createMockArtifact("groupId", "artifactId", "version", "jar", "classifier");
 
-        RepositoryEvent build =
-            new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
-                                         EventType.ARTIFACT_DEPLOYED ).setArtifact( artifact ).build();
-        aat.start( build );
+    RepositoryEvent build =
+        new RepositoryEvent.Builder(mock(RepositorySystemSession.class),
+            EventType.ARTIFACT_DEPLOYED).setArtifact(artifact).build();
+    aat.start(build);
 
-        RepositoryEvent buildUnknown =
-            new RepositoryEvent.Builder( mock( RepositorySystemSession.class ),
-                                         EventType.ARTIFACT_DEPLOYED ).setArtifact( unKnownArtifact ).build();
+    RepositoryEvent buildUnknown =
+        new RepositoryEvent.Builder(mock(RepositorySystemSession.class),
+            EventType.ARTIFACT_DEPLOYED).setArtifact(unKnownArtifact).build();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> aat.stop( buildUnknown )).withMessage("Unknown artifactId (groupId:artifactId:version:classifier:jar)");
-    }
+    assertThatIllegalArgumentException().isThrownBy(() -> aat.stop(buildUnknown)).withMessage("Unknown artifactId (groupId:artifactId:version:classifier:jar)");
+  }
 
-    @Test
-    void calculateMegabytesPerSecondsShouldReturnOneMegabytePerSecond()
-    {
-        long timeInMilliseconds = 1000;
-        long sizeInBytes = 1 * 1024 * 1024;
-        assertThat( aat. calculateMegabytesPerSeconds( timeInMilliseconds, sizeInBytes ) ).isEqualTo( 1.0,
-                                                                                                     offset( 0.0002 ) );
+  @Test
+  void calculateMegabytesPerSecondsShouldReturnOneMegabytePerSecond() {
+    long timeInMilliseconds = 1000;
+    long sizeInBytes = 1 * 1024 * 1024;
+    assertThat(aat.calculateMegabytesPerSeconds(timeInMilliseconds, sizeInBytes)).isEqualTo(1.0,
+        offset(0.0002));
 
-    }
+  }
 
 }

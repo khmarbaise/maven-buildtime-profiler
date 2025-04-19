@@ -29,18 +29,17 @@ import static org.awaitility.Awaitility.await;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class SystemTimeTest
-{
+class SystemTimeTest {
 
-    @Test
-    void shouldResultInMeasuredTime() {
-        SystemTime s = new SystemTime();
-        s.start();
-        await()
-            .pollInterval(Duration.ofMillis(10))
-            .atLeast(Duration.ofMillis(10)).until(() -> true);
-        s.stop();
+  @Test
+  void shouldResultInMeasuredTime() {
+    SystemTime s = new SystemTime();
+    s.start();
+    await()
+        .pollInterval(Duration.ofMillis(10))
+        .atLeast(Duration.ofMillis(10)).until(() -> true);
+    s.stop();
 
-        assertThat( s.getElapsedTime() ).isGreaterThanOrEqualTo( 10L );
-    }
+    assertThat(s.getElapsedTime()).isGreaterThanOrEqualTo(10L);
+  }
 }

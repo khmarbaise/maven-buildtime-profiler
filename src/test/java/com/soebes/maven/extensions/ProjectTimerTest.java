@@ -12,57 +12,53 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ProjectTimerTest
-{
+class ProjectTimerTest {
 
-    @Test
-    void shouldMeasureTheTime() {
-        ProjectTimer t = new ProjectTimer();
+  @Test
+  void shouldMeasureTheTime() {
+    ProjectTimer t = new ProjectTimer();
 
-        ExecutionEvent event = createEvent( "Anton" );
+    ExecutionEvent event = createEvent("Anton");
 
-        t.projectStart( event );
+    t.projectStart(event);
 
-        await()
-            .pollInterval(Duration.ofMillis(10))
-            .atLeast(Duration.ofMillis(10)).until(() -> true);
+    await()
+        .pollInterval(Duration.ofMillis(10))
+        .atLeast(Duration.ofMillis(10)).until(() -> true);
 
-        t.projectStop( event );
+    t.projectStop(event);
 
-        assertThat( t.getTimeForProject( event.getProject() ) ).isGreaterThanOrEqualTo( 10L );
-    }
+    assertThat(t.getTimeForProject(event.getProject())).isGreaterThanOrEqualTo(10L);
+  }
 
-    @Test
-    void projectStopShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
-    {
-        ProjectTimer t = new ProjectTimer();
+  @Test
+  void projectStopShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject() {
+    ProjectTimer t = new ProjectTimer();
 
-        ExecutionEvent event = createEvent( "Anton" );
+    ExecutionEvent event = createEvent("Anton");
 
-        t.projectStart( event );
+    t.projectStart(event);
 
-        ExecutionEvent unknownEvent = createEvent( "Egon" );
+    ExecutionEvent unknownEvent = createEvent("Egon");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> t.projectStop( unknownEvent )).withMessage("Unknown projectId (Egon)");
-    }
+    assertThatIllegalArgumentException().isThrownBy(() -> t.projectStop(unknownEvent)).withMessage("Unknown projectId (Egon)");
+  }
 
-    @Test
-    void getTimeForProjectShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject()
-    {
-        ProjectTimer t = new ProjectTimer();
+  @Test
+  void getTimeForProjectShouldFailWithIllegalArgumentExceptionBasedOnUnknownProject() {
+    ProjectTimer t = new ProjectTimer();
 
-        ExecutionEvent event = createEvent( "Anton" );
+    ExecutionEvent event = createEvent("Anton");
 
-        assertThatIllegalArgumentException().isThrownBy(() -> t.getTimeForProject( event.getProject() )).withMessage("Unknown projectId (Anton)");
-    }
+    assertThatIllegalArgumentException().isThrownBy(() -> t.getTimeForProject(event.getProject())).withMessage("Unknown projectId (Anton)");
+  }
 
-    private ExecutionEvent createEvent( String id )
-    {
-        MavenProject project = mock( MavenProject.class );
-        when( project.getId() ).thenReturn( id );
+  private ExecutionEvent createEvent(String id) {
+    MavenProject project = mock(MavenProject.class);
+    when(project.getId()).thenReturn(id);
 
-        ExecutionEvent event = mock( ExecutionEvent.class );
-        when( event.getProject() ).thenReturn( project );
-        return event;
-    }
+    ExecutionEvent event = mock(ExecutionEvent.class);
+    when(event.getProject()).thenReturn(project);
+    return event;
+  }
 }

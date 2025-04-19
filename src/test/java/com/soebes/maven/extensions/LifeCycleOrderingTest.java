@@ -30,23 +30,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class LifeCycleOrderingTest
-{
+class LifeCycleOrderingTest {
 
-    LifeCycleOrdering snippet;
-    
-    @BeforeEach
-    void beforeMethod()
-    {
-        snippet = new LifeCycleOrdering();
-    }
+  LifeCycleOrdering snippet;
 
-    @Test
-    void firstTest()
-    {
-        List<String> givenPhases = Arrays.asList( "test", "deploy", "compile", "initialize", "clean" );
+  @BeforeEach
+  void beforeMethod() {
+    snippet = new LifeCycleOrdering();
+  }
 
-        snippet.orderLifeCycleOnPreparedOrder( givenPhases );
-        assertThat( givenPhases ).containsExactly( "clean", "initialize", "compile", "test", "deploy" );
-    }
+  @Test
+  void firstTest() {
+    List<String> givenPhases = Arrays.asList("test", "deploy", "compile", "initialize", "clean");
+
+    snippet.orderLifeCycleOnPreparedOrder(givenPhases);
+    assertThat(givenPhases).containsExactly("clean", "initialize", "compile", "test", "deploy");
+  }
 }

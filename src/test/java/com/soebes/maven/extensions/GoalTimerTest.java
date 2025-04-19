@@ -31,39 +31,36 @@ import static org.mockito.Mockito.when;
 /**
  * @author Karl Heinz Marbaise <a href="mailto:kama@soebes.de">kama@soebes.de</a>
  */
-class GoalTimerTest
-{
+class GoalTimerTest {
 
-    @Test
-    void mojoStopShouldFailWithIllegalArgumentException()
-    {
-        GoalTimer t = new GoalTimer();
+  @Test
+  void mojoStopShouldFailWithIllegalArgumentException() {
+    GoalTimer t = new GoalTimer();
 
-        t.mojoStart(createEvent( "Anton" ));
+    t.mojoStart(createEvent("Anton"));
 
-        assertThatIllegalArgumentException()
-          .isThrownBy(() -> t.mojoStop(createEvent( "Egon" )))
-          .withMessage("Unknown mojoId (execution-groupId:execution-artifactId:execution-version" +
-            ":execution-goal (Egon))");
-    }
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> t.mojoStop(createEvent("Egon")))
+        .withMessage("Unknown mojoId (execution-groupId:execution-artifactId:execution-version" +
+                     ":execution-goal (Egon))");
+  }
 
-    private ExecutionEvent createEvent( String id )
-    {
-        MavenProject project = mock( MavenProject.class );
-        when( project.getGroupId() ).thenReturn( "groupId" );
-        when( project.getArtifactId() ).thenReturn( "artifactId" );
-        when( project.getVersion() ).thenReturn( "version" );
+  private ExecutionEvent createEvent(String id) {
+    MavenProject project = mock(MavenProject.class);
+    when(project.getGroupId()).thenReturn("groupId");
+    when(project.getArtifactId()).thenReturn("artifactId");
+    when(project.getVersion()).thenReturn("version");
 
-        ExecutionEvent event = mock( ExecutionEvent.class );
-        MojoExecution execution = mock( MojoExecution.class );
-        when( execution.getGroupId() ).thenReturn( "execution-groupId" );
-        when( execution.getArtifactId() ).thenReturn( "execution-artifactId" );
-        when( execution.getExecutionId() ).thenReturn( id );
-        when( execution.getGoal() ).thenReturn( "execution-goal" );
-        when( execution.getVersion() ).thenReturn( "execution-version" );
+    ExecutionEvent event = mock(ExecutionEvent.class);
+    MojoExecution execution = mock(MojoExecution.class);
+    when(execution.getGroupId()).thenReturn("execution-groupId");
+    when(execution.getArtifactId()).thenReturn("execution-artifactId");
+    when(execution.getExecutionId()).thenReturn(id);
+    when(execution.getGoal()).thenReturn("execution-goal");
+    when(execution.getVersion()).thenReturn("execution-version");
 
-        when( event.getMojoExecution() ).thenReturn( execution );
-        when( event.getProject() ).thenReturn( project );
-        return event;
-    }
+    when(event.getMojoExecution()).thenReturn(execution);
+    when(event.getProject()).thenReturn(project);
+    return event;
+  }
 }
